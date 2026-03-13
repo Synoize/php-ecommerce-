@@ -1,52 +1,34 @@
 <?php
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
-$errors = [];
-
-if (isPost()) {
-    $email = trim((string)($_POST['email'] ?? ''));
-    $password = (string)($_POST['password'] ?? '');
-
-    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required.';
-    if ($password === '') $errors[] = 'Password is required.';
-
-    if (count($errors) === 0) {
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? AND role = ? LIMIT 1');
-        $stmt->execute([$email, 'admin']);
-        $user = $stmt->fetch();
-        if ($user && password_verify($password, (string)$user['password'])) {
-            $_SESSION['user'] = ['id' => $user['id'], 'name' => $user['name'], 'email' => $user['email'], 'role' => $user['role']];
-            setFlash('success', 'Admin logged in.');
-            redirect('/admin/index.php');
-        } else {
-            $errors[] = 'Invalid admin credentials.';
-        }
+if (is_post()) {
+    verify_csrf();
+    $result = (new AuthController())->login($_POST);
+    if ($result['ok'] && is_admin()) {
+        redirect('admin/index.php');
     }
+
+    (new AuthController())->logout();
+    set_flash('error', 'Admin credentials required.');
+    redirect('admin/admin_login.php');
 }
 ?>
-
-<div class="mx-auto max-w-md">
-  <div class="rounded-2xl border bg-white p-6 shadow-soft">
-    <h1 class="text-xl font-semibold text-gray-900">Admin Login</h1>
-
-    <?php if (count($errors) > 0): ?>
-      <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-        <?php foreach ($errors as $err): ?><div><?php echo e($err); ?></div><?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-
-    <form method="post" class="mt-5 space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input class="mt-1 w-full rounded-lg border px-3 py-2 text-sm" name="email" type="email" required />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input class="mt-1 w-full rounded-lg border px-3 py-2 text-sm" name="password" type="password" required />
-      </div>
-      <button class="inline-flex w-full items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover" type="submit">Login</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-slate-950 p-4">
+    <form action="" method="post" class="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+        <h1 class="text-3xl font-bold">Admin Login</h1>
+        <p class="mt-2 text-sm text-slate-500">Use the seeded `admin@demo.com` account from `database.sql`.</p>
+        <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+        <input class="mt-6 w-full rounded-2xl border border-slate-200 px-4 py-3" type="email" name="email" placeholder="Email" required>
+        <input class="mt-4 w-full rounded-2xl border border-slate-200 px-4 py-3" type="password" name="password" placeholder="Password" required>
+        <button class="mt-6 w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Login</button>
     </form>
-  </div>
-</div>
-
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+</body>
+</html>

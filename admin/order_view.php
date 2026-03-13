@@ -1,81 +1,84 @@
 <?php
-require_once __DIR__ . '/../includes/header.php';
-requireAdmin();
+require_once __DIR__ . '/../config/bootstrap.php';
+require_admin();
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$stmt = $pdo->prepare('SELECT o.*, u.name user_name, u.email user_email FROM orders o JOIN users u ON u.id=o.user_id WHERE o.id = ?');
-$stmt->execute([$id]);
-$order = $stmt->fetch();
-if (!$order) {
-    setFlash('danger', 'Order not found.');
-    redirect('/admin/manage_orders.php');
+$orderModel = new OrderModel();
+
+if (is_post()) {
+    verify_csrf();
+    $orderModel->updateStatus((int) $_POST['order_id'], (string) $_POST['status'], (string) $_POST['payment_status']);
+    set_flash('success', 'Order status updated.');
+    redirect('admin/order_view.php?id=' . (int) $_POST['order_id']);
 }
 
-$itemsStmt = $pdo->prepare('SELECT oi.*, p.name product_name FROM order_items oi JOIN products p ON p.id=oi.product_id WHERE oi.order_id = ?');
-$itemsStmt->execute([$id]);
-$items = $itemsStmt->fetchAll();
+$order = $orderModel->findAdmin((int) ($_GET['id'] ?? 0));
+if (!$order) {
+    exit('Order not found');
+}
+
+$adminPageTitle = 'Order View';
+require __DIR__ . '/partials/header.php';
 ?>
-
-<h1 class="text-xl font-semibold text-gray-900">Order #<?php echo (int)$order['id']; ?></h1>
-
-<div class="mt-5 grid gap-4 lg:grid-cols-12">
-  <div class="lg:col-span-4">
-    <div class="rounded-2xl border bg-white p-5 shadow-soft">
-      <div class="text-sm text-gray-600">User</div>
-      <div class="mt-1 text-sm font-semibold text-gray-900"><?php echo e($order['user_name']); ?></div>
-      <div class="text-xs text-gray-600"><?php echo e($order['user_email']); ?></div>
-
-      <div class="my-4 border-t"></div>
-
-      <div class="text-sm text-gray-600">Status</div>
-      <div class="mt-1 text-sm font-semibold text-gray-900"><?php echo e($order['status']); ?></div>
-
-      <div class="my-4 border-t"></div>
-
-      <div class="text-sm text-gray-600">Payment</div>
-      <div class="mt-1 text-sm font-semibold text-gray-900"><?php echo e($order['payment_method'] ?? '-'); ?> (<?php echo e($order['payment_status'] ?? '-'); ?>)</div>
-      <?php if (!empty($order['razorpay_payment_id']) || !empty($order['razorpay_order_id'])): ?>
-        <div class="mt-2 text-xs text-gray-600">Razorpay Payment ID: <?php echo e($order['razorpay_payment_id'] ?? '-'); ?></div>
-        <div class="text-xs text-gray-600">Razorpay Order ID: <?php echo e($order['razorpay_order_id'] ?? '-'); ?></div>
-      <?php endif; ?>
-
-      <div class="my-4 border-t"></div>
-
-      <div class="text-sm text-gray-600">Total</div>
-      <div class="mt-1 text-lg font-bold text-gray-900">₹<?php echo e(number_format((float)$order['total_amount'],2)); ?></div>
-    </div>
-  </div>
-
-  <div class="lg:col-span-8">
-    <div class="overflow-hidden rounded-2xl border bg-white shadow-soft">
-      <div class="px-5 py-4 border-b">
-        <h2 class="text-base font-semibold text-gray-900">Items</h2>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-left text-sm">
-          <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-600">
-            <tr>
-              <th class="px-4 py-3">Product</th>
-              <th class="px-4 py-3">Qty</th>
-              <th class="px-4 py-3">Price</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y">
-            <?php foreach ($items as $it): ?>
-              <tr>
-                <td class="px-4 py-3 font-medium text-gray-900"><?php echo e($it['product_name']); ?></td>
-                <td class="px-4 py-3 text-gray-900"><?php echo (int)$it['quantity']; ?></td>
-                <td class="px-4 py-3 text-gray-900">₹<?php echo e(number_format((float)$it['price'],2)); ?></td>
-              </tr>
-            <?php endforeach; ?>
-            <?php if (count($items) === 0): ?>
-              <tr><td colspan="3" class="px-4 py-6 text-sm text-gray-600">No items.</td></tr>
+<div class="grid gap-6 lg:grid-cols-[1fr,360px]">
+    <div class="rounded-3xl bg-white p-6 shadow">
+        <h1 class="text-2xl font-bold">Order #<?= (int) $order['id']; ?></h1>
+        <?php $trackingSteps = order_tracking_steps((string) $order['status']); ?>
+        <div class="mt-6 rounded-3xl bg-slate-50 p-5">
+            <div class="text-sm font-semibold text-slate-700">Customer-facing status</div>
+            <?php if ((string) $order['status'] === 'cancelled'): ?>
+                <p class="mt-3 text-sm text-rose-600">The order is marked as cancelled.</p>
+            <?php else: ?>
+                <div class="mt-4 grid gap-4 md:grid-cols-4">
+                    <?php foreach ($trackingSteps as $step): ?>
+                        <div class="rounded-2xl border px-4 py-3 <?= $step['complete'] ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'; ?>">
+                            <div class="text-xs uppercase tracking-[0.2em] <?= $step['current'] ? 'text-sky-600' : 'text-slate-400'; ?>"><?= $step['key']; ?></div>
+                            <div class="mt-2 text-sm font-semibold text-slate-800"><?= e($step['label']); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
+        </div>
+        <div class="mt-6 space-y-4">
+            <?php foreach ($order['items'] as $item): ?>
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 p-4">
+                    <div>
+                        <div class="font-semibold"><?= e($item['name']); ?></div>
+                        <div class="text-sm text-slate-500">Qty <?= (int) $item['quantity']; ?></div>
+                    </div>
+                    <div class="font-semibold text-sky-600"><?= e(money((float) $item['price'] * (int) $item['quantity'])); ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
-  </div>
+    <aside class="rounded-3xl bg-white p-6 shadow">
+        <div class="text-sm text-slate-500">Customer</div>
+        <div class="mt-2 font-semibold"><?= e($order['user_name']); ?></div>
+        <div class="mt-1 text-sm text-slate-500"><?= e($order['email']); ?></div>
+        <form action="" method="post" class="mt-6 space-y-3">
+            <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+            <input type="hidden" name="order_id" value="<?= (int) $order['id']; ?>">
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Order status</label>
+                <select name="status" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    <?php foreach (['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'] as $status): ?>
+                        <option value="<?= e($status); ?>" <?= $order['status'] === $status ? 'selected' : ''; ?>><?= e(ucfirst($status)); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Payment status</label>
+                <select name="payment_status" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    <?php foreach (['pending', 'paid', 'failed'] as $paymentStatus): ?>
+                        <option value="<?= e($paymentStatus); ?>" <?= $order['payment_status'] === $paymentStatus ? 'selected' : ''; ?>><?= e(ucfirst($paymentStatus)); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button class="w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Update order</button>
+        </form>
+        <div class="mt-6 text-sm text-slate-500">Shipping</div>
+        <div class="mt-2 text-sm"><?= e((string) $order['address_line']); ?>, <?= e((string) $order['city']); ?>, <?= e((string) $order['state']); ?> - <?= e((string) $order['pincode']); ?></div>
+        <div class="mt-6 text-sm text-slate-500">Payment</div>
+        <div class="mt-2 text-sm"><?= e((string) $order['payment_method']); ?> / <?= e((string) $order['payment_status']); ?></div>
+    </aside>
 </div>
-
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require __DIR__ . '/partials/footer.php'; ?>

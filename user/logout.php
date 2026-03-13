@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
-unset($_SESSION['user']);
-setFlash('success', 'Logged out successfully.');
-redirect('/index.php');
+require_once __DIR__ . '/../config/bootstrap.php';
+(new AuthController())->logout();
+set_flash('success', 'Logged out successfully.');
+redirect('');
+
