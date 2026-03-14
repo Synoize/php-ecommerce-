@@ -5,15 +5,35 @@ $store = new StoreController();
 $featuredCategories = $store->categories->featured(4);
 $featuredProducts = $store->products->featured(8);
 $slides = (new SlideModel())->all();
+$wishlistProductIds = [];
 
+if ($slides === []) {
+    $slides[] = [
+        'type' => 'image',
+        'file_path' => 'images/uploads/carousel/_01.mp4',
+        'title' => 'Watch Ecommerce',
+        'description' => 'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+        'button_name' => 'Shop Now',
+        'button_link' => 'shop.php',
+    ];
+}
 
+if (is_logged_in()) {
+    $wishlistItems = (new WishlistModel())->items((int) current_user()['id']);
+    $wishlistProductIds = array_fill_keys(
+        array_map(
+            static fn(array $item): int => (int) $item['product_id'],
+            $wishlistItems
+        ),
+        true
+    );
+}
 
 $pageTitle = 'Watch Ecommerce | Home';
 $pageDescription = 'Shop premium watches with category filtering, reviews, wishlist, cart, and secure checkout.';
 require __DIR__ . '/layout/header.php';
 ?>
 <main class="mt-28">
-    <!-- Carousel -->
     <section class="w-full">
         <div class="relative w-full overflow-hidden">
             <div id="slider" class="flex transition-transform duration-700 ease-in-out">
@@ -36,20 +56,20 @@ require __DIR__ . '/layout/header.php';
                         <div class="absolute inset-0 flex items-center">
                             <div class="flex h-full w-full flex-col justify-between px-6 py-10 md:px-24 md:py-20">
                                 <div class="max-w-3xl">
-                                    <span class="inline-flex rounded-full bg-white-light px-4 py-2 text-xs md:text-sm text-black-light">Spring 2026 collection</span>
-                                    <h2 class="mt-4 md:mt-6 max-w-2xl text-2xl md:text-3xl font-bold leading-tight text-white-dark md:text-6xl">
+                                    <span class="inline-flex rounded-full bg-white-light px-4 py-2 text-xs text-black-light md:text-sm">Spring 2026 collection</span>
+                                    <h2 class="mt-4 max-w-2xl text-2xl font-bold leading-tight text-white-dark md:mt-6 md:text-6xl">
                                         <?= e((string) $slide['title']); ?>
                                     </h2>
-                                    <p class="mt-4 max-w-xl text-xs md:text-sm font-light text-white-light md:text-lg">
+                                    <p class="mt-4 max-w-xl text-xs font-light text-white-light md:text-lg">
                                         <?= e((string) ($slide['description'] ?? '')); ?>
                                     </p>
                                 </div>
 
                                 <a
                                     href="<?= e(app_url((string) ($slide['button_link'] ?? 'shop.php'))); ?>"
-                                    class="group mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-primary-medium px-6 py-2 md:py-3 text-[10px] md:text-sm font-semibold text-white-dark transition-all duration-300">
+                                    class="group mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-primary-medium px-6 py-2 text-[10px] font-semibold text-white-dark transition-all duration-300 md:py-3 md:text-sm">
                                     <span><?= e((string) ($slide['button_name'] ?? 'Explore')); ?></span>
-                                    <span class="transition-transform duration-300 group-hover:translate-x-1"><i data-lucide="arrow-right" class="w-3 h-3 md:w-4 md:h-4"></i></span>
+                                    <span class="transition-transform duration-300 group-hover:translate-x-1"><i data-lucide="arrow-right" class="h-3 w-3 md:h-4 md:w-4"></i></span>
                                 </a>
                             </div>
                         </div>
@@ -61,14 +81,14 @@ require __DIR__ . '/layout/header.php';
                 <button
                     type="button"
                     onclick="prevSlide()"
-                    class="absolute left-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 hover:bg-white-dark text-black-medium text-lg md:text-xl shadow-lg transition hover:scale-105 duration-300 md:h-12 md:w-12">
+                    class="absolute left-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark md:h-12 md:w-12 md:text-xl">
                     &#8249;
                 </button>
 
                 <button
                     type="button"
                     onclick="nextSlide()"
-                    class="absolute right-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 hover:bg-white-dark text-black-medium text-lg md:text-xl shadow-lg transition hover:scale-105 duration-300 md:h-12 md:w-12">
+                    class="absolute right-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark md:h-12 md:w-12 md:text-xl">
                     &#8250;
                 </button>
 
@@ -77,7 +97,7 @@ require __DIR__ . '/layout/header.php';
                         <button
                             type="button"
                             onclick="goToSlide(<?= $i; ?>)"
-                            class="dotSlider h-3 w-3 rounded-full bg-white-dark/40 transition"></button>
+                            class="dotSlider h-2 w-2 rounded-full bg-white-dark/40 transition"></button>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -125,7 +145,6 @@ require __DIR__ . '/layout/header.php';
             }
 
             startAutoplay();
-
             slider.parentElement.addEventListener("mouseenter", stopAutoplay);
             slider.parentElement.addEventListener("mouseleave", startAutoplay);
 
@@ -152,148 +171,153 @@ require __DIR__ . '/layout/header.php';
     </script>
 
     <!-- Categories -->
-    <section class="mx-auto max-w-7xl px-2 py-8 md:py-20 flex items-center justify-start gap-3 md:gap-8 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-
-        <!-- NEW LAUNCH -->
-        <div class="relative flex items-center justify-center
-                w-[80px] h-[80px] md:w-[260px] md:h-[260px] shrink-0">
-
+    <section class="mx-auto flex max-w-7xl items-center justify-start gap-3 overflow-x-auto px-2 py-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:gap-8 md:py-20">
+        <div class="relative flex h-[80px] w-[80px] shrink-0 items-center justify-center md:h-[260px] md:w-[260px]">
             <iframe
                 src="https://lottie.host/embed/f6933fd2-3012-489e-8a56-8576e6e9501f/CYg29mu74N.lottie"
-                class="absolute inset-0 w-full h-full pointer-events-none">
-            </iframe>
+                class="absolute inset-0 h-full w-full pointer-events-none"></iframe>
 
-            <a href="<?= e(app_url('categories.php')); ?>"
-                class="relative text-[10px] md:text-3xl font-extrabold
-           text-white-dark text-center leading-tight">
+            <a href="<?= e(app_url('categories.php')); ?>" class="relative text-center text-[10px] font-extrabold leading-tight text-white-dark md:text-3xl">
                 NEW <br> LAUNCH
             </a>
-
         </div>
 
-        <!-- CATEGORY LOOP -->
         <?php foreach ($featuredCategories as $category): ?>
-            <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>"
-                class="flex flex-col items-center min-w-[70px] max-w-[90px] md:min-w-[200px] md:max-w-[240px] group shrink-0">
-
-                <div class="flex items-center justify-center w-full
-                rounded-t-[1.5rem] md:rounded-t-[4rem]
-                border border-primary-medium/40
-                bg-gradient-to-b from-[#0065a420] to-[#ff003320]
-                overflow-hidden transition">
-
+            <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>" class="group min-w-[70px] max-w-[90px] shrink-0 flex-col items-center md:min-w-[180px] md:max-w-[220px]">
+                <div class="flex w-full items-center justify-center overflow-hidden rounded-t-[1.5rem] border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition md:rounded-t-[4rem]">
                     <img
                         src="<?= e(upload_url((string) $category['image'])); ?>"
                         alt="<?= e($category['name']); ?>"
-                        class="p-2 md:p-8 w-full h-20 md:h-60 object-contain
-                    transition duration-300 group-hover:scale-105"
+                        class="h-20 w-full object-contain p-2 transition duration-300 group-hover:scale-105 md:h-60 md:p-8"
                         loading="lazy">
-
                 </div>
 
-                <p class="mt-2 text-xs md:text-sm text-black-medium text-center">
+                <p class="mt-2 text-center text-xs text-black-medium md:text-sm">
                     <?= e($category['name']); ?>
                 </p>
-
             </a>
         <?php endforeach; ?>
-
     </section>
 
-    <!-- Featured Products -->
+    <!-- Featured Watches -->
     <section class="mx-auto max-w-7xl px-4 py-4">
-
-        <!-- Header -->
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wider text-black-light">Trending</p>
-                <h2 class="text-xl md:text-3xl font-semibold text-primary-medium">
-                    Featured Watches
-                </h2>
+                <h2 class="text-xl font-semibold text-primary-medium md:text-3xl">Featured Watches</h2>
             </div>
 
-            <a href="<?= e(app_url('shop.php')); ?>"
-                class="group px-4 py-2 border rounded-full text-sm flex items-center gap-2 hover:bg-white-light/40 transition">
-
+            <a href="<?= e(app_url('shop.php')); ?>" class="group flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition hover:bg-white-light/40">
                 <span class="text-sm text-black-light">See All</span>
-
-                <i data-lucide="arrow-right"
-                    class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 text-black-light">
-                </i>
+                <i data-lucide="arrow-right" class="h-4 w-4 text-black-light transition-transform duration-300 group-hover:translate-x-1"></i>
             </a>
         </div>
 
-        <!-- Product Grid -->
-        <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-
-            <?php foreach ($featuredProducts as $product): ?>
-
+        <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <?php foreach (array_slice($featuredProducts, 0, 6) as $product): ?>
                 <div class="group overflow-hidden">
+                    <div class="relative overflow-hidden rounded-lg bg-white-light">
+                        <?php if (is_logged_in()): ?>
+                            <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
+                                <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                                <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                                <input type="hidden" name="redirect" value="index.php">
+                                <button
+                                    type="submit"
+                                    class="rounded-full bg-white-dark/80 p-2 transition hover:bg-white-dark <?= isset($wishlistProductIds[(int) $product['id']]) ? 'text-red-500' : 'text-black-light'; ?>"
+                                    aria-label="<?= isset($wishlistProductIds[(int) $product['id']]) ? 'Remove from wishlist' : 'Add to wishlist'; ?>">
+                                    <i data-lucide="heart" class="h-4 w-4 <?= isset($wishlistProductIds[(int) $product['id']]) ? 'fill-current' : ''; ?>"></i>
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <a
+                                href="<?= e(app_url('user/login.php')); ?>"
+                                class="absolute top-3 right-3 z-10 rounded-full bg-white-dark/80 p-2 text-black-light transition hover:bg-white-dark hover:text-red-500"
+                                aria-label="Login to use wishlist">
+                                <i data-lucide="heart" class="h-4 w-4"></i>
+                            </a>
+                        <?php endif; ?>
 
-                    <!-- Image Container -->
-                    <div class="relative overflow-hidden bg-white-light rounded-lg">
-
-                        <!-- Wishlist -->
-                        <button class="absolute top-3 right-3 z-10 bg-white-dark/80 p-2 rounded-full hover:bg-white-dark text-red-500">
-                            <i data-lucide="heart" class="w-4 h-4"></i>
-                        </button>
-
-                        <!-- Product Image -->
                         <a href="<?= e(product_link($product)); ?>">
                             <img
                                 src="<?= e(upload_url((string) $product['image'])); ?>"
                                 alt="<?= e($product['name']); ?>"
-                                class="w-full h-56 object-cover transition duration-500 group-hover:scale-110"
+                                class="h-56 w-full object-contain p-2 transition duration-500 group-hover:scale-110"
                                 loading="lazy" />
                         </a>
-
                     </div>
 
-                    <!-- Product Info -->
                     <div class="pt-4">
-
-                        <!-- Category -->
-                        <p class="text-xs uppercase tracking-wider text-primary-medium">
+                        <p class="text-xs uppercase tracking-wider text-black-light">
                             <?= e($product['category_name'] ?? 'Watch'); ?>
                         </p>
 
-                        <!-- Product Name -->
-                        <h3 class="text-sm font-medium text-black-light mt-1 line-clamp-2">
+                        <h3 class="mt-1 line-clamp-2 text-sm font-medium text-black-medium">
                             <?= e($product['name']); ?>
                         </h3>
 
-                        <!-- Rating -->
-                        <p class="text-xs text-yellow-500 mt-1 flex gap-1 items-center ">
-                            <i data-lucide="star" class="w-4 h-4"></i>
-                            <?= number_format((float) $product['avg_rating'], 1); ?> / 5
-                        </p>
+                        <div class="mt-2 flex items-center gap-2">
 
-                        <!-- Price -->
-                        <p class="mt-2 text-lg font-semibold text-green-500">
+                            <!-- Rating Badge -->
+                            <span class="flex items-center gap-1 bg-yellow-100 text-yellow-600 text-xs font-semibold px-2 py-1 rounded-md">
+
+                                <i data-lucide="star" class="w-4 h-4 fill-yellow-500 text-yellow-500"></i>
+
+                                <?= number_format((float) $product['avg_rating'], 1); ?>
+
+                            </span>
+
+                            <!-- Review Count -->
+                            <!-- <span class="text-xs text-white-medium">
+                                (<?= (int) $product['review_count']; ?> reviews)
+                            </span> -->
+
+                        </div>
+
+                        <p class="mt-2 text-lg font-semibold text-green-600">
                             <?= e(money((float) $product['price'])); ?>
                         </p>
 
-                        <!-- Reviews -->
-                        <p class="text-xs text-black-light mt-1">
-                            <?= (int) $product['review_count']; ?> reviews • Stock <?= (int) $product['stock']; ?>
-                        </p>
+                        <div class="mt-2 flex justify-between items-center gap-3 text-xs">
 
-                        <!-- Button -->
+                            <span class="flex items-center gap-1 text-black-light text-nowrap">
+                                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                <?= (int) $product['review_count']; ?> reviews
+                            </span>
+
+                            <?php if ((int)$product['stock'] == 0): ?>
+
+                                <span class="flex items-center gap-1 bg-red-100 text-red-600 text-xs text-center font-semibold px-2 py-1 rounded-md">
+                                    <i data-lucide="frown" class="w-3.5 h-3.5 hidden md:block"></i>
+                                    Out of Stock
+                                </span>
+
+                            <?php elseif ((int)$product['stock'] < 20): ?>
+
+                                <span class="flex items-center gap-1 bg-orange-100 text-orange-600 text-xs text-center font-semibold px-2 py-1 rounded-md">
+                                    Only <?= (int)$product['stock']; ?> left
+                                </span>
+
+                            <?php else: ?>
+
+                                <span class="flex items-center gap-1 bg-green-100 text-green-600 text-xs text-center font-semibold px-2 py-1 rounded-md">
+                                    In Stock
+                                </span>
+
+                            <?php endif; ?>
+
+                        </div>
+
                         <a
                             href="<?= e(product_link($product)); ?>"
-                            class="mt-4 block text-center bg-primary-medium hover:bg-primary-medium/80 text-white-dark py-3 text-sm font-semibold transition">
+                            class="mt-4 block bg-primary-medium py-3 text-center text-sm font-semibold text-white-dark transition hover:bg-primary-medium/80">
                             BUY NOW
                         </a>
-
                     </div>
-
                 </div>
-
             <?php endforeach; ?>
-
         </div>
-
     </section>
-
 </main>
+
 <?php require __DIR__ . '/layout/footer.php'; ?>

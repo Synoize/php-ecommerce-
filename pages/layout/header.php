@@ -105,7 +105,6 @@ $flash = get_flash();
                         Categories
                     </a> -->
 
-
                     <!-- CATEGORIES -->
                     <div class="space-x-4">
                         <?php foreach ($headerCategories as $navCategory): ?>
@@ -154,7 +153,7 @@ $flash = get_flash();
                         <?php if ($headerWishlistCount > 0): ?>
 
                             <span
-                                class="absolute -top-1 -right-1.5 bg-red-500 text-white-dark text-xs px-1.5 rounded-full">
+                                class="absolute -top-1.5 -right-2 bg-red-500 text-white-dark text-xs px-1.5 rounded-full">
                                 <?= (int)$headerWishlistCount ?>
                             </span>
 
@@ -166,12 +165,12 @@ $flash = get_flash();
                     <a href="<?= e(app_url('cart.php')); ?>"
                         class="relative text-black-medium hover:text-white-medium">
 
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
 
                         <?php if ($headerCartCount > 0): ?>
 
                             <span
-                                class="absolute -top-1 -right-1.5 bg-primary-medium text-white-dark text-xs px-1.5 rounded-full">
+                                class="absolute -top-1.5 -right-2 bg-primary-medium text-white-dark text-xs px-1.5 rounded-full">
                                 <?= (int)$headerCartCount ?>
                             </span>
 
@@ -221,16 +220,34 @@ $flash = get_flash();
                                         <a href="<?= e(app_url('user/orders.php')); ?>"
                                             class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
-                                            <i data-lucide="package" class="w-4 h-4"></i>
+                                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                                             Orders
 
                                         </a>
 
-                                        <!-- WISHLIST -->
-                                        <a href="<?= e(app_url('help.php')); ?>"
+                                        <!-- CHECKOUT -->
+                                        <a href="<?= e(app_url('checkout.php')); ?>"
+                                            class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
+
+                                            <i data-lucide="badge-indian-rupee" class="w-4 h-4"></i>
+                                            Checkout
+
+                                        </a>
+
+                                        <!-- ABOUT -->
+                                        <a href="<?= e(app_url('about.php')); ?>"
                                             class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
                                             <i data-lucide="badge-info" class="w-4 h-4"></i>
+                                            About
+
+                                        </a>
+
+                                        <!-- Help -->
+                                        <a href="<?= e(app_url('help.php')); ?>"
+                                            class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
+
+                                            <i data-lucide="message-circle-question-mark" class="w-4 h-4"></i>
                                             Help
 
                                         </a>
@@ -287,7 +304,7 @@ $flash = get_flash();
                     </button>
 
 
-                    <div class="mt-6 text-sm flex flex-col flex-1">
+                    <div class="mt-4 text-sm flex flex-col flex-1">
 
                         <!-- SEARCH BAR -->
                         <form action="<?= e(app_url('shop.php')); ?>" method="get"
@@ -417,7 +434,6 @@ $flash = get_flash();
                             </a>
 
 
-
                             <!-- PROFILE -->
                             <?php if (is_logged_in()): ?>
 
@@ -446,11 +462,35 @@ $flash = get_flash();
 
 
 
+                            <!-- CHECKOUT -->
+                            <?php if (is_logged_in()): ?>
+
+                                <a href="<?= e(app_url('checkout.php')); ?>"
+                                    class="flex items-center gap-3 hover:text-white-medium">
+
+                                    <i data-lucide="badge-indian-rupee" class="text-black-light w-5 h-5"></i>
+                                    Checkout
+                                </a>
+
+                            <?php endif; ?>
+
+                            
+
+                            <!-- ABOUT -->
+                            <a href="<?= e(app_url('about.php')); ?>"
+                                class="flex items-center gap-3 hover:text-white-medium">
+
+                                <i data-lucide="badge-info" class="text-black-light w-5 h-5"></i>
+                                About
+                            </a>
+
+
+
                             <!-- HELP SUPPORT -->
                             <a href="<?= e(app_url('help.php')); ?>"
                                 class="flex items-center gap-3 hover:text-white-medium">
 
-                                <i data-lucide="badge-info" class="text-black-light w-5 h-5"></i>
+                                <i data-lucide="message-circle-question-mark" class="text-black-light w-5 h-5"></i>
                                 Help
                             </a>
 
