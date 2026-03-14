@@ -22,6 +22,7 @@ require_once __DIR__ . '/../models/CouponModel.php';
 require_once __DIR__ . '/../models/OrderModel.php';
 require_once __DIR__ . '/../models/ReviewModel.php';
 require_once __DIR__ . '/../models/PaymentModel.php';
+require_once __DIR__ . '/../models/SlideModel.php';
 require_once __DIR__ . '/../controllers/AuthController.php';
 require_once __DIR__ . '/../controllers/StoreController.php';
 require_once __DIR__ . '/../controllers/CheckoutController.php';
@@ -139,7 +140,7 @@ function require_admin(): void
 
 function money(float $amount): string
 {
-    return 'Rs. ' . number_format($amount, 2);
+    return '₹ ' . number_format($amount, 2);
 }
 
 function slugify(string $value): string

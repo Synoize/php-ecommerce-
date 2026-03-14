@@ -501,9 +501,6 @@ $flash = get_flash();
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
-            // Initialize Lucide Icons
-            lucide.createIcons();
-
             // PROMO BAR HIDE ON SCROLL
             const promoBar = document.getElementById("topPromoBar");
             let lastScroll = 0;

@@ -343,3 +343,29 @@ ON DUPLICATE KEY UPDATE
   valid_from = VALUES(valid_from),
   valid_to = VALUES(valid_to),
   is_active = VALUES(is_active);
+
+
+
+CREATE TABLE slides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(20) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    title VARCHAR(150),
+    description TEXT,
+    button_name VARCHAR(100),
+    button_link VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO slides
+(type, file_path, title, description, button_name, button_link)
+VALUES
+(
+'image',
+'images/uploads/carousel/_1.jpg',
+'Watch Ecommerce',
+'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+'Shop Now',
+'shop.php'
+);

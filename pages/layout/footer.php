@@ -31,6 +31,10 @@
     </div>
 </footer>
 <script src="<?= e(asset_url('js/app.js')); ?>"></script>
+<script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+</script>
 </body>
-</html>
 
+</html>
