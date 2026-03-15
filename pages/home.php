@@ -7,6 +7,13 @@ $featuredProducts = $store->products->featured(8);
 $slides = (new SlideModel())->all();
 $wishlistProductIds = [];
 
+$clientsReview = [
+    "images/uploads/reviews/_01.mp4",
+    "images/uploads/reviews/_01.mp4",
+    "images/uploads/reviews/_01.mp4",
+    "images/uploads/reviews/_01.mp4",
+];
+
 if ($slides === []) {
     $slides[] = [
         'type' => 'image',
@@ -34,6 +41,7 @@ $pageDescription = 'Shop premium watches with category filtering, reviews, wishl
 require __DIR__ . '/layout/header.php';
 ?>
 <main class="mt-28">
+    <!-- Carousel -->
     <section class="w-full">
         <div class="relative w-full overflow-hidden">
             <div id="slider" class="flex transition-transform duration-700 ease-in-out">
@@ -213,7 +221,7 @@ require __DIR__ . '/layout/header.php';
             </a>
         </div>
 
-        <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div class="my-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             <?php foreach (array_slice($featuredProducts, 0, 6) as $product): ?>
                 <div class="group overflow-hidden">
                     <div class="relative overflow-hidden rounded-lg bg-white-light">
@@ -317,6 +325,107 @@ require __DIR__ . '/layout/header.php';
                 </div>
             <?php endforeach; ?>
         </div>
+    </section>
+
+    <!-- Banner -->
+    <section class="mx-auto max-w-7xl px-4 pb-6 md:pb-0 md:pt-4">
+
+        <div class="mx-auto max-w-7xl px-[8%] 
+  bg-primary-medium rounded-3xl flex items-center justify-between overflow-hidden">
+
+            <!-- Text -->
+            <div class="text-white-dark">
+                <h1 class="text-3xl md:text-6xl font-light tracking-[0.35em]">
+                    ROLEX
+                </h1>
+
+                <p class="mt-3 text-xs md:text-lg tracking-[0.25em] uppercase opacity-90">
+                    Swiss Luxury Watches
+                </p>
+            </div>
+
+            <!-- Watch Image -->
+            <img
+                src="assets/images/banner_watch.png"
+                alt="Rolex Watch"
+                class="h-40 md:h-[320px] object-contain select-none">
+
+        </div>
+
+    </section>
+
+    <!-- Client Review -->
+    <section class="mx-auto max-w-7xl py-8 md:py-20">
+        <!-- Heading -->
+        <div class="flex items-center justify-between px-4">
+            <div>
+                <p class="text-sm uppercase tracking-wider text-black-light">Client's Review</p>
+                <h2 class="text-xl font-semibold text-primary-medium md:text-3xl">Building trust through great work.</h2>
+            </div>
+
+            <a href="<?= e(app_url('reviews.php')); ?>" class="group flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition hover:bg-white-light/40 text-nowrap">
+                <span class="text-sm text-black-light">See All</span>
+                <i data-lucide="arrow-right" class="h-4 w-4 text-black-light transition-transform duration-300 group-hover:translate-x-1"></i>
+            </a>
+        </div>
+
+        <!-- Scrollable Cards -->
+        <div class="mt-10 flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pb-4
+[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+            <?php foreach ($clientsReview as $review): ?>
+
+                <div class="snap-start shrink-0 w-[240px] sm:w-[260px] md:w-[280px]">
+
+                    <div class="relative rounded-3xl overflow-hidden h-[340px] md:h-[380px]
+        bg-white-light group cursor-pointer select-none">
+
+                        <!-- Video -->
+                        <video
+                            src="<?= e(upload_url((string)$review)); ?>"
+                            class="review-video w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                            playsinline
+                            muted
+                            loop>
+                        </video>
+
+                        <!-- Play Icon Overlay -->
+                        <div id="PlayIconButton" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+
+                            <div class="bg-black-light/40 rounded-full p-3 backdrop-blur-sm
+                group-hover:scale-105 transition">
+
+                                <i data-lucide="play" class="w-6 h-6 text-white-dark"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
+        <script>
+            document.querySelectorAll('.review-video').forEach(video => {
+
+                const playIcon = video.parentElement.querySelector('#PlayIconButton');
+
+                video.parentElement.addEventListener('mouseenter', () => {
+                    video.play();
+                    playIcon.classList.add('hidden');
+                });
+
+                video.parentElement.addEventListener('mouseleave', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                    playIcon.classList.remove('hidden');
+                });
+
+            });
+        </script>
     </section>
 </main>
 

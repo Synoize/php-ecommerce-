@@ -15,17 +15,90 @@ if (is_post()) {
 $pageTitle = 'Register';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mx-auto max-w-md px-4 py-16">
-    <div class="rounded-[2rem] bg-white p-8 shadow-soft">
-        <h1 class="font-display text-3xl font-bold">Create account</h1>
-        <form action="" method="post" class="mt-6 space-y-4">
+<main class="mt-28 mx-auto max-w-md px-4 py-12">
+
+    <div class="md:bg-white-light/20 md:border md:p-8">
+
+        <!-- Title -->
+        <div class="text-center">
+            <h1 class="text-2xl font-semibold text-primary-medium">
+                Create Your Account
+            </h1>
+
+            <p class="text-sm text-black-light mt-2">
+                Join us and start exploring premium watches.
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form action="" method="post" class="mt-8 space-y-5">
+
             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="name" placeholder="Full name" required>
-            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="email" name="email" placeholder="Email" required>
-            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="phone" placeholder="Phone">
-            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="password" name="password" placeholder="Password" required>
-            <button class="w-full rounded-full bg-brand-600 px-6 py-3 font-semibold text-white" type="submit">Register</button>
+
+            <!-- Full Name -->
+            <div>
+                <label class="text-sm text-black-light">Full Name</label>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter your full name"
+                    required
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="text-sm text-black-light">Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label class="text-sm text-black-light">Phone Number</label>
+                <input
+                    type="text"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label class="text-sm text-black-light">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Create a password"
+                    required
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+            </div>
+
+            <!-- Button -->
+            <button
+                type="submit"
+                class="w-full bg-primary-medium text-white-dark py-3 tracking-wide hover:bg-primary-medium/90 transition">
+
+                Create Account
+
+            </button>
+
         </form>
+
+        <!-- Login Link -->
+        <p class="mt-6 text-sm text-center text-black-light">
+            Already have an account?
+            <a class="text-primary-medium hover:underline"
+                href="<?= e(app_url('user/login.php')); ?>">
+                Login
+            </a>
+        </p>
+
     </div>
+
 </main>
 <?php require __DIR__ . '/layout/footer.php'; ?>

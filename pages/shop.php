@@ -14,7 +14,7 @@ $categories = $store->categories->all();
 $pageTitle = 'Shop Watches';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mx-auto max-w-7xl px-4 py-12">
+<main class="mt-28 mx-auto max-w-7xl px-4 py-12">
     <div class="rounded-[2rem] bg-white p-6 shadow-soft">
         <div class="grid gap-4 lg:grid-cols-[1.2fr,1fr,1fr,auto]">
             <form action="<?= e(app_url('shop.php')); ?>" method="get" class="lg:col-span-2">
@@ -45,7 +45,7 @@ require __DIR__ . '/layout/header.php';
                 <div class="p-5">
                     <div class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><?= e($product['category_name'] ?? 'Watch'); ?></div>
                     <h2 class="mt-2 text-lg font-semibold"><?= e($product['name']); ?></h2>
-                    <p class="mt-2 text-sm text-slate-500"><?= number_format((float) $product['avg_rating'], 1); ?> rating • <?= (int) $product['review_count']; ?> reviews</p>
+                    <p class="mt-2 text-sm text-slate-500"><?= number_format((float) $product['avg_rating'], 1); ?> rating ï¿½ <?= (int) $product['review_count']; ?> reviews</p>
                     <div class="mt-4 flex items-center justify-between">
                         <span class="font-semibold text-brand-600"><?= e(money((float) $product['price'])); ?></span>
                         <span class="rounded-full <?= (int) $product['stock'] > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'; ?> px-3 py-1 text-xs font-semibold"><?= (int) $product['stock'] > 0 ? 'In stock' : 'Out of stock'; ?></span>

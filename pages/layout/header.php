@@ -77,9 +77,8 @@ $flash = get_flash();
                 <!-- LOGO -->
                 <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
 
-                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>"
-                        class="h-10 w-10 object-cover rounded-full">
-                    <div class="text-2xl text-primary-medium">BIG BRANDS</div>
+                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-10 w-10 object-cover rounded-full">
+                    <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div>
 
                 </a>
 
@@ -474,7 +473,7 @@ $flash = get_flash();
 
                             <?php endif; ?>
 
-                            
+
 
                             <!-- ABOUT -->
                             <a href="<?= e(app_url('about.php')); ?>"
@@ -633,6 +632,9 @@ $flash = get_flash();
             }
 
         });
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
     </script>
     <?php if ($flash): ?>
         <div class="absolute top-20 mx-auto max-w-7xl px-4">
