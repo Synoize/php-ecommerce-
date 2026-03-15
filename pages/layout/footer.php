@@ -1,7 +1,7 @@
-<footer class="w-full bg-white-light/20">
+<footer class="w-full bg-white-light/20 border-t">
 
     <!-- TOP SECTION -->
-    <div class="mx-auto max-w-7xl py-10 px-4 ">
+    <div class="mx-auto max-w-7xl py-10 px-4 md:px-0">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
 
             <!-- BRAND -->
@@ -129,14 +129,14 @@
 
 
     <!-- BOTTOM SECTION -->
-    <div class="mx-auto max-w-7xl py-10 px-4 ">
+    <div class="mx-auto max-w-7xl py-10 px-4 md:px-0">
         <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
 
             <!-- LOGO -->
             <img
                 src="<?= e(asset_url('images/logo/logo.png')); ?>"
                 alt="Watch Ecommerce"
-                class="w-24 md:w-32">
+                class="w-24">
 
             <!-- COPYRIGHT -->
             <div class="text-center text-xs text-white-medium">
@@ -146,19 +146,19 @@
             <!-- SOCIAL -->
             <div class="flex items-center gap-4">
 
-                <a href="#">
+                <a href="https://www.instagram.com/bigbrandsindia" target="_blank">
                     <i data-lucide="instagram" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
                 </a>
 
-                <a href="#">
+                <a href="https://www.facebook.com/bigbrandsindia" target="_blank">
                     <i data-lucide="facebook" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
                 </a>
 
-                <a href="#">
+                <a href="https://twitter.com/bigbrandsindia" target="_blank">
                     <i data-lucide="twitter" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
                 </a>
 
-                <a href="#">
+                <a href="https://www.youtube.com/bigbrandsindia" target="_blank">
                     <i data-lucide="youtube" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
                 </a>
 

@@ -61,7 +61,7 @@ $flash = get_flash();
         <div id="topPromoBar"
             class="bg-primary-medium text-white-dark text-xs transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-h-10">
 
-            <div class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center">
+            <div class="mx-auto max-w-7xl px-4 md:px-0 h-8 flex justify-center items-center text-center">
                 Free Gifts on orders above <span class="font-semibold ml-1">₹1499</span>
             </div>
 
@@ -69,7 +69,7 @@ $flash = get_flash();
 
 
         <!-- MAIN NAVBAR -->
-        <div class="mx-auto max-w-7xl px-4">
+        <div class="mx-auto max-w-7xl px-4 md:px-0">
 
             <div class="h-20 flex items-center justify-between gap-4">
 
@@ -637,7 +637,7 @@ $flash = get_flash();
         lucide.createIcons();
     </script>
     <?php if ($flash): ?>
-        <div class="absolute top-20 mx-auto max-w-7xl px-4">
+        <div class="absolute top-20 mx-auto max-w-7xl px-4 md:px-0 z-50">
             <div class="flash-message rounded-2xl border px-4 py-3 text-sm <?= $flash['type'] === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-rose-200 bg-rose-50 text-rose-700'; ?>">
                 <?= e($flash['message']); ?>
             </div>

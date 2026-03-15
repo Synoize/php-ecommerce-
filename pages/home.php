@@ -62,7 +62,7 @@ require __DIR__ . '/layout/header.php';
                         <?php endif; ?>
 
                         <div class="absolute inset-0 flex items-center">
-                            <div class="flex h-full w-full flex-col justify-between px-6 py-10 md:px-24 md:py-20">
+                            <div class="flex h-full w-full flex-col justify-between px-6 py-10 md:px-32 md:py-20">
                                 <div class="max-w-3xl">
                                     <span class="inline-flex rounded-full bg-white-light px-4 py-2 text-xs text-black-light md:text-sm">Spring 2026 collection</span>
                                     <h2 class="mt-4 max-w-2xl text-2xl font-bold leading-tight text-white-dark md:mt-6 md:text-6xl">
@@ -179,7 +179,7 @@ require __DIR__ . '/layout/header.php';
     </script>
 
     <!-- Categories -->
-    <section class="mx-auto flex max-w-7xl items-center justify-start gap-3 overflow-x-auto px-2 py-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:gap-8 md:py-20">
+    <section class="mx-auto flex max-w-7xl items-center justify-start gap-3 overflow-x-auto px-2 md:px-0 py-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:gap-8 md:py-20">
         <div class="relative flex h-[80px] w-[80px] shrink-0 items-center justify-center md:h-[260px] md:w-[260px]">
             <iframe
                 src="https://lottie.host/embed/f6933fd2-3012-489e-8a56-8576e6e9501f/CYg29mu74N.lottie"
@@ -208,7 +208,7 @@ require __DIR__ . '/layout/header.php';
     </section>
 
     <!-- Featured Watches -->
-    <section class="mx-auto max-w-7xl px-4 py-4">
+    <section class="mx-auto max-w-7xl px-4 py-4 md:px-0">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wider text-black-light">Trending</p>
@@ -328,7 +328,7 @@ require __DIR__ . '/layout/header.php';
     </section>
 
     <!-- Banner -->
-    <section class="mx-auto max-w-7xl px-4 pb-6 md:pb-0 md:pt-4">
+    <section class="mx-auto max-w-7xl px-4 pb-6 md:px-0 md:pb-0 md:pt-4">
 
         <div class="mx-auto max-w-7xl px-[8%] 
   bg-primary-medium rounded-3xl flex items-center justify-between overflow-hidden">
@@ -357,7 +357,7 @@ require __DIR__ . '/layout/header.php';
     <!-- Client Review -->
     <section class="mx-auto max-w-7xl py-8 md:py-20">
         <!-- Heading -->
-        <div class="flex items-center justify-between px-4">
+        <div class="flex items-center justify-between px-4 md:px-0">
             <div>
                 <p class="text-sm uppercase tracking-wider text-black-light">Client's Review</p>
                 <h2 class="text-xl font-semibold text-primary-medium md:text-3xl">Building trust through great work.</h2>
@@ -370,8 +370,8 @@ require __DIR__ . '/layout/header.php';
         </div>
 
         <!-- Scrollable Cards -->
-        <div class="mt-10 flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pb-4
-[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div class="mt-10 flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 pb-4 md:px-0
+ [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
             <?php foreach ($clientsReview as $review): ?>
 

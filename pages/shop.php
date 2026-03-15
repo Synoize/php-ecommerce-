@@ -14,7 +14,7 @@ $categories = $store->categories->all();
 $pageTitle = 'Shop Watches';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mt-28 mx-auto max-w-7xl px-4 py-12">
+<main class="mt-28 mx-auto max-w-7xl px-4 py-12 md:px-0">
     <div class="rounded-[2rem] bg-white p-6 shadow-soft">
         <div class="grid gap-4 lg:grid-cols-[1.2fr,1fr,1fr,auto]">
             <form action="<?= e(app_url('shop.php')); ?>" method="get" class="lg:col-span-2">
