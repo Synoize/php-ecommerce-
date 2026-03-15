@@ -46,6 +46,10 @@ class OrderModel extends BaseModel
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                 ]);
+
+                if ($stockStmt->rowCount() !== 1) {
+                    throw new RuntimeException($item['name'] . ' is no longer available in the requested quantity.');
+                }
             }
 
             if ($coupon) {
@@ -191,4 +195,3 @@ class OrderModel extends BaseModel
         ];
     }
 }
-

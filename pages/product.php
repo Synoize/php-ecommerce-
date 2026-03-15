@@ -54,13 +54,17 @@ require __DIR__ . '/layout/header.php';
             <div class="mt-6 text-3xl font-semibold text-brand-600"><?= e(money((float) $product['price'])); ?></div>
             <p class="mt-6 text-slate-600"><?= nl2br(e((string) $product['description'])); ?></p>
             <div class="mt-8 flex flex-wrap gap-3">
-                <form action="<?= e(app_url('api/cart.php')); ?>" method="post" class="flex flex-wrap gap-3">
-                    <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-                    <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
-                    <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
-                    <input type="number" min="1" max="<?= max(1, (int) $product['stock']); ?>" name="quantity" value="1" class="w-24 rounded-full border border-slate-200 px-4 py-3">
-                    <button type="submit" class="rounded-full bg-brand-600 px-6 py-3 font-semibold text-white">Add to cart</button>
-                </form>
+                <?php if ((int) $product['stock'] > 0): ?>
+                    <form action="<?= e(app_url('api/cart.php')); ?>" method="post" class="flex flex-wrap gap-3">
+                        <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                        <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                        <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
+                        <input type="number" min="1" max="<?= (int) $product['stock']; ?>" name="quantity" value="1" class="w-24 rounded-full border border-slate-200 px-4 py-3">
+                        <button type="submit" class="rounded-full bg-brand-600 px-6 py-3 font-semibold text-white">Add to cart</button>
+                    </form>
+                <?php else: ?>
+                    <button type="button" disabled class="cursor-not-allowed rounded-full bg-slate-200 px-6 py-3 font-semibold text-slate-500">Out of stock</button>
+                <?php endif; ?>
                 <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post">
                     <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
                     <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
@@ -79,7 +83,7 @@ require __DIR__ . '/layout/header.php';
                     <article class="rounded-2xl border border-slate-100 p-4">
                         <div class="flex items-center justify-between gap-3">
                             <div class="font-semibold"><?= e($review['name']); ?></div>
-                            <div class="text-sm text-amber-500"><?= str_repeat('★', (int) $review['rating']); ?></div>
+                            <div class="text-sm text-amber-500"><?= str_repeat('?', (int) $review['rating']); ?></div>
                         </div>
                         <p class="mt-2 text-sm text-slate-600"><?= e((string) $review['comment']); ?></p>
                     </article>
@@ -130,4 +134,3 @@ require __DIR__ . '/layout/header.php';
     </section>
 </main>
 <?php require __DIR__ . '/layout/footer.php'; ?>
-

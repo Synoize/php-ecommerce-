@@ -45,19 +45,23 @@ require __DIR__ . '/layout/header.php';
                 <div class="p-5">
                     <div class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><?= e($product['category_name'] ?? 'Watch'); ?></div>
                     <h2 class="mt-2 text-lg font-semibold"><?= e($product['name']); ?></h2>
-                    <p class="mt-2 text-sm text-slate-500"><?= number_format((float) $product['avg_rating'], 1); ?> rating â€¢ <?= (int) $product['review_count']; ?> reviews</p>
+                    <p class="mt-2 text-sm text-slate-500"><?= number_format((float) $product['avg_rating'], 1); ?> rating • <?= (int) $product['review_count']; ?> reviews</p>
                     <div class="mt-4 flex items-center justify-between">
                         <span class="font-semibold text-brand-600"><?= e(money((float) $product['price'])); ?></span>
                         <span class="rounded-full <?= (int) $product['stock'] > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'; ?> px-3 py-1 text-xs font-semibold"><?= (int) $product['stock'] > 0 ? 'In stock' : 'Out of stock'; ?></span>
                     </div>
                     <div class="mt-4 flex gap-2">
-                        <form action="<?= e(app_url('api/cart.php')); ?>" method="post" class="flex-1">
-                            <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-                            <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
-                            <input type="hidden" name="quantity" value="1">
-                            <input type="hidden" name="redirect" value="shop.php">
-                            <button type="submit" class="w-full rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Add to cart</button>
-                        </form>
+                        <?php if ((int) $product['stock'] > 0): ?>
+                            <form action="<?= e(app_url('api/cart.php')); ?>" method="post" class="flex-1">
+                                <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                                <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="redirect" value="shop.php">
+                                <button type="submit" class="w-full rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Add to cart</button>
+                            </form>
+                        <?php else: ?>
+                            <button type="button" disabled class="w-full flex-1 cursor-not-allowed rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-500">Out of stock</button>
+                        <?php endif; ?>
                         <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post">
                             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
                             <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">

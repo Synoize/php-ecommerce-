@@ -58,6 +58,7 @@ class CheckoutController
             throw new RuntimeException('Cart is empty.');
         }
 
+        $this->validateCartStock($items);
         $orderId = $this->orders->create($userId, $addressId, $items, $subtotal, $_SESSION['checkout_coupon'] ?? null, 'cod');
         $this->cart->clear($userId);
         unset($_SESSION['checkout_coupon']);
@@ -74,6 +75,8 @@ class CheckoutController
         if ($items === []) {
             throw new RuntimeException('Cart is empty.');
         }
+
+        $this->validateCartStock($items);
 
         if (RAZORPAY_KEY_ID === '' || RAZORPAY_KEY_SECRET === '') {
             throw new RuntimeException('Razorpay keys are not configured.');
@@ -135,5 +138,17 @@ class CheckoutController
         $this->cart->clear((int) current_user()['id']);
         unset($_SESSION['checkout_coupon'], $_SESSION['pending_order_id']);
     }
-}
 
+    private function validateCartStock(array $items): void
+    {
+        foreach ($items as $item) {
+            if ((int) $item['stock'] <= 0) {
+                throw new RuntimeException($item['name'] . ' is out of stock.');
+            }
+
+            if ((int) $item['quantity'] > (int) $item['stock']) {
+                throw new RuntimeException('Only ' . (int) $item['stock'] . ' item(s) left for ' . $item['name'] . '.');
+            }
+        }
+    }
+}
