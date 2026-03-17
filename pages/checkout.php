@@ -55,9 +55,21 @@ require __DIR__ . '/layout/header.php';
             <h2 class="font-display text-2xl font-bold">Order summary</h2>
             <div class="mt-6 space-y-4">
                 <?php foreach ($data['items'] as $item): ?>
-                    <div class="flex items-center justify-between gap-3 text-sm">
-                        <div><?= e($item['name']); ?> x <?= (int) $item['quantity']; ?></div>
-                        <div><?= e(money((float) $item['line_total'])); ?></div>
+                    <div class="rounded-2xl border border-slate-100 p-4 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <div><?= e($item['name']); ?> x <?= (int) $item['quantity']; ?></div>
+                            <div><?= e(money((float) $item['price'] * (int) $item['quantity'])); ?></div>
+                        </div>
+                        <?php if (!empty($item['box_name']) && (int) $item['box_quantity'] > 0): ?>
+                            <div class="mt-2 flex items-center justify-between gap-3 text-slate-500">
+                                <div><?= e((string) $item['box_name']); ?> x <?= (int) $item['box_quantity']; ?></div>
+                                <div><?= e(money((float) ($item['box_price'] ?? 0) * (int) $item['box_quantity'])); ?></div>
+                            </div>
+                        <?php endif; ?>
+                        <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 font-semibold text-slate-700">
+                            <span>Line total</span>
+                            <span><?= e(money((float) $item['line_total'])); ?></span>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>

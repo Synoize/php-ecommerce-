@@ -54,12 +54,26 @@ require __DIR__ . '/layout/header.php';
                 </div>
                 <div class="mt-6 space-y-4">
                     <?php foreach ($order['items'] as $line): ?>
-                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 p-4">
-                            <div>
-                                <div class="font-semibold"><?= e($line['name']); ?></div>
-                                <div class="mt-1 text-sm text-slate-500">Qty <?= (int) $line['quantity']; ?></div>
+                        <?php $productTotal = (float) $line['price'] * (int) $line['quantity']; ?>
+                        <?php $boxTotal = (float) ($line['box_option_price'] ?? 0) * (int) ($line['box_quantity'] ?? 0); ?>
+                        <div class="rounded-2xl border border-slate-100 p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <div class="font-semibold"><?= e($line['name']); ?></div>
+                                    <div class="mt-1 text-sm text-slate-500">Qty <?= (int) $line['quantity']; ?></div>
+                                </div>
+                                <div class="font-semibold text-brand-600"><?= e(money($productTotal)); ?></div>
                             </div>
-                            <div class="font-semibold text-brand-600"><?= e(money((float) $line['price'] * (int) $line['quantity'])); ?></div>
+                            <?php if (!empty($line['box_option_name']) && (int) $line['box_quantity'] > 0): ?>
+                                <div class="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                                    <div><?= e((string) $line['box_option_name']); ?> x <?= (int) $line['box_quantity']; ?></div>
+                                    <div><?= e(money($boxTotal)); ?></div>
+                                </div>
+                            <?php endif; ?>
+                            <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700">
+                                <span>Line total</span>
+                                <span><?= e(money($productTotal + $boxTotal)); ?></span>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>

@@ -146,6 +146,7 @@ class ProductModel extends BaseModel
         if ($product['images'] === []) {
             $product['images'][] = ['image_url' => $product['image']];
         }
+        $product['box_options'] = $this->boxOptions($id);
 
         return $product;
     }
@@ -154,6 +155,15 @@ class ProductModel extends BaseModel
     {
         $stmt = $this->pdo->prepare(
             'SELECT * FROM product_images WHERE product_id = :product_id ORDER BY sort_order ASC, id ASC'
+        );
+        $stmt->execute(['product_id' => $productId]);
+        return $stmt->fetchAll();
+    }
+
+    public function boxOptions(int $productId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM product_box_options WHERE product_id = :product_id AND is_active = 1 ORDER BY id ASC'
         );
         $stmt->execute(['product_id' => $productId]);
         return $stmt->fetchAll();

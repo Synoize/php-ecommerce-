@@ -9,10 +9,6 @@ COLLATE utf8mb4_unicode_ci;
 
 USE watch_ecommerce;
 
--- ---------------------------------------------
--- USERS
--- ---------------------------------------------
-
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
@@ -23,10 +19,6 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- USER ADDRESSES
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS addresses (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -45,10 +37,6 @@ CREATE TABLE IF NOT EXISTS addresses (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- CATEGORIES
--- ---------------------------------------------
-
 CREATE TABLE IF NOT EXISTS categories (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
@@ -56,10 +44,6 @@ CREATE TABLE IF NOT EXISTS categories (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_categories_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- PRODUCTS
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS products (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -78,10 +62,6 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- PRODUCT IMAGES
--- ---------------------------------------------
-
 CREATE TABLE IF NOT EXISTS product_images (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   product_id INT UNSIGNED NOT NULL,
@@ -92,29 +72,41 @@ CREATE TABLE IF NOT EXISTS product_images (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- SHOPPING CART
--- ---------------------------------------------
+CREATE TABLE IF NOT EXISTS product_box_options (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  product_id INT UNSIGNED NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  image VARCHAR(255) DEFAULT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_product_box_options_product (product_id),
+  CONSTRAINT chk_product_box_options_price_non_negative CHECK (price >= 0),
+  CONSTRAINT fk_product_box_options_product
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS cart (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id INT UNSIGNED NOT NULL,
   product_id INT UNSIGNED NOT NULL,
   quantity INT UNSIGNED NOT NULL DEFAULT 1,
+  box_option_id INT UNSIGNED DEFAULT NULL,
+  box_quantity INT UNSIGNED NOT NULL DEFAULT 0,
   added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_cart_user_product (user_id, product_id),
   KEY idx_cart_user (user_id),
   KEY idx_cart_product (product_id),
+  KEY idx_cart_box_option (box_option_id),
   CONSTRAINT chk_cart_quantity_positive CHECK (quantity >= 1),
+  CONSTRAINT chk_cart_box_quantity_non_negative CHECK (box_quantity >= 0),
   CONSTRAINT fk_cart_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_cart_product
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  CONSTRAINT fk_cart_box_option
+    FOREIGN KEY (box_option_id) REFERENCES product_box_options(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- WISHLIST
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS wishlist (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -129,10 +121,6 @@ CREATE TABLE IF NOT EXISTS wishlist (
   CONSTRAINT fk_wishlist_product
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- ORDERS
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS orders (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -156,29 +144,29 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- ORDER ITEMS
--- ---------------------------------------------
-
 CREATE TABLE IF NOT EXISTS order_items (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   order_id INT UNSIGNED NOT NULL,
   product_id INT UNSIGNED NOT NULL,
   quantity INT UNSIGNED NOT NULL,
   price DECIMAL(10,2) NOT NULL,
+  box_option_id INT UNSIGNED DEFAULT NULL,
+  box_option_name VARCHAR(150) DEFAULT NULL,
+  box_option_price DECIMAL(10,2) DEFAULT NULL,
+  box_quantity INT UNSIGNED NOT NULL DEFAULT 0,
   KEY idx_order_items_order (order_id),
   KEY idx_order_items_product (product_id),
+  KEY idx_order_items_box_option (box_option_id),
   CONSTRAINT chk_order_items_quantity_positive CHECK (quantity >= 1),
+  CONSTRAINT chk_order_items_box_quantity_non_negative CHECK (box_quantity >= 0),
   CONSTRAINT chk_order_items_price_non_negative CHECK (price >= 0),
   CONSTRAINT fk_order_items_order
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   CONSTRAINT fk_order_items_product
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (product_id) REFERENCES products(id),
+  CONSTRAINT fk_order_items_box_option
+    FOREIGN KEY (box_option_id) REFERENCES product_box_options(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- PAYMENTS
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS payments (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -194,10 +182,6 @@ CREATE TABLE IF NOT EXISTS payments (
   CONSTRAINT fk_payments_order
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- PRODUCT REVIEWS
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS reviews (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -216,10 +200,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- COUPONS
--- ---------------------------------------------
-
 CREATE TABLE IF NOT EXISTS coupons (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   code VARCHAR(50) NOT NULL,
@@ -232,10 +212,6 @@ CREATE TABLE IF NOT EXISTS coupons (
   CONSTRAINT chk_coupons_discount_range CHECK (discount_percent BETWEEN 1 AND 100),
   CONSTRAINT chk_coupons_validity_range CHECK (valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ---------------------------------------------
--- ORDER COUPONS
--- ---------------------------------------------
 
 CREATE TABLE IF NOT EXISTS order_coupons (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -251,28 +227,29 @@ CREATE TABLE IF NOT EXISTS order_coupons (
     FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------
--- DEFAULT CATEGORIES
--- ---------------------------------------------
+CREATE TABLE IF NOT EXISTS slides (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(20) NOT NULL,
+  file_path VARCHAR(255) NOT NULL,
+  title VARCHAR(150) DEFAULT NULL,
+  description TEXT DEFAULT NULL,
+  button_name VARCHAR(100) DEFAULT NULL,
+  button_link VARCHAR(255) DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO categories (name, image) VALUES
-('G-Shock', 'categories/g-shock.jpg'),
-('For Men', 'categories/man.jpg'),
-('For Women', 'categories/woman.jpg'),
-('Automatic Mechanical', 'categories/automatic-mechanical.jpg')
+('G-Shock', 'images/uploads/categories/g-shock.png'),
+('For Men', 'images/uploads/categories/man.png'),
+('For Women', 'images/uploads/categories/woman.png'),
+('Automatic', 'images/uploads/categories/automatic-mechanical.png')
 ON DUPLICATE KEY UPDATE
   image = VALUES(image);
-
--- ---------------------------------------------
--- DEFAULT ADMIN USER
--- email: admin@gmail.com
--- password: admin123
--- ---------------------------------------------
 
 INSERT INTO users (name, email, password, role)
 VALUES (
   'Admin',
-  'admin@gamil.com',
+  'admin@gmail.com',
   '$2y$10$HuZFYH11qin0LzYkV1W3luJX5r8xvViWPYO7dJyZhZDnn0vSeXpJ6',
   'admin'
 )
@@ -281,10 +258,6 @@ ON DUPLICATE KEY UPDATE
   password = VALUES(password),
   role = VALUES(role);
 
--- ---------------------------------------------
--- SAMPLE PRODUCTS
--- ---------------------------------------------
-
 INSERT INTO products (name, description, category_id, price, stock, image)
 SELECT
   'Women Classic Watch',
@@ -292,7 +265,7 @@ SELECT
   c.id,
   2499.00,
   15,
-  'https://www.danielwellington.com/cdn/shop/files/51a753b76ff3491e5cf13ebaf42f835b48e16a19.png'
+  'images/uploads/products/_02.png'
 FROM categories c
 WHERE c.name = 'For Women'
   AND NOT EXISTS (
@@ -306,7 +279,7 @@ SELECT
   c.id,
   2799.00,
   20,
-  'https://png.pngtree.com/png-vector/20230906/ourmid/pngtree-wristwatch-analog-classic-brown-leather-strap-watch-png-image_10001801.png'
+  'images/uploads/products/_01.png'
 FROM categories c
 WHERE c.name = 'For Men'
   AND NOT EXISTS (
@@ -315,16 +288,30 @@ WHERE c.name = 'For Men'
 
 INSERT INTO products (name, description, category_id, price, stock, image)
 SELECT
-  'Kids Digital Watch',
-  'Colorful digital watch designed for kids.',
+  'G-Shock Digital Watch',
+  'G-Shock digital watch for everyone.',
   c.id,
   999.00,
   25,
-  'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=1080/da/cms-assets/cms/product/4c216a16-854c-4bb4-901f-0169d2eeae41.png'
+  'images/uploads/products/_03.png'
 FROM categories c
 WHERE c.name = 'G-Shock'
   AND NOT EXISTS (
-    SELECT 1 FROM products WHERE name = 'Kids Digital Watch'
+    SELECT 1 FROM products WHERE name = 'G-Shock Digital Watch'
+  );
+
+INSERT INTO products (name, description, category_id, price, stock, image)
+SELECT
+  'Automatic Mechanical Watch',
+  'Automatic mechanical watch with premium movement.',
+  c.id,
+  3999.00,
+  10,
+  'images/uploads/products/_04.png'
+FROM categories c
+WHERE c.name = 'Automatic'
+  AND NOT EXISTS (
+    SELECT 1 FROM products WHERE name = 'Automatic Mechanical Watch'
   );
 
 INSERT INTO product_images (product_id, image_url, sort_order)
@@ -333,6 +320,22 @@ FROM products p
 WHERE NOT EXISTS (
   SELECT 1 FROM product_images pi WHERE pi.product_id = p.id
 );
+
+INSERT INTO product_box_options (product_id, name, image, price, is_active)
+SELECT p.id, 'G-Shock Kit Box', 'images/uploads/boxes/gshock-kit-box.jpg', 400.00, 1
+FROM products p
+WHERE p.name = 'Women Classic Watch'
+  AND NOT EXISTS (
+    SELECT 1 FROM product_box_options b WHERE b.product_id = p.id AND b.name = 'G-Shock Kit Box'
+  );
+
+INSERT INTO product_box_options (product_id, name, image, price, is_active)
+SELECT p.id, 'Premium Gift Box', 'images/uploads/boxes/premium-gift-box.jpg', 550.00, 1
+FROM products p
+WHERE p.name = 'Men Classic Watch'
+  AND NOT EXISTS (
+    SELECT 1 FROM product_box_options b WHERE b.product_id = p.id AND b.name = 'Premium Gift Box'
+  );
 
 INSERT INTO coupons (code, discount_percent, valid_from, valid_to, is_active)
 VALUES
@@ -344,28 +347,20 @@ ON DUPLICATE KEY UPDATE
   valid_to = VALUES(valid_to),
   is_active = VALUES(is_active);
 
-
-
-CREATE TABLE slides (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(20) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
-    title VARCHAR(150),
-    description TEXT,
-    button_name VARCHAR(100),
-    button_link VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-INSERT INTO slides
-(type, file_path, title, description, button_name, button_link)
-VALUES
-(
-'image',
-'images/uploads/carousel/_1.jpg',
-'Watch Ecommerce',
-'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
-'Shop Now',
-'shop.php'
+INSERT INTO slides (type, file_path, title, description, button_name, button_link)
+VALUES (
+  'image',
+  'images/uploads/carousel/_1.jpg',
+  'Watch Ecommerce',
+  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+  'Shop Now',
+  'shop.php'
+),
+ (
+  'video',
+  'images/uploads/carousel/_01.mp4',
+  'Watch Ecommerce',
+  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+  'Shop Now',
+  'shop.php'
 );

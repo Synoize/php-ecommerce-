@@ -28,8 +28,13 @@ class OrderModel extends BaseModel
             $orderId = (int) $this->pdo->lastInsertId();
 
             $itemStmt = $this->pdo->prepare(
-                'INSERT INTO order_items (order_id, product_id, quantity, price)
-                 VALUES (:order_id, :product_id, :quantity, :price)'
+                'INSERT INTO order_items (
+                    order_id, product_id, quantity, price,
+                    box_option_id, box_option_name, box_option_price, box_quantity
+                 ) VALUES (
+                    :order_id, :product_id, :quantity, :price,
+                    :box_option_id, :box_option_name, :box_option_price, :box_quantity
+                 )'
             );
             $stockStmt = $this->pdo->prepare(
                 'UPDATE products SET stock = stock - :quantity WHERE id = :product_id AND stock >= :quantity'
@@ -41,6 +46,10 @@ class OrderModel extends BaseModel
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
+                    'box_option_id' => $item['box_option_id'] ?: null,
+                    'box_option_name' => $item['box_name'] ?: null,
+                    'box_option_price' => $item['box_price'] ?: null,
+                    'box_quantity' => $item['box_quantity'] ?? 0,
                 ]);
                 $stockStmt->execute([
                     'product_id' => $item['product_id'],

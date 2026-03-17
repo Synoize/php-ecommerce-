@@ -264,7 +264,7 @@ require __DIR__ . '/layout/header.php';
 
                                     <button
                                         disabled
-                                        class="w-full block bg-white-light py-2.5 text-center text-sm font-semibold text-black-light cursor-not-allowed">
+                                        class="w-full block bg-red-500 py-2.5 text-center text-sm font-semibold text-white-dark transition hover:bg-red-600 cursor-not-allowed">
 
                                         Out of Stock
 

@@ -18,15 +18,26 @@ require __DIR__ . '/layout/header.php';
                     <div>
                         <div class="text-lg font-semibold"><?= e($item['name']); ?></div>
                         <div class="mt-1 text-sm text-slate-500"><?= e(money((float) $item['price'])); ?> each</div>
+                        <?php if (!empty($item['box_name']) && (int) $item['box_quantity'] > 0): ?>
+                            <div class="mt-2 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                                <div class="font-semibold text-slate-800">Box option: <?= e((string) $item['box_name']); ?></div>
+                                <div class="mt-1"><?= e(money((float) ($item['box_price'] ?? 0))); ?> x <?= (int) $item['box_quantity']; ?></div>
+                            </div>
+                        <?php endif; ?>
                         <form action="<?= e(app_url('api/cart.php')); ?>" method="post" class="mt-3 flex flex-wrap gap-3">
                             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
                             <input type="hidden" name="product_id" value="<?= (int) $item['product_id']; ?>">
-                            <input type="number" name="quantity" value="<?= (int) $item['quantity']; ?>" min="1" class="w-24 rounded-full border border-slate-200 px-4 py-2">
+                            <input type="hidden" name="box_option_id" value="<?= (int) ($item['box_option_id'] ?? 0); ?>">
+                            <input type="hidden" name="box_quantity" value="<?= (int) ($item['box_quantity'] ?? 0); ?>">
+                            <input type="number" name="quantity" value="<?= (int) $item['quantity']; ?>" min="1" max="<?= max(1, (int) $item['stock']); ?>" class="w-24 rounded-full border border-slate-200 px-4 py-2">
                             <button type="submit" name="action" value="update" class="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold">Update</button>
                             <button type="submit" name="action" value="remove" class="rounded-full bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700">Remove</button>
                         </form>
                     </div>
-                    <div class="text-right font-semibold text-brand-600"><?= e(money((float) $item['line_total'])); ?></div>
+                    <div class="text-right font-semibold text-brand-600">
+                        <div><?= e(money((float) $item['line_total'])); ?></div>
+                        <div class="mt-1 text-xs text-slate-400">Qty <?= (int) $item['quantity']; ?></div>
+                    </div>
                 </article>
             <?php endforeach; ?>
             <?php if (!$items): ?>
@@ -50,4 +61,3 @@ require __DIR__ . '/layout/header.php';
     </div>
 </main>
 <?php require __DIR__ . '/layout/footer.php'; ?>
-
