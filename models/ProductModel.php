@@ -23,19 +23,57 @@ class ProductModel extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function priceRange(): array
+    {
+        $row = $this->pdo->query(
+            'SELECT COALESCE(MIN(price), 0) AS min_price, COALESCE(MAX(price), 0) AS max_price
+             FROM products
+             WHERE is_active = 1'
+        )->fetch();
+
+        return [
+            'min' => (float) ($row['min_price'] ?? 0),
+            'max' => (float) ($row['max_price'] ?? 0),
+        ];
+    }
+
     public function search(array $filters): array
     {
         $where = ['p.is_active = 1'];
         $params = [];
 
-        if (!empty($filters['category_id'])) {
-            $where[] = 'p.category_id = :category_id';
-            $params['category_id'] = (int) $filters['category_id'];
+        $categoryIds = array_values(array_filter(
+            array_map('intval', (array) ($filters['category_ids'] ?? [])),
+            static fn(int $id): bool => $id > 0
+        ));
+
+        if ($categoryIds === [] && !empty($filters['category_id'])) {
+            $categoryIds[] = (int) $filters['category_id'];
+        }
+
+        if ($categoryIds !== []) {
+            $placeholders = [];
+            foreach ($categoryIds as $index => $categoryId) {
+                $key = 'category_' . $index;
+                $placeholders[] = ':' . $key;
+                $params[$key] = $categoryId;
+            }
+            $where[] = 'p.category_id IN (' . implode(', ', $placeholders) . ')';
         }
 
         if (!empty($filters['query'])) {
             $where[] = '(p.name LIKE :query OR p.description LIKE :query)';
             $params['query'] = '%' . $filters['query'] . '%';
+        }
+
+        if (isset($filters['min_price']) && $filters['min_price'] !== '') {
+            $where[] = 'p.price >= :min_price';
+            $params['min_price'] = (float) $filters['min_price'];
+        }
+
+        if (isset($filters['max_price']) && $filters['max_price'] !== '') {
+            $where[] = 'p.price <= :max_price';
+            $params['max_price'] = (float) $filters['max_price'];
         }
 
         $sortSql = match ($filters['sort'] ?? '') {
@@ -50,7 +88,10 @@ class ProductModel extends BaseModel
         $offset = ($page - 1) * $perPage;
 
         $countStmt = $this->pdo->prepare('SELECT COUNT(*) FROM products p WHERE ' . implode(' AND ', $where));
-        $countStmt->execute($params);
+        foreach ($params as $key => $value) {
+            $countStmt->bindValue($key, $value);
+        }
+        $countStmt->execute();
         $total = (int) $countStmt->fetchColumn();
 
         $sql = 'SELECT p.*, c.name AS category_name,
@@ -212,4 +253,3 @@ class ProductModel extends BaseModel
         }
     }
 }
-

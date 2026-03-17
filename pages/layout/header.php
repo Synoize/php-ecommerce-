@@ -77,7 +77,7 @@ $flash = get_flash();
                 <!-- LOGO -->
                 <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
 
-                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-10 w-10 object-cover rounded-full">
+                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-10 w-10 object-cover">
                     <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div>
 
                 </a>
@@ -303,7 +303,7 @@ $flash = get_flash();
                     </button>
 
 
-                    <div class="mt-4 text-sm flex flex-col flex-1">
+                    <div class="mt-4 text-sm flex flex-col flex-1 h-full">
 
                         <!-- SEARCH BAR -->
                         <form action="<?= e(app_url('shop.php')); ?>" method="get"
@@ -327,7 +327,7 @@ $flash = get_flash();
 
 
                         <!-- MENU LINKS -->
-                        <div class="px-2 space-y-6 flex-1 text-black-medium">
+                        <div class="px-2 space-y-6 flex-1 text-black-medium overflow-y-auto h-full">
 
                             <!-- HOME -->
                             <a href="<?= e(app_url()); ?>"

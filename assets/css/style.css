@@ -2,14 +2,6 @@ body {
     font-family: Manrope, sans-serif;
 }
 
-.flash-message {
-    animation: fadeSlide 0.4s ease;
-}
-
-.address-choice:has(input:checked) {
-    border-color: #0f4c81;
-    box-shadow: 0 0 0 2px rgba(15, 76, 129, 0.08);
-}
 
 @keyframes fadeSlide {
     from {
@@ -22,4 +14,3 @@ body {
         transform: translateY(0);
     }
 }
-
