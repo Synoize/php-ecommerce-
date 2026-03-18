@@ -491,11 +491,28 @@ require __DIR__ . '/layout/header.php';
                             <?= e(money((float) $product['price'])); ?>
                         </p>
 
-                        <a
-                            href="<?= e(product_link($product)); ?>"
-                            class="mt-4 block bg-primary-medium py-2.5 text-center text-sm font-semibold text-white-dark transition hover:bg-primary-medium/80">
-                            BUY NOW
-                        </a>
+
+
+                        <?php if ((int)$product['stock'] > 0): ?>
+
+                            <a
+                                href="<?= e(product_link($product)); ?>"
+                                class="mt-4 block bg-primary-medium py-2.5 text-center text-sm font-semibold text-white-dark transition hover:bg-primary-medium/80">
+                                BUY NOW
+                            </a>
+
+                        <?php else: ?>
+
+                            <button
+                                disabled
+                                class="mt-4 w-full block bg-red-100 py-2.5 text-center text-sm font-bold text-rose-500 transition cursor-not-allowed">
+
+                                Out of Stock
+
+                            </button>
+
+                        <?php endif; ?>
+
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -703,5 +720,7 @@ require __DIR__ . '/layout/header.php';
     </section>
 
 </main>
+
+<?php require __DIR__ . '/../includes/importent.php'; ?>
 
 <?php require __DIR__ . '/layout/footer.php'; ?>

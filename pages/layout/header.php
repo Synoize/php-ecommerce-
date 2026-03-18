@@ -637,9 +637,57 @@ $flash = get_flash();
         lucide.createIcons();
     </script>
     <?php if ($flash): ?>
-        <div class="absolute top-20 mx-auto max-w-7xl px-4 md:px-0 z-50">
-            <div class="flash-message rounded-2xl border px-4 py-3 text-sm <?= $flash['type'] === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-rose-200 bg-rose-50 text-rose-700'; ?>">
-                <?= e($flash['message']); ?>
+        <div id="flashWrapper" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50">
+
+            <div id="flashMessage"
+                class="flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm backdrop-blur transition-all duration-500 opacity-0 translate-y-10
+        <?= $flash['type'] === 'success'
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+            : 'border-rose-200 bg-rose-50 text-rose-700'; ?>">
+
+                <!-- Message -->
+                <span class="flex-1 font-medium">
+                    <?= e($flash['message']); ?>
+                </span>
+
+                <!-- Close Button -->
+                <button id="closeFlash" class="text-2xl font-bold opacity-70 hover:opacity-100">
+                    ×
+                </button>
             </div>
+
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                const flash = document.getElementById("flashMessage");
+                const closeBtn = document.getElementById("closeFlash");
+
+                if (!flash) return;
+
+                // Show animation
+                setTimeout(() => {
+                    flash.classList.remove("opacity-0", "translate-y-10");
+                    flash.classList.add("opacity-100", "translate-y-0");
+                }, 100);
+
+                // Auto hide after 3 seconds
+                setTimeout(() => {
+                    hideFlash();
+                }, 3000);
+
+                // Manual close
+                closeBtn.addEventListener("click", hideFlash);
+
+                function hideFlash() {
+                    flash.classList.remove("opacity-100", "translate-y-0");
+                    flash.classList.add("opacity-0", "translate-y-10");
+
+                    setTimeout(() => {
+                        flash.remove();
+                    }, 500);
+                }
+
+            });
+        </script>
     <?php endif; ?>
