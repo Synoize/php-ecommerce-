@@ -661,82 +661,112 @@ require __DIR__ . '/layout/header.php';
                 </i>
             </a>
         </div>
-        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <?php foreach ($related as $item): ?>
-                <div class="group overflow-hidden">
-                    <div class="relative overflow-hidden rounded-lg bg-white-light/40">
+        <div class="mt-6">
+            <?php if (!empty($related)): ?>
 
-                        <!-- Image -->
-                        <a href="<?= e(product_link($item)); ?>">
-                            <img
-                                src="<?= e(upload_url((string) $item['image'])); ?>"
-                                alt="<?= e($item['name']); ?>"
-                                class="h-36 md:h-44 w-full object-contain p-2 transition duration-500 group-hover:scale-105"
-                                loading="lazy" />
-                        </a>
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                    <?php foreach ($related as $item): ?>
+                        <div class="group overflow-hidden">
+                            <div class="relative overflow-hidden rounded-lg bg-white-light/40">
 
-                        <!-- Stock Badge (optional if you have stock) -->
-                        <?php if (isset($item['stock']) && (int)$item['stock'] == 0): ?>
+                                <!-- Image -->
+                                <a href="<?= e(product_link($item)); ?>">
+                                    <img
+                                        src="<?= e(upload_url((string) $item['image'])); ?>"
+                                        alt="<?= e($item['name']); ?>"
+                                        class="h-36 md:h-44 w-full object-contain p-2 transition duration-500 group-hover:scale-105"
+                                        loading="lazy" />
+                                </a>
 
-                            <span class="absolute top-3 left-3 text-xs flex items-center gap-1 bg-red-100 text-red-600 font-semibold px-2 py-1 rounded-md">
-                                Out of Stock
-                            </span>
+                                <!-- WISHLIST -->
+                                <?php if (is_logged_in()): ?>
+                                    <?php $isWishlisted = $store->wishlist->has((int) current_user()['id'], (int) $item['id']); ?>
 
-                        <?php elseif (isset($item['stock']) && (int)$item['stock'] < 20): ?>
+                                    <form action="<?= e(app_url('api/wishlist.php')); ?>"
+                                        method="post"
+                                        class="absolute top-3 right-3 z-10">
 
-                            <span class="absolute top-3 left-3 text-xs flex items-center gap-1 bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-md">
-                                Only <?= (int)$item['stock']; ?> left
-                            </span>
+                                        <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                                        <input type="hidden" name="product_id" value="<?= (int) $item['id']; ?>">
+                                        <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
 
-                        <?php else: ?>
+                                        <button
+                                            type="submit"
+                                            class="rounded-full border p-2 bg-white-dark hover:scale-105 transition
+                                           <?= $isWishlisted ? 'text-red-500' : 'text-black-light'; ?>">
 
-                            <span class="absolute top-3 left-3 text-xs flex items-center gap-1 bg-green-100 text-green-600 font-semibold px-2 py-1 rounded-md">
-                                In Stock
-                            </span>
+                                            <i data-lucide="heart"
+                                                class="h-4 w-4 <?= $isWishlisted ? 'fill-current' : ''; ?>"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
 
-                        <?php endif; ?>
+                                <!-- Stock Badge -->
+                                <?php if (isset($item['stock']) && (int)$item['stock'] == 0): ?>
+                                    <span class="absolute top-3 left-3 text-xs bg-red-100 text-red-600 font-semibold px-2 py-1 rounded-md">
+                                        Out of Stock
+                                    </span>
+                                <?php elseif (isset($item['stock']) && (int)$item['stock'] < 20): ?>
+                                    <span class="absolute top-3 left-3 text-xs bg-orange-100 text-orange-600 font-semibold px-2 py-1 rounded-md">
+                                        Only <?= (int)$item['stock']; ?> left
+                                    </span>
+                                <?php else: ?>
+                                    <span class="absolute top-3 left-3 text-xs bg-green-100 text-green-600 font-semibold px-2 py-1 rounded-md">
+                                        In Stock
+                                    </span>
+                                <?php endif; ?>
 
-                    </div>
+                            </div>
 
-                    <div class="py-4 px-2">
+                            <div class="py-4 px-2">
+                                <h3 class="line-clamp-2 text-xs md:text-sm font-medium text-black-medium">
+                                    <?= e($item['name']); ?>
+                                </h3>
 
-                        <!-- Category -->
-                        <span class="text-[10px] uppercase tracking-wider text-black-light bg-primary-light px-2 py-1 rounded-md">
-                            <?= e($item['category_name'] ?? 'Recommend'); ?>
-                        </span>
+                                <p class="mt-2 text-sm font-semibold text-green-600">
+                                    <?= e(money((float) $item['price'])); ?>
+                                </p>
 
-                        <!-- Title -->
-                        <h3 class="mt-1 line-clamp-2 text-xs md:text-sm font-medium text-black-medium">
-                            <?= e($item['name']); ?>
-                        </h3>
-
-                        <!-- Price -->
-                        <p class="mt-2 text-sm font-semibold text-green-600">
-                            <?= e(money((float) $item['price'])); ?>
-                        </p>
-
-                        <!-- Button -->
-                        <?php if (!isset($item['stock']) || (int)$item['stock'] > 0): ?>
-
-                            <a
-                                href="<?= e(product_link($item)); ?>"
-                                class="mt-4 block bg-primary-medium py-2.5 text-center text-sm font-semibold text-white-dark transition hover:bg-primary-medium/80">
-                                BUY NOW
-                            </a>
-
-                        <?php else: ?>
-
-                            <button
-                                disabled
-                                class="mt-4 w-full bg-red-100 py-2.5 text-center text-sm font-bold text-rose-500 cursor-not-allowed">
-                                Out of Stock
-                            </button>
-
-                        <?php endif; ?>
-
-                    </div>
+                                <?php if (!isset($item['stock']) || (int)$item['stock'] > 0): ?>
+                                    <a href="<?= e(product_link($item)); ?>"
+                                        class="mt-4 block bg-primary-medium py-2.5 text-center text-sm font-semibold text-white-dark transition hover:bg-primary-medium/80">
+                                        BUY NOW
+                                    </a>
+                                <?php else: ?>
+                                    <button disabled
+                                        class="mt-4 w-full bg-red-100 py-2.5 text-center text-sm font-bold text-rose-500 cursor-not-allowed">
+                                        Out of Stock
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
+
+            <?php else: ?>
+
+                <!-- EMPTY STATE -->
+                <div class="flex flex-col items-center justify-center py-16 border border-dashed rounded-xl text-center">
+
+                    <i data-lucide="shopping-bag" class="w-12 h-12 text-white-medium mb-3"></i>
+
+                    <h3 class="text-lg font-semibold text-black-medium">
+                        No Related Products
+                    </h3>
+
+                    <p class="mt-1 text-sm text-white-medium">
+                        We couldn't find similar items for this product.
+                    </p>
+
+                    <a href="<?= e(app_url('shop.php')); ?>"
+                        class="mt-4 inline-flex items-center gap-2 rounded-full bg-primary-medium px-5 py-2 text-sm text-white-dark hover:bg-primary-medium/90 transition">
+                        Explore Products
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+
+                </div>
+
+            <?php endif; ?>
         </div>
     </section>
 </main>
