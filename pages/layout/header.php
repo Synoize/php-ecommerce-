@@ -199,10 +199,14 @@ $flash = get_flash();
                                     <div class="py-2 text-sm text-black-medium">
 
                                         <?php if (is_admin()): ?>
+                                            <a href="<?= e(app_url('admin/index.php')); ?>"
+                                                class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
-                                            <a href="<?= e(app_url('admin/index.php')); ?>" class="hover:text-white-medium">
-                                                Admin Dashboard
+                                                <i data-lucide="shield-user" class="w-4 h-4"></i>
+                                                <span>Admin Dashboard</span>
+
                                             </a>
+
 
                                         <?php endif; ?>
 
@@ -433,6 +437,19 @@ $flash = get_flash();
                             </a>
 
 
+                            <!-- ADMIN DASHBOARD -->
+                            <?php if (is_admin()): ?>
+                                <a href="<?= e(app_url('admin/index.php')); ?>"
+                                    class="flex items-center gap-3 hover:text-white-medium">
+
+                                    <i data-lucide="shield-user" class="text-black-light w-5 h-5"></i>
+                                    Admin Dashboard
+
+                                </a>
+
+                            <?php endif; ?>
+
+
                             <!-- PROFILE -->
                             <?php if (is_logged_in()): ?>
 
@@ -444,7 +461,6 @@ $flash = get_flash();
                                 </a>
 
                             <?php endif; ?>
-
 
 
                             <!-- ORDERS -->

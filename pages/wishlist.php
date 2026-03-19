@@ -12,7 +12,7 @@ require __DIR__ . '/layout/header.php';
 
     <!-- Heading -->
     <div class="flex items-center justify-between">
-        <h1 class="font-display text-2xl md:text-3xl font-bold text-black-medium">
+        <h1 class="text-2xl md:text-3xl font-bold text-black-medium">
             Your Wishlist
         </h1>
         <span class="text-sm text-black-light">

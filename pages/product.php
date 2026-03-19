@@ -299,11 +299,11 @@ require __DIR__ . '/layout/header.php';
 
                             <button
                                 type="button"
-                                class="qty-btn p-3.5 text-lg text-black-light bg-white-light/80 hover:bg-white-light/40 transition"
+                                class="qty-btn p-3 text-lg text-black-light bg-white-light/80 hover:bg-white-light/40 transition"
                                 data-step="-1">
                                 <i data-lucide="minus" class="w-4 h-4"></i>
                             </button>
-                            <div class="flex items-center justify-center pl-3 w-fit">
+                            <div class="flex items-center justify-center md:pl-3 w-fit">
                                 <input
                                     id="product-qty"
                                     type="number"
@@ -317,7 +317,7 @@ require __DIR__ . '/layout/header.php';
 
                             <button
                                 type="button"
-                                class="qty-btn p-3.5 text-lg text-black-light bg-white-light/80 hover:bg-white-light/40 transition"
+                                class="qty-btn p-3 text-lg text-black-light bg-white-light/80 hover:bg-white-light/40 transition"
                                 data-step="1">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                             </button>
