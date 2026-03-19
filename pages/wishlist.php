@@ -8,7 +8,7 @@ $pageTitle = 'Wishlist';
 require __DIR__ . '/layout/header.php';
 ?>
 
-<main class="mt-28 mx-auto max-w-7xl px-4 py-10">
+<main class="mt-28 mx-auto max-w-7xl px-4 py-8">
 
     <!-- Heading -->
     <div class="flex items-center justify-between">
@@ -23,7 +23,7 @@ require __DIR__ . '/layout/header.php';
     <?php if (empty($items)): ?>
 
         <!-- Empty State -->
-        <div class="mt-12 h-[calc(100vh-272px)] flex flex-col items-center justify-center text-center">
+        <div class="mt-12 min-h-[calc(100vh-262px)] flex flex-col items-center justify-center text-center">
             <div class="rounded-full bg-white-light/40 p-6 text-2xl">
                 <i data-lucide="heart" class="fill-current text-red-500"></i>
             </div>
@@ -45,7 +45,7 @@ require __DIR__ . '/layout/header.php';
     <?php else: ?>
 
         <!-- Wishlist Grid -->
-        <div class="mt-6 min-h-[calc(100vh-248px)] grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div class="mt-6 min-h-[calc(100vh-238px)] grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
 
             <?php foreach ($items as $item): ?>
                 <div class="group overflow-hidden">

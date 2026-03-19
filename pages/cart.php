@@ -121,7 +121,7 @@ require __DIR__ . '/layout/header.php';
             <?php else: ?>
 
                 <!-- EMPTY STATE -->
-                <div class="flex flex-col items-center justify-center py-16 border border-dashed rounded-2xl text-center">
+                <div class="flex flex-col items-center justify-center py-16 border border-dashed rounded-xl text-center">
 
                     <i data-lucide="shopping-cart" class="w-14 h-14 text-white-medium mb-3"></i>
 
@@ -147,7 +147,7 @@ require __DIR__ . '/layout/header.php';
 
         <!-- SUMMARY -->
         <?php if ($items): ?>
-            <aside class="sticky top-28 h-fit rounded-xl border bg-white-light/20 p-6">
+            <aside class="sticky top-28 h-fit rounded-xl border bg-white-light/10 p-6">
 
                 <h2 class="text-xl font-semibold text-black-medium">Order Summary</h2>
 

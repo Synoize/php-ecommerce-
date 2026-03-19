@@ -80,7 +80,7 @@ $pageTitle = $pageHeading;
 require __DIR__ . '/layout/header.php';
 ?>
 
-<main class="mt-28 mx-auto max-w-7xl px-4 py-8 md:px-0">
+<main class="mt-28 mx-auto max-w-7xl px-4 py-8">
 
     <!-- MOBILE FILTER BUTTON -->
     <div class="lg:hidden flex justify-between items-center mb-6">
