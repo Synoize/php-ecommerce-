@@ -17,6 +17,17 @@ class WishlistModel extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function adminAll(): array
+    {
+        return $this->pdo->query(
+            'SELECT w.*, u.name AS user_name, u.email, p.name AS product_name, p.price, p.stock
+             FROM wishlist w
+             INNER JOIN users u ON u.id = w.user_id
+             INNER JOIN products p ON p.id = w.product_id
+             ORDER BY w.created_at DESC'
+        )->fetchAll();
+    }
+
     public function has(int $userId, int $productId): bool
     {
         $stmt = $this->pdo->prepare(
@@ -48,4 +59,3 @@ class WishlistModel extends BaseModel
         return (int) $stmt->fetchColumn();
     }
 }
-

@@ -40,12 +40,26 @@ require __DIR__ . '/partials/header.php';
         </div>
         <div class="mt-6 space-y-4">
             <?php foreach ($order['items'] as $item): ?>
-                <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 p-4">
-                    <div>
-                        <div class="font-semibold"><?= e($item['name']); ?></div>
-                        <div class="text-sm text-slate-500">Qty <?= (int) $item['quantity']; ?></div>
+                <?php $productTotal = (float) $item['price'] * (int) $item['quantity']; ?>
+                <?php $boxTotal = (float) ($item['box_option_price'] ?? 0) * (int) ($item['box_quantity'] ?? 0); ?>
+                <div class="rounded-2xl border border-slate-100 p-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <div class="font-semibold"><?= e($item['name']); ?></div>
+                            <div class="text-sm text-slate-500">Qty <?= (int) $item['quantity']; ?></div>
+                        </div>
+                        <div class="font-semibold text-sky-600"><?= e(money($productTotal)); ?></div>
                     </div>
-                    <div class="font-semibold text-sky-600"><?= e(money((float) $item['price'] * (int) $item['quantity'])); ?></div>
+                    <?php if (!empty($item['box_option_name']) && (int) $item['box_quantity'] > 0): ?>
+                        <div class="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                            <div><?= e((string) $item['box_option_name']); ?> x <?= (int) $item['box_quantity']; ?></div>
+                            <div><?= e(money($boxTotal)); ?></div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700">
+                        <span>Line total</span>
+                        <span><?= e(money($productTotal + $boxTotal)); ?></span>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -79,6 +93,12 @@ require __DIR__ . '/partials/header.php';
         <div class="mt-2 text-sm"><?= e((string) $order['address_line']); ?>, <?= e((string) $order['city']); ?>, <?= e((string) $order['state']); ?> - <?= e((string) $order['pincode']); ?></div>
         <div class="mt-6 text-sm text-slate-500">Payment</div>
         <div class="mt-2 text-sm"><?= e((string) $order['payment_method']); ?> / <?= e((string) $order['payment_status']); ?></div>
+        <?php if (!empty($order['coupon'])): ?>
+            <div class="mt-6 text-sm text-slate-500">Coupon</div>
+            <div class="mt-2 text-sm"><?= e((string) $order['coupon']['code']); ?> saved <?= e(money((float) $order['coupon']['discount_amount'])); ?></div>
+        <?php endif; ?>
+        <div class="mt-6 text-sm text-slate-500">Order total</div>
+        <div class="mt-2 text-lg font-semibold"><?= e(money((float) $order['total_amount'])); ?></div>
     </aside>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>

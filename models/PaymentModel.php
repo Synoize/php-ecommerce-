@@ -19,5 +19,15 @@ class PaymentModel extends BaseModel
             'status' => $status,
         ]);
     }
-}
 
+    public function all(): array
+    {
+        return $this->pdo->query(
+            'SELECT p.*, o.user_id, o.payment_method, o.payment_status, u.name AS user_name, u.email
+             FROM payments p
+             INNER JOIN orders o ON o.id = p.order_id
+             INNER JOIN users u ON u.id = o.user_id
+             ORDER BY p.created_at DESC'
+        )->fetchAll();
+    }
+}

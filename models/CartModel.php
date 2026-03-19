@@ -27,6 +27,26 @@ class CartModel extends BaseModel
         return $items;
     }
 
+    public function adminAll(): array
+    {
+        $rows = $this->pdo->query(
+            'SELECT c.*, u.name AS user_name, u.email, p.name AS product_name, p.price,
+                    b.name AS box_name, b.price AS box_price
+             FROM cart c
+             INNER JOIN users u ON u.id = c.user_id
+             INNER JOIN products p ON p.id = c.product_id
+             LEFT JOIN product_box_options b ON b.id = c.box_option_id
+             ORDER BY c.added_at DESC'
+        )->fetchAll();
+
+        foreach ($rows as &$row) {
+            $row['line_total'] = ((float) $row['price'] * (int) $row['quantity'])
+                + ((float) ($row['box_price'] ?? 0) * (int) ($row['box_quantity'] ?? 0));
+        }
+
+        return $rows;
+    }
+
     public function add(int $userId, int $productId, int $quantity, ?int $boxOptionId = null, int $boxQuantity = 0): void
     {
         $quantity = max(1, $quantity);
