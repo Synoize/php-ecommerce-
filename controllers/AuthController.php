@@ -5,10 +5,12 @@ declare(strict_types=1);
 class AuthController
 {
     private UserModel $users;
+    private PasswordResetModel $passwordResets;
 
     public function __construct()
     {
         $this->users = new UserModel();
+        $this->passwordResets = new PasswordResetModel();
     }
 
     public function register(array $data): array
@@ -61,6 +63,52 @@ class AuthController
         unset($user['password']);
         $_SESSION['user'] = $user;
         return ['ok' => true, 'message' => 'Signed in successfully.'];
+    }
+
+    public function requestPasswordReset(string $email): array
+    {
+        $email = strtolower(trim($email));
+
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['ok' => false, 'message' => 'Enter a valid email address.'];
+        }
+
+        $user = $this->users->findByEmail($email);
+        if (!$user) {
+            return [
+                'ok' => true,
+                'message' => 'If the email exists, a reset link has been generated.',
+            ];
+        }
+
+        $reset = $this->passwordResets->create((int) $user['id']);
+
+        return [
+            'ok' => true,
+            'message' => 'Password reset link generated.',
+            'reset_link' => app_url('user/reset_password.php?selector=' . $reset['selector'] . '&token=' . $reset['token']),
+        ];
+    }
+
+    public function resetPassword(string $selector, string $token, string $password, string $confirmPassword): array
+    {
+        if ($selector === '' || $token === '') {
+            return ['ok' => false, 'message' => 'Invalid password reset link.'];
+        }
+
+        if (strlen($password) < 6) {
+            return ['ok' => false, 'message' => 'Password must be at least 6 characters.'];
+        }
+
+        if ($password !== $confirmPassword) {
+            return ['ok' => false, 'message' => 'Passwords do not match.'];
+        }
+
+        if (!$this->passwordResets->consume($selector, $token, $password)) {
+            return ['ok' => false, 'message' => 'Reset link is invalid or expired.'];
+        }
+
+        return ['ok' => true, 'message' => 'Password updated successfully. Please sign in.'];
     }
 
     public function logout(): void

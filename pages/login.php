@@ -16,26 +16,15 @@ $pageTitle = 'Login';
 require __DIR__ . '/layout/header.php';
 ?>
 <main class="mt-28 mx-auto max-w-md px-4 py-12">
-
-    <div class="md:bg-white-light/20 md:border md:p-8">
-
-        <!-- Title -->
+    <div class="border md:bg-white-light/20 md:p-8">
         <div class="text-center">
-            <h1 class="text-2xl font-semibold text-primary-medium">
-                Login to Your Account
-            </h1>
-
-            <p class="text-sm text-black-light mt-2">
-                Welcome back! Please enter your details.
-            </p>
+            <h1 class="text-2xl font-semibold text-primary-medium">Login to Your Account</h1>
+            <p class="mt-2 text-sm text-black-light">Welcome back! Please enter your details.</p>
         </div>
 
-        <!-- Form -->
         <form action="" method="post" class="mt-8 space-y-5">
-
             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
 
-            <!-- Email -->
             <div>
                 <label class="text-sm text-black-light">Email Address</label>
                 <input
@@ -43,40 +32,29 @@ require __DIR__ . '/layout/header.php';
                     name="email"
                     placeholder="Enter your email"
                     required
-                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:border-black-light focus:outline-none">
             </div>
 
-            <!-- Password -->
             <div>
-                <label class="text-sm text-black-light">Password</label>
+                <div class="flex items-center justify-between gap-3">
+                    <label class="text-sm text-black-light">Password</label>
+                    <a href="<?= e(app_url('user/forgot_password.php')); ?>" class="text-xs text-primary-medium hover:underline">Forgot password?</a>
+                </div>
                 <input
                     type="password"
                     name="password"
                     placeholder="Enter your password"
                     required
-                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:outline-none focus:border-black-light">
+                    class="mt-1 w-full border border-white-medium px-4 py-3 focus:border-black-light focus:outline-none">
             </div>
 
-            <!-- Button -->
-            <button
-                type="submit"
-                class="w-full bg-primary-medium text-white-dark py-3 hover:bg-primary-medium/90 transition">
-
-                Login
-
-            </button>
-
+            <button type="submit" class="w-full bg-primary-medium py-3 text-white-dark transition hover:bg-primary-medium/90">Login</button>
         </form>
 
-        <!-- Register -->
-        <p class="mt-6 text-sm text-center text-gray-600">
+        <p class="mt-6 text-center text-sm text-gray-600">
             Don't have an account?
-            <a class="text-primary-medium hover:underline"
-                href="<?= e(app_url('user/signup.php')); ?>">
-                Create Account
-            </a>
+            <a class="text-primary-medium hover:underline" href="<?= e(app_url('user/signup.php')); ?>">Create Account</a>
         </p>
-
     </div>
-
 </main>
+<?php require __DIR__ . '/layout/footer.php'; ?>

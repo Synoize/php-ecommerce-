@@ -129,23 +129,6 @@ $flash = get_flash();
         <div class="mx-auto max-w-7xl px-4 md:px-0">
 
             <div class="h-20 flex items-center justify-between gap-4">
-
-
-                <!-- LOGO -->
-                <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
-
-                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-10 w-10 object-cover">
-                    <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div>
-
-                </a>
-
-
-                <!-- MOBILE MENU BUTTON -->
-                <button id="navToggle" class="lg:hidden text-black-light">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-
-
                 <!-- DESKTOP NAVIGATION -->
                 <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-black-medium">
 
@@ -176,6 +159,39 @@ $flash = get_flash();
                     </div>
 
                 </nav>
+
+                
+                <!-- MOBILE MENU BUTTON -->
+                <button id="navToggle" class="lg:hidden text-black-light">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+
+                <!-- LOGO -->
+                <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
+
+                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-14 w-14 object-cover">
+                    <!-- <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div> -->
+
+                </a>
+
+                
+                <!-- MOBILE CART BUTTON -->
+                <a href="<?= e(app_url('cart.php')); ?>"
+                    class="relative text-black-medium hover:text-white-medium lg:hidden text-black-light">
+
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+
+                    <?php if ($headerCartCount > 0): ?>
+
+                        <span
+                            class="absolute -top-1.5 -right-2 bg-primary-medium text-white-dark text-xs px-1.5 rounded-full">
+                            <?= (int)$headerCartCount ?>
+                        </span>
+
+                    <?php endif; ?>
+
+                </a>
 
 
                 <!-- RIGHT SIDE -->
@@ -709,6 +725,7 @@ $flash = get_flash();
         // Initialize Lucide Icons
         lucide.createIcons();
     </script>
+
     <?php if ($flash): ?>
         <div id="flashWrapper" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50">
 

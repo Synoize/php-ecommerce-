@@ -111,7 +111,7 @@ require __DIR__ . '/layout/header.php';
                 <div class="flex justify-between border-t pt-3 text-lg font-semibold"><span class="text-black-medium">Total</span><span class="text-green-600"><?= e(money($data['total'])); ?></span></div>
             </div>
 
-            <div id="payment-note" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            <div id="payment-note" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
                 Cash on Delivery requires an online booking payment of <?= e(money((float) $data['cod_booking_amount'])); ?> first. The remaining amount is paid on delivery.
             </div>
 
