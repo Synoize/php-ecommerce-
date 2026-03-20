@@ -350,7 +350,7 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO slides (type, file_path, title, description, button_name, button_link)
 VALUES (
   'image',
-  'images/uploads/carousel/_1.jpg',
+  'images/uploads/carousel/_01.jpg',
   'Watch Ecommerce',
   'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
   'Shop Now',
@@ -360,7 +360,7 @@ VALUES (
   'video',
   'images/uploads/carousel/_01.mp4',
   'Watch Ecommerce',
-  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order management.',
   'Shop Now',
   'shop.php'
 );

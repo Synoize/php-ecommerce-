@@ -151,6 +151,48 @@ require __DIR__ . '/layout/header.php';
 
                 <p class="mt-6 text-sm leading-7 text-black-light"><?= nl2br(e((string) $product['description'])); ?></p>
 
+                <div id="live-activity"
+                    class="mt-4 text-sm text-red-500 font-medium transition-opacity duration-500">
+                </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+
+                        const el = document.getElementById("live-activity");
+
+                        if (!el) return;
+
+                        const messages = [
+                            () => `🔥 ${rand(5, 25)} people are viewing this right now`,
+                            () => `⚡ ${rand(1, 10)} orders placed in last hour`,
+                            () => `🛒 ${rand(2, 15)} people added this to cart`,
+                            () => `👀 ${rand(10, 50)} people viewed this today`
+                        ];
+
+                        function rand(min, max) {
+                            return Math.floor(Math.random() * (max - min + 1)) + min;
+                        }
+
+                        function updateMessage() {
+
+                            el.style.opacity = 0;
+
+                            setTimeout(() => {
+                                const msg = messages[Math.floor(Math.random() * messages.length)];
+                                el.innerHTML = msg();
+                                el.style.opacity = 1;
+                            }, 300);
+
+                        }
+
+                        // initial
+                        updateMessage();
+
+                        // change every 4–7 sec
+                        setInterval(updateMessage, rand(4000, 7000));
+
+                    });
+                </script>
+
                 <?php if ($boxOptions !== []): ?>
                     <div class="mt-8 border-t pt-6">
                         <div class="text-2xl font-semibold text-black-medium">Buy with Box <span class="text-rose-500">*</span></div>
@@ -398,7 +440,7 @@ require __DIR__ . '/layout/header.php';
                 </div>
             </div>
 
-            <div class="space-y-3 rounded-xl border border bg-white-light/20 p-6 shadow-soft">
+            <div class="space-y-3 rounded-xl border border bg-white-light/20 p-6">
                 <details open class="group border-b pb-4">
                     <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.16em] text-black-medium/90">
                         Product Description

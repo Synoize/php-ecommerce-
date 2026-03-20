@@ -65,8 +65,7 @@ class AuthController
 
     public function logout(): void
     {
-        unset($_SESSION['user'], $_SESSION['checkout_coupon'], $_SESSION['pending_order_id']);
+        unset($_SESSION['user'], $_SESSION['checkout_coupon'], $_SESSION['pending_order_id'], $_SESSION['pending_checkout']);
         session_regenerate_id(true);
     }
 }
-

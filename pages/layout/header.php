@@ -61,11 +61,68 @@ $flash = get_flash();
         <div id="topPromoBar"
             class="bg-primary-medium text-white-dark text-xs transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-h-10">
 
-            <div class="mx-auto max-w-7xl px-4 md:px-0 h-8 flex justify-center items-center text-center">
+            <div id="promo-activity" class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center transition-opacity duration-500">
                 Free Gifts on orders above <span class="font-semibold ml-1">₹1499</span>
             </div>
 
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                const pa = document.getElementById("promo-activity");
+
+                if (!pa) return;
+
+                const messages = [
+
+                    // 🔴 IMPORTANT INFO (HIGH PRIORITY)
+                    () => `🚫 No Open Box Delivery Available`,
+                    () => `⚠️ Return available only for damaged products`,
+                    () => `📦 Delivery within 3–7 working days`,
+                    () => `🔒 100% Secure Payments`,
+                    () => `💬 24/7 Customer Support Available`,
+
+                    // 🟢 OFFERS
+                    () => `🎁 Flat ${rand(10, 40)}% OFF – Limited Time`,
+                    () => `💳 Extra ₹${rand(50, 300)} OFF on Prepaid Orders`,
+                    () => `🎉 Use code SAVE${rand(10, 50)} for extra discount`,
+                    () => `🔥 Special Deal Ending Soon`,
+
+                    // 🔵 TRUST + SOCIAL PROOF
+                    () => `👀 ${rand(10, 50)} people viewed this today`,
+                    () => `🛒 ${rand(2, 15)} people added to cart`,
+                    () => `⚡ ${rand(1, 10)} orders placed recently`,
+                    () => `⭐ Rated highly by customers`,
+
+                    // 🟠 URGENCY
+                    () => `⏳ Hurry! Only ${rand(3, 20)} left in stock`,
+                    () => `🚀 Selling fast – don’t miss out`
+                ];
+
+                function rand(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+                function updateMessage() {
+
+                    pa.style.opacity = 0;
+
+                    setTimeout(() => {
+                        const msg = messages[Math.floor(Math.random() * messages.length)];
+                        pa.innerHTML = msg();
+                        pa.style.opacity = 1;
+                    }, 300);
+
+                }
+
+                // initial
+                updateMessage();
+
+                // change every 4–7 sec
+                setInterval(updateMessage, rand(4000, 7000));
+
+            });
+        </script>
 
 
         <!-- MAIN NAVBAR -->

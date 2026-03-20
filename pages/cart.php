@@ -33,10 +33,10 @@ require __DIR__ . '/layout/header.php';
                grid-cols-[80px,1fr] lg:grid-cols-[120px,1fr,auto]">
 
                         <!-- IMAGE -->
-                        <div class="overflow-hidden rounded-lg border bg-white-light/20 mx-auto sm:mx-0 w-full h-auto max-w-[140px]">
+                        <div class="overflow-hidden rounded-lg border bg-white-dark h-24 md:h-28 mx-auto sm:mx-0 w-full max-w-[140px]">
                             <img src="<?= e(upload_url((string) $item['image'])); ?>"
                                 alt="<?= e($item['name']); ?>"
-                                class="md:h-28 w-full object-contain p-2 transition duration-300 group-hover:scale-105">
+                                class="h-24 md:h-28 w-full object-contain p-2 transition duration-300 group-hover:scale-105">
                         </div>
 
                         <!-- DETAILS -->
@@ -103,15 +103,15 @@ require __DIR__ . '/layout/header.php';
                         </div>
 
                         <!-- Total Price -->
-                        <div class="flex flex-row self-end items-center gap-4 text-nowrap">
-                            <span class="text-lg sm:text-xl font-bold text-black-medium">
-                                <?= e(money((float) $item['line_total'])); ?>
-                            </span>
-
+                        <div class="flex flex-row self-end items-center gap-10 text-nowrap">
                             <span class="text-xs text-black-light">
                                 Quantity: <span class="font-semibold"><?= (int) $item['quantity']; ?></span>
                             </span>
 
+                            <span class="text-lg sm:text-xl font-bold text-black-medium">
+                                <?= e(money((float) $item['line_total'])); ?>
+                            </span>
+                            
                         </div>
 
                     </article>
