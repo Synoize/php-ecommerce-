@@ -9,81 +9,201 @@ $orders = $orderModel->forUser((int) current_user()['id']);
 $pageTitle = 'My Orders';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mx-auto max-w-7xl px-4 py-12">
-    <h1 class="font-display text-4xl font-bold">Order history</h1>
-    <div class="mt-8 grid gap-8 lg:grid-cols-[380px,1fr]">
-        <section class="rounded-[2rem] bg-white p-6 shadow-soft">
-            <div class="space-y-4">
+
+<main class="mx-auto max-w-7xl px-4 py-10 mt-20">
+
+    <!-- HEADER -->
+    <h1 class="text-2xl md:text-3xl font-bold text-black-medium">
+        My Orders
+    </h1>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-[320px,1fr]">
+
+        <!-- LEFT: ORDER LIST -->
+        <section class="space-y-3">
+
+            <?php if ($orders): ?>
                 <?php foreach ($orders as $item): ?>
-                    <a href="<?= e(app_url('user/orders.php?order_id=' . (int) $item['id'])); ?>" class="block rounded-3xl border border-slate-100 p-4">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="font-semibold">#<?= (int) $item['id']; ?></div>
-                            <span class="rounded-full px-3 py-1 text-xs font-semibold <?= order_status_badge((string) $item['status']); ?>"><?= e($item['status']); ?></span>
+
+                    <a href="<?= e(app_url('user/orders.php?order_id=' . (int) $item['id'])); ?>"
+                        class="block rounded-xl border p-4 bg-white-light/10 hover:bg-white-light/20 transition">
+
+                        <div class="flex justify-between items-center">
+
+                            <span class="font-semibold text-black-medium">
+                                #<?= (int) $item['id']; ?>
+                            </span>
+
+                            <span class="text-xs px-3 py-1 rounded-full font-medium <?= order_status_badge((string) $item['status']); ?>">
+                                <?= e($item['status']); ?>
+                            </span>
+
                         </div>
-                        <div class="mt-2 text-sm text-slate-500"><?= e((string) $item['created_at']); ?></div>
-                        <div class="mt-2 font-semibold text-brand-600"><?= e(money((float) $item['total_amount'])); ?></div>
+
+                        <div class="mt-2 text-xs text-black-light">
+                            <?= date('d M Y', strtotime((string) $item['created_at'])); ?>
+                        </div>
+
+                        <div class="mt-2 font-semibold text-primary-medium">
+                            <?= e(money((float) $item['total_amount'])); ?>
+                        </div>
+
                     </a>
+
                 <?php endforeach; ?>
-            </div>
+            <?php else: ?>
+
+                <div class="text-sm text-black-light">
+                    No orders found.
+                </div>
+
+            <?php endif; ?>
+
         </section>
-        <section class="rounded-[2rem] bg-white p-6 shadow-soft">
+
+        <!-- RIGHT: ORDER DETAILS -->
+        <section class="sticky top-28 h-fit rounded-xl border bg-white-light/10 p-5">
+
             <?php if ($order): ?>
+
                 <?php $trackingSteps = order_tracking_steps((string) $order['status']); ?>
-                <div class="flex items-center justify-between gap-3">
-                    <h2 class="font-display text-2xl font-bold">Order #<?= (int) $order['id']; ?></h2>
-                    <span class="rounded-full px-3 py-1 text-xs font-semibold <?= order_status_badge((string) $order['status']); ?>"><?= e($order['status']); ?></span>
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center">
+
+                    <h2 class="text-lg md:text-xl font-semibold text-black-medium">
+                        Order #<?= (int) $order['id']; ?>
+                    </h2>
+
+                    <span class="text-xs px-3 py-1 rounded-full font-medium <?= order_status_badge((string) $order['status']); ?>">
+                        <?= e($order['status']); ?>
+                    </span>
+
                 </div>
-                <div class="mt-6 grid gap-3 text-sm text-slate-600">
-                    <div>Payment: <?= e((string) $order['payment_method']); ?> / <?= e((string) $order['payment_status']); ?></div>
-                    <div>Address: <?= e((string) $order['address_line']); ?>, <?= e((string) $order['city']); ?>, <?= e((string) $order['state']); ?></div>
+
+                <!-- META -->
+                <div class="mt-4 text-sm text-black-light space-y-1">
+                    <div>Payment: <?= e($order['payment_method']); ?> / <?= e($order['payment_status']); ?></div>
+                    <div>Address: <?= e($order['address_line']); ?>, <?= e($order['city']); ?>, <?= e($order['state']); ?></div>
                 </div>
-                <div class="mt-6 rounded-3xl bg-slate-50 p-5">
-                    <div class="text-sm font-semibold text-slate-700">Order tracking</div>
-                    <?php if ((string) $order['status'] === 'cancelled'): ?>
-                        <p class="mt-3 text-sm text-rose-600">This order has been cancelled by the store.</p>
+
+                <!-- TRACKING -->
+                <div class="mt-6">
+
+                    <h3 class="text-sm font-semibold text-black-medium mb-3">
+                        Order Tracking
+                    </h3>
+
+                    <?php if ($order['status'] === 'cancelled'): ?>
+
+                        <div class="text-sm text-red-600">
+                            This order has been cancelled.
+                        </div>
+
                     <?php else: ?>
-                        <div class="mt-4 grid gap-4 md:grid-cols-4">
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
                             <?php foreach ($trackingSteps as $step): ?>
-                                <div class="rounded-2xl border px-4 py-3 <?= $step['complete'] ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'; ?>">
-                                    <div class="text-xs uppercase tracking-[0.2em] <?= $step['current'] ? 'text-brand-600' : 'text-slate-400'; ?>"><?= $step['key']; ?></div>
-                                    <div class="mt-2 text-sm font-semibold text-slate-800"><?= e($step['label']); ?></div>
+                                <div class="rounded-lg border px-3 py-3 text-center
+                                    <?= $step['complete'] ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'; ?>">
+
+                                    <div class="text-[10px] uppercase tracking-wider
+                                        <?= $step['current'] ? 'text-primary-medium' : 'text-gray-400'; ?>">
+                                        <?= $step['key']; ?>
+                                    </div>
+
+                                    <div class="mt-1 text-sm font-medium text-black-medium">
+                                        <?= e($step['label']); ?>
+                                    </div>
+
                                 </div>
                             <?php endforeach; ?>
+
                         </div>
+
                     <?php endif; ?>
+
                 </div>
+
+                <!-- ITEMS -->
                 <div class="mt-6 space-y-4">
+
                     <?php foreach ($order['items'] as $line): ?>
-                        <?php $productTotal = (float) $line['price'] * (int) $line['quantity']; ?>
-                        <?php $boxTotal = (float) ($line['box_option_price'] ?? 0) * (int) ($line['box_quantity'] ?? 0); ?>
-                        <div class="rounded-2xl border border-slate-100 p-4">
-                            <div class="flex items-center justify-between gap-3">
+
+                        <?php
+                        $productTotal = (float) $line['price'] * (int) $line['quantity'];
+                        $boxTotal = (float) ($line['box_option_price'] ?? 0) * (int) ($line['box_quantity'] ?? 0);
+                        ?>
+
+                        <div class="rounded-xl border p-4 bg-white-light/20">
+
+                            <div class="flex justify-between items-start gap-3">
+
                                 <div>
-                                    <div class="font-semibold"><?= e($line['name']); ?></div>
-                                    <div class="mt-1 text-sm text-slate-500">Qty <?= (int) $line['quantity']; ?></div>
+                                    <div class="font-semibold text-black-medium">
+                                        <?= e($line['name']); ?>
+                                    </div>
+
+                                    <div class="text-xs text-black-light mt-1">
+                                        Qty: <?= (int) $line['quantity']; ?>
+                                    </div>
                                 </div>
-                                <div class="font-semibold text-brand-600"><?= e(money($productTotal)); ?></div>
+
+                                <div class="font-semibold text-primary-medium">
+                                    <?= e(money($productTotal)); ?>
+                                </div>
+
                             </div>
+
+                            <!-- BOX -->
                             <?php if (!empty($line['box_option_name']) && (int) $line['box_quantity'] > 0): ?>
-                                <div class="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                                    <div><?= e((string) $line['box_option_name']); ?> x <?= (int) $line['box_quantity']; ?></div>
-                                    <div><?= e(money($boxTotal)); ?></div>
+                                <div class="mt-3 flex justify-between text-sm bg-white-light/30 rounded-lg px-3 py-2">
+
+                                    <span>
+                                        <?= e($line['box_option_name']); ?> × <?= (int) $line['box_quantity']; ?>
+                                    </span>
+
+                                    <span>
+                                        <?= e(money($boxTotal)); ?>
+                                    </span>
+
                                 </div>
                             <?php endif; ?>
-                            <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700">
-                                <span>Line total</span>
+
+                            <!-- TOTAL -->
+                            <div class="mt-3 flex justify-between border-t pt-2 text-sm font-medium">
+
+                                <span>Line Total</span>
                                 <span><?= e(money($productTotal + $boxTotal)); ?></span>
+
                             </div>
+
                         </div>
+
                     <?php endforeach; ?>
+
                 </div>
+
+                <!-- COUPON -->
                 <?php if ($order['coupon']): ?>
-                    <div class="mt-6 text-sm text-slate-600">Coupon <?= e((string) $order['coupon']['code']); ?> saved <?= e(money((float) $order['coupon']['discount_amount'])); ?></div>
+                    <div class="mt-5 text-sm text-green-600">
+                        Coupon <?= e($order['coupon']['code']); ?> saved <?= e(money($order['coupon']['discount_amount'])); ?>
+                    </div>
                 <?php endif; ?>
+
             <?php else: ?>
-                <p class="text-slate-500">Select an order to view its details.</p>
+
+                <div class="text-center text-sm text-black-light py-10">
+                    Select an order to view details
+                </div>
+
             <?php endif; ?>
+
         </section>
+
     </div>
+
 </main>
+
 <?php require __DIR__ . '/layout/footer.php'; ?>

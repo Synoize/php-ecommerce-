@@ -232,7 +232,7 @@ $flash = get_flash();
                                         <a href="<?= e(app_url('checkout.php')); ?>"
                                             class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
-                                            <i data-lucide="badge-indian-rupee" class="w-4 h-4"></i>
+                                            <i data-lucide="credit-card" class="w-4 h-4"></i>
                                             Checkout
 
                                         </a>
@@ -483,7 +483,7 @@ $flash = get_flash();
                                 <a href="<?= e(app_url('checkout.php')); ?>"
                                     class="flex items-center gap-3 hover:text-white-medium">
 
-                                    <i data-lucide="badge-indian-rupee" class="text-black-light w-5 h-5"></i>
+                                    <i data-lucide="credit-card" class="text-black-light w-5 h-5"></i>
                                     Checkout
                                 </a>
 
