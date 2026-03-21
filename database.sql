@@ -20,6 +20,20 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS password_resets (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  selector VARCHAR(32) NOT NULL,
+  token_hash VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used_at DATETIME DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_password_resets_selector (selector),
+  KEY idx_password_resets_user (user_id),
+  CONSTRAINT fk_password_resets_user
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS addresses (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id INT UNSIGNED NOT NULL,
@@ -350,7 +364,7 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO slides (type, file_path, title, description, button_name, button_link)
 VALUES (
   'image',
-  'images/uploads/carousel/_1.jpg',
+  'images/uploads/carousel/_01.jpg',
   'Watch Ecommerce',
   'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
   'Shop Now',
@@ -360,7 +374,8 @@ VALUES (
   'video',
   'images/uploads/carousel/_01.mp4',
   'Watch Ecommerce',
-  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
+  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order management.',
   'Shop Now',
   'shop.php'
 );
+

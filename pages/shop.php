@@ -80,7 +80,7 @@ $pageTitle = $pageHeading;
 require __DIR__ . '/layout/header.php';
 ?>
 
-<main class="mt-28 mx-auto max-w-7xl px-4 py-8 md:px-0">
+<main class="mt-28 mx-auto max-w-7xl px-4 py-8">
 
     <!-- MOBILE FILTER BUTTON -->
     <div class="lg:hidden flex justify-between items-center mb-6">
@@ -93,12 +93,18 @@ require __DIR__ . '/layout/header.php';
     </div>
 
 
-    <div class="grid gap-8 lg:grid-cols-[300px,1fr]">
+    <div class="min-h-[calc(100vh-262px)] grid gap-8 lg:grid-cols-[300px,1fr] items-start">
 
 
         <!-- FILTER DRAWER -->
-        <aside id="filter-drawer" class="fixed lg:static top-0 left-0 h-full lg:h-fit w-[300px] bg-white-dark p-4 md:p-0 z-50 md:z-10 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"> <!-- MOBILE CLOSE --> <button id="close-filter" class="mb-6 lg:hidden absolute top-4 right-4 text-black-light"> <i data-lucide="x" class="w-6 h-6"></i> </button>
-            <form action="<?= e(app_url('shop.php')); ?>" method="get" class="space-y-8"> <input type="hidden" name="sort" value="<?= e($filters['sort']); ?>"> <!-- FILTER HEADER -->
+        <aside id="filter-drawer" class="fixed lg:static top-0 left-0 h-full lg:h-fit w-[300px] bg-white-dark p-4 md:p-0 z-50 md:z-10 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"> 
+            <!-- MOBILE CLOSE -->
+            <button id="close-filter" class="mb-6 lg:hidden absolute top-4 right-4 text-black-light"> 
+                <i data-lucide="x" class="w-6 h-6"></i> 
+            </button>
+            <form action="<?= e(app_url('shop.php')); ?>" method="get" class="space-y-8"> 
+                <input type="hidden" name="sort" value="<?= e($filters['sort']); ?>"> 
+                <!-- FILTER HEADER -->
                 <div>
                     <h2 class="text-xl md:text-2xl font-semibold text-black-medium tracking-wide"> Filter Products </h2>
                     <p class="text-xs md:text-sm text-white-medium mt-1"> Find your perfect watch </p>
@@ -317,7 +323,6 @@ require __DIR__ . '/layout/header.php';
     </div>
 
 </main>
-
 
 <script>
     const openBtn = document.getElementById("open-filter")

@@ -8,6 +8,8 @@ class OrderModel extends BaseModel
     {
         $discountAmount = $coupon ? round($subtotal * ((int) $coupon['discount_percent'] / 100), 2) : 0.0;
         $total = max(0, $subtotal - $discountAmount);
+        $status = (string) ($paymentMeta['initial_status'] ?? ($paymentMethod === 'cod' ? 'confirmed' : 'pending'));
+        $paymentStatus = (string) ($paymentMeta['initial_payment_status'] ?? 'pending');
 
         $this->pdo->beginTransaction();
 
@@ -20,9 +22,9 @@ class OrderModel extends BaseModel
                 'user_id' => $userId,
                 'address_id' => $addressId,
                 'total_amount' => $total,
-                'status' => $paymentMethod === 'cod' ? 'confirmed' : 'pending',
+                'status' => $status,
                 'payment_method' => $paymentMethod,
-                'payment_status' => 'pending',
+                'payment_status' => $paymentStatus,
                 'razorpay_order_id' => $paymentMeta['razorpay_order_id'] ?? null,
             ]);
             $orderId = (int) $this->pdo->lastInsertId();
@@ -190,6 +192,21 @@ class OrderModel extends BaseModel
         $stmt->execute([
             'id' => $orderId,
             'payment_status' => 'paid',
+            'status' => 'confirmed',
+            'razorpay_payment_id' => $razorpayPaymentId,
+        ]);
+    }
+
+    public function markCodAdvancePaid(int $orderId, string $razorpayPaymentId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE orders
+             SET payment_status = :payment_status, status = :status, razorpay_payment_id = :razorpay_payment_id
+             WHERE id = :id'
+        );
+        $stmt->execute([
+            'id' => $orderId,
+            'payment_status' => 'pending',
             'status' => 'confirmed',
             'razorpay_payment_id' => $razorpayPaymentId,
         ]);

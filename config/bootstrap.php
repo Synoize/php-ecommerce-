@@ -13,6 +13,7 @@ date_default_timezone_set(APP_TIMEZONE);
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/../models/BaseModel.php';
 require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../models/PasswordResetModel.php';
 require_once __DIR__ . '/../models/CategoryModel.php';
 require_once __DIR__ . '/../models/ProductModel.php';
 require_once __DIR__ . '/../models/CartModel.php';
@@ -140,7 +141,7 @@ function require_admin(): void
 
 function money(float $amount): string
 {
-    return '₹ ' . number_format($amount, 2);
+    return 'Rs. ' . number_format($amount, 2);
 }
 
 function slugify(string $value): string

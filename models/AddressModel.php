@@ -13,6 +13,16 @@ class AddressModel extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function all(): array
+    {
+        return $this->pdo->query(
+            'SELECT a.*, u.name AS user_name, u.email
+             FROM addresses a
+             INNER JOIN users u ON u.id = a.user_id
+             ORDER BY a.created_at DESC'
+        )->fetchAll();
+    }
+
     public function findOwned(int $userId, int $id): ?array
     {
         $stmt = $this->pdo->prepare(

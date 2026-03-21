@@ -61,34 +61,74 @@ $flash = get_flash();
         <div id="topPromoBar"
             class="bg-primary-medium text-white-dark text-xs transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-h-10">
 
-            <div class="mx-auto max-w-7xl px-4 md:px-0 h-8 flex justify-center items-center text-center">
+            <div id="promo-activity" class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center transition-opacity duration-500">
                 Free Gifts on orders above <span class="font-semibold ml-1">₹1499</span>
             </div>
 
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                const pa = document.getElementById("promo-activity");
+
+                if (!pa) return;
+
+                const messages = [
+
+                    // 🔴 IMPORTANT INFO (HIGH PRIORITY)
+                    () => `🚫 No Open Box Delivery Available`,
+                    () => `⚠️ Return available only for damaged products`,
+                    () => `📦 Delivery within 3–7 working days`,
+                    () => `🔒 100% Secure Payments`,
+                    () => `💬 24/7 Customer Support Available`,
+
+                    // 🟢 OFFERS
+                    () => `🎁 Flat ${rand(10, 40)}% OFF – Limited Time`,
+                    () => `💳 Extra ₹${rand(50, 300)} OFF on Prepaid Orders`,
+                    () => `🎉 Use code SAVE${rand(10, 50)} for extra discount`,
+                    () => `🔥 Special Deal Ending Soon`,
+
+                    // 🔵 TRUST + SOCIAL PROOF
+                    () => `👀 ${rand(10, 50)} people viewed this today`,
+                    () => `🛒 ${rand(2, 15)} people added to cart`,
+                    () => `⚡ ${rand(1, 10)} orders placed recently`,
+                    () => `⭐ Rated highly by customers`,
+
+                    // 🟠 URGENCY
+                    () => `⏳ Hurry! Only ${rand(3, 20)} left in stock`,
+                    () => `🚀 Selling fast – don’t miss out`
+                ];
+
+                function rand(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+                function updateMessage() {
+
+                    pa.style.opacity = 0;
+
+                    setTimeout(() => {
+                        const msg = messages[Math.floor(Math.random() * messages.length)];
+                        pa.innerHTML = msg();
+                        pa.style.opacity = 1;
+                    }, 300);
+
+                }
+
+                // initial
+                updateMessage();
+
+                // change every 4–7 sec
+                setInterval(updateMessage, rand(4000, 7000));
+
+            });
+        </script>
 
 
         <!-- MAIN NAVBAR -->
         <div class="mx-auto max-w-7xl px-4 md:px-0">
 
             <div class="h-20 flex items-center justify-between gap-4">
-
-
-                <!-- LOGO -->
-                <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
-
-                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-10 w-10 object-cover">
-                    <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div>
-
-                </a>
-
-
-                <!-- MOBILE MENU BUTTON -->
-                <button id="navToggle" class="lg:hidden text-black-light">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-
-
                 <!-- DESKTOP NAVIGATION -->
                 <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-black-medium">
 
@@ -119,6 +159,39 @@ $flash = get_flash();
                     </div>
 
                 </nav>
+
+                
+                <!-- MOBILE MENU BUTTON -->
+                <button id="navToggle" class="lg:hidden text-black-light">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+
+                <!-- LOGO -->
+                <a href="<?= e(app_url()); ?>" class="flex items-center gap-3">
+
+                    <img src="<?= e(asset_url('images/logo/logo.png')); ?>" alt="<?= e(APP_NAME); ?>" class="h-14 w-14 object-cover">
+                    <!-- <div class="text-2xl text-primary-medium"><?= e(APP_NAME); ?></div> -->
+
+                </a>
+
+                
+                <!-- MOBILE CART BUTTON -->
+                <a href="<?= e(app_url('cart.php')); ?>"
+                    class="relative text-black-medium hover:text-white-medium lg:hidden text-black-light">
+
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+
+                    <?php if ($headerCartCount > 0): ?>
+
+                        <span
+                            class="absolute -top-1.5 -right-2 bg-primary-medium text-white-dark text-xs px-1.5 rounded-full">
+                            <?= (int)$headerCartCount ?>
+                        </span>
+
+                    <?php endif; ?>
+
+                </a>
 
 
                 <!-- RIGHT SIDE -->
@@ -199,10 +272,14 @@ $flash = get_flash();
                                     <div class="py-2 text-sm text-black-medium">
 
                                         <?php if (is_admin()): ?>
+                                            <a href="<?= e(app_url('admin/index.php')); ?>"
+                                                class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
-                                            <a href="<?= e(app_url('admin/index.php')); ?>" class="hover:text-white-medium">
-                                                Admin Dashboard
+                                                <i data-lucide="shield-user" class="w-4 h-4"></i>
+                                                <span>Admin Dashboard</span>
+
                                             </a>
+
 
                                         <?php endif; ?>
 
@@ -228,7 +305,7 @@ $flash = get_flash();
                                         <a href="<?= e(app_url('checkout.php')); ?>"
                                             class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
-                                            <i data-lucide="badge-indian-rupee" class="w-4 h-4"></i>
+                                            <i data-lucide="credit-card" class="w-4 h-4"></i>
                                             Checkout
 
                                         </a>
@@ -433,6 +510,19 @@ $flash = get_flash();
                             </a>
 
 
+                            <!-- ADMIN DASHBOARD -->
+                            <?php if (is_admin()): ?>
+                                <a href="<?= e(app_url('admin/index.php')); ?>"
+                                    class="flex items-center gap-3 hover:text-white-medium">
+
+                                    <i data-lucide="shield-user" class="text-black-light w-5 h-5"></i>
+                                    Admin Dashboard
+
+                                </a>
+
+                            <?php endif; ?>
+
+
                             <!-- PROFILE -->
                             <?php if (is_logged_in()): ?>
 
@@ -444,7 +534,6 @@ $flash = get_flash();
                                 </a>
 
                             <?php endif; ?>
-
 
 
                             <!-- ORDERS -->
@@ -467,7 +556,7 @@ $flash = get_flash();
                                 <a href="<?= e(app_url('checkout.php')); ?>"
                                     class="flex items-center gap-3 hover:text-white-medium">
 
-                                    <i data-lucide="badge-indian-rupee" class="text-black-light w-5 h-5"></i>
+                                    <i data-lucide="credit-card" class="text-black-light w-5 h-5"></i>
                                     Checkout
                                 </a>
 
@@ -636,6 +725,7 @@ $flash = get_flash();
         // Initialize Lucide Icons
         lucide.createIcons();
     </script>
+
     <?php if ($flash): ?>
         <div id="flashWrapper" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50">
 

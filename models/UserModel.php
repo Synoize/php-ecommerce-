@@ -37,8 +37,24 @@ class UserModel extends BaseModel
     public function all(): array
     {
         return $this->pdo->query(
-            'SELECT id, name, email, phone, role, created_at FROM users ORDER BY created_at DESC'
+            'SELECT u.id, u.name, u.email, u.phone, u.role, u.created_at,
+                    COUNT(DISTINCT o.id) AS orders_count,
+                    COUNT(DISTINCT a.id) AS address_count
+             FROM users u
+             LEFT JOIN orders o ON o.user_id = u.id
+             LEFT JOIN addresses a ON a.user_id = u.id
+             GROUP BY u.id
+             ORDER BY u.created_at DESC'
         )->fetchAll();
+    }
+
+    public function updateRole(int $id, string $role): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET role = :role WHERE id = :id');
+        $stmt->execute([
+            'id' => $id,
+            'role' => $role === 'admin' ? 'admin' : 'user',
+        ]);
     }
 
     public function count(): int
@@ -46,4 +62,3 @@ class UserModel extends BaseModel
         return (int) $this->pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     }
 }
-

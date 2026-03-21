@@ -42,5 +42,10 @@ class ReviewModel extends BaseModel
              ORDER BY r.created_at DESC'
         )->fetchAll();
     }
-}
 
+    public function delete(int $id): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM reviews WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+    }
+}

@@ -231,15 +231,13 @@ require __DIR__ . '/layout/header.php';
 
             <!-- CAROUSEL -->
             <div id="featureCarousel"
-                class="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory
-            px-4 md:px-0
-            [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                class="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 <?php foreach ($featuredProductsVideo as $video): ?>
 
                     <!-- CARD -->
                     <div class="snap-center shrink-0
-                    w-[80%]
+                    w-[72%]
                     sm:w-[55%]
                     md:w-[38%]
                     lg:w-[26%]
