@@ -16,7 +16,6 @@ $data = $checkout->checkoutData((int) current_user()['id']);
 $pageTitle = 'Checkout';
 require __DIR__ . '/layout/header.php';
 ?>
-
 <main class="mt-28 mx-auto max-w-7xl px-4 py-8">
     <h1 class="mb-8 text-2xl font-bold text-black-medium md:text-3xl">Checkout</h1>
 
@@ -27,13 +26,7 @@ require __DIR__ . '/layout/header.php';
                 <div class="mt-4 grid gap-4 md:grid-cols-2">
                     <?php foreach ($data['addresses'] as $address): ?>
                         <label class="relative cursor-pointer rounded-xl border bg-white-dark p-4 transition hover:border-primary-medium">
-                            <input type="radio"
-                                name="address_id"
-                                value="<?= (int) $address['id']; ?>"
-                                form="checkout-form"
-                                class="peer hidden outline-none"
-                                <?= !empty($address['is_default']) ? 'checked' : ''; ?>>
-
+                            <input type="radio" name="address_id" value="<?= (int) $address['id']; ?>" form="checkout-form" class="peer hidden outline-none" <?= !empty($address['is_default']) ? 'checked' : ''; ?>>
                             <div class="space-y-2">
                                 <div class="flex justify-between">
                                     <span class="text-sm font-semibold"><?= e($address['full_name']); ?></span>
@@ -41,14 +34,8 @@ require __DIR__ . '/layout/header.php';
                                         <span class="rounded-full bg-green-100 px-2 py-1 text-xs text-green-600">Default</span>
                                     <?php endif; ?>
                                 </div>
-                                <p class="text-xs text-black-light">
-                                    <?= e($address['address_line']); ?>,
-                                    <?= e($address['city']); ?>,
-                                    <?= e($address['state']); ?> -
-                                    <?= e($address['pincode']); ?>
-                                </p>
+                                <p class="text-xs text-black-light"><?= e($address['address_line']); ?>, <?= e($address['city']); ?>, <?= e($address['state']); ?> - <?= e($address['pincode']); ?></p>
                             </div>
-
                             <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-medium"></div>
                         </label>
                     <?php endforeach; ?>
@@ -59,7 +46,6 @@ require __DIR__ . '/layout/header.php';
                 <h2 class="text-lg font-semibold text-black-medium">Add New Address</h2>
                 <form action="" method="post" class="mt-4 grid gap-3 text-sm text-black-medium md:grid-cols-2">
                     <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-
                     <input class="input rounded-lg border p-3 outline-none focus:border-white-medium" type="text" name="full_name" placeholder="Full Name" required>
                     <input class="input rounded-lg border p-3 outline-none focus:border-white-medium" type="text" name="phone" placeholder="Phone Number" required>
                     <textarea class="input rounded-lg border p-3 outline-none focus:border-white-medium md:col-span-2" name="address_line" rows="3" placeholder="Full Address" required></textarea>
@@ -67,16 +53,8 @@ require __DIR__ . '/layout/header.php';
                     <input class="input rounded-lg border p-3 outline-none focus:border-white-medium" type="text" name="state" placeholder="State" required>
                     <input class="input rounded-lg border p-3 outline-none focus:border-white-medium" type="text" name="pincode" placeholder="Pincode" required>
                     <input class="input rounded-lg border p-3 outline-none focus:border-white-medium" type="text" name="country" value="India">
-
-                    <label class="flex items-center gap-2 text-sm md:col-span-2">
-                        <input type="checkbox" name="is_default" value="1">
-                        Set as default
-                    </label>
-
-                    <button class="rounded-lg bg-primary-medium py-3 text-sm font-semibold text-white-dark transition hover:bg-primary-medium/90 md:col-span-2"
-                        type="submit" name="save_address">
-                        Save Address
-                    </button>
+                    <label class="flex items-center gap-2 text-sm md:col-span-2"><input type="checkbox" name="is_default" value="1"> Set as default</label>
+                    <button class="rounded-lg bg-primary-medium py-3 text-sm font-semibold text-white-dark transition hover:bg-primary-medium/90 md:col-span-2" type="submit" name="save_address">Save Address</button>
                 </form>
             </div>
         </section>
@@ -112,115 +90,51 @@ require __DIR__ . '/layout/header.php';
             </div>
 
             <div id="payment-note" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-                Cash on Delivery requires an online booking payment of <?= e(money((float) $data['cod_booking_amount'])); ?> first. The remaining amount is paid on delivery.
+                Cash on Delivery requires an online booking payment of <?= e(money((float) $data['cod_booking_amount'])); ?> via Pay0 first. The remaining amount is paid on delivery.
             </div>
 
-            <form id="checkout-form" action="<?= e(app_url('api/checkout.php')); ?>" method="post" class="mt-5 space-y-4">
+            <form id="checkout-form" action="<?= e(app_url('payment/create-order.php')); ?>" method="post" class="mt-5 space-y-4">
                 <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
 
                 <select name="payment_method" id="payment-method" class="w-full rounded border px-3 py-2 text-sm">
-                    <option value="cod">Cash on Delivery (<?= e(money((float) $data['cod_booking_amount'])); ?> booking payment)</option>
-                    <option value="razorpay">Razorpay (full payment)</option>
+                    <option value="cod">Cash on Delivery (<?= e(money((float) $data['cod_booking_amount'])); ?> booking payment via Pay0)</option>
+                    <option value="pay0">Pay0 (full payment)</option>
                 </select>
 
                 <button id="checkout-button" class="w-full rounded-lg bg-primary-medium px-5 py-3 text-sm font-semibold text-white-dark transition hover:bg-primary-medium/90">
-                    Pay <?= e(money((float) $data['cod_booking_amount'])); ?> & Book COD Order
+                    Continue to Pay0
                 </button>
             </form>
         </aside>
     </div>
 </main>
+<script>
+    const paymentMethod = document.getElementById('payment-method');
+    const paymentNote = document.getElementById('payment-note');
+    const checkoutButton = document.getElementById('checkout-button');
+    const codBookingAmount = <?= json_encode((float) $data['cod_booking_amount']); ?>;
+    const orderTotal = <?= json_encode((float) $data['total']); ?>;
 
-<?php if (RAZORPAY_KEY_ID !== ''): ?>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script>
-        const checkoutForm = document.getElementById('checkout-form');
-        const paymentMethod = document.getElementById('payment-method');
-        const paymentNote = document.getElementById('payment-note');
-        const checkoutButton = document.getElementById('checkout-button');
-        const codBookingAmount = <?= json_encode((float) $data['cod_booking_amount']); ?>;
-        const orderTotal = <?= json_encode((float) $data['total']); ?>;
+    function formatINR(amount) {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    }
 
-        function formatINR(amount) {
-            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    function syncPaymentCopy() {
+        if (!paymentMethod || !paymentNote || !checkoutButton) {
+            return;
         }
 
-        function syncPaymentCopy() {
-            if (!paymentMethod || !paymentNote || !checkoutButton) {
-                return;
-            }
-
-            if (paymentMethod.value === 'cod') {
-                paymentNote.textContent = 'Cash on Delivery requires an online booking payment of ' + formatINR(codBookingAmount) + ' first. The remaining amount is paid on delivery.';
-                checkoutButton.textContent = 'Pay ' + formatINR(codBookingAmount) + ' & Book COD Order';
-                return;
-            }
-
-            paymentNote.textContent = 'Razorpay will collect the full order amount online before the order is confirmed.';
-            checkoutButton.textContent = 'Pay ' + formatINR(orderTotal) + ' & Place Order';
+        if (paymentMethod.value === 'cod') {
+            paymentNote.textContent = 'Cash on Delivery requires an online booking payment of ' + formatINR(codBookingAmount) + ' via Pay0 first. The remaining amount is paid on delivery.';
+            checkoutButton.textContent = 'Pay ' + formatINR(codBookingAmount) + ' via Pay0 & Book COD Order';
+            return;
         }
 
-        paymentMethod?.addEventListener('change', syncPaymentCopy);
-        syncPaymentCopy();
+        paymentNote.textContent = 'You will be redirected to Pay0 to complete the full order payment securely.';
+        checkoutButton.textContent = 'Pay ' + formatINR(orderTotal) + ' via Pay0';
+    }
 
-        checkoutForm?.addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const form = event.currentTarget;
-            const res = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: new FormData(form)
-            });
-
-            const data = await res.json();
-
-            if (!data.ok) {
-                alert(data.message || 'Payment failed');
-                return;
-            }
-
-            const isCod = data.payment_method === 'cod';
-            const rzp = new Razorpay({
-                key: data.key,
-                amount: data.razorpay_order.amount,
-                currency: data.razorpay_order.currency,
-                name: '<?= e(APP_NAME); ?>',
-                description: isCod ? 'COD booking payment' : 'Full order payment',
-                order_id: data.razorpay_order.id,
-                handler: async function (res) {
-                    const verify = new FormData();
-                    verify.append('_token', form.querySelector('[name="_token"]').value);
-                    verify.append('razorpay_order_id', res.razorpay_order_id);
-                    verify.append('razorpay_payment_id', res.razorpay_payment_id);
-                    verify.append('razorpay_signature', res.razorpay_signature);
-
-                    const verifyRes = await fetch('<?= e(app_url('api/razorpay_verify.php')); ?>', {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: verify
-                    });
-
-                    const verifyData = await verifyRes.json();
-
-                    if (!verifyData.ok) {
-                        alert(verifyData.message || 'Verification failed');
-                        return;
-                    }
-
-                    window.location.href = '<?= e(app_url('user/orders.php?order_id=')); ?>' + verifyData.order_id;
-                }
-            });
-
-            rzp.open();
-        });
-    </script>
-<?php endif; ?>
-
+    paymentMethod?.addEventListener('change', syncPaymentCopy);
+    syncPaymentCopy();
+</script>
 <?php require __DIR__ . '/layout/footer.php'; ?>

@@ -6,9 +6,11 @@
 
             <!-- BRAND -->
             <div class="lg:col-span-2">
-                <h3 class="text-2xl font-semibold text-primary-medium">
-                    <?= e(APP_NAME); ?>
-                </h3>
+                <!-- LOGO -->
+                <img
+                    src="<?= e(asset_url('images/logo/logo.png')); ?>"
+                    alt="Watch Ecommerce"
+                    class="w-24">
 
                 <p class="mt-4 text-sm text-black-light leading-6 max-w-sm">
                     A premium watch storefront offering modern and classic timepieces.
@@ -24,15 +26,15 @@
 
             <!-- WATCH COLLECTION -->
             <div>
-                <h4 class="text-sm font-semibold text-black-light mb-4">Watch Collection</h4>
+                <h4 class="text-sm font-semibold text-black-medium mb-4">Watch Collection</h4>
 
-                <ul class="space-y-3 text-sm text-white-medium">
+                <ul class="space-y-3 text-sm text-black-medium">
 
                     <li class="flex flex-col space-y-3">
                         <?php foreach ($headerCategories as $navCategory): ?>
 
                             <a
-                                href="<?= e(app_url('shop.php?category=' . (int)$navCategory['id'])); ?>" class="text-nowrap text-white-medium hover:text-black-light">
+                                href="<?= e(app_url('shop.php?category=' . (int)$navCategory['id'])); ?>" class="text-nowrap hover:text-black-light">
 
                                 <?= e($navCategory['name']); ?> Watch's
 
@@ -53,9 +55,9 @@
 
             <!-- CUSTOMER SUPPORT -->
             <div>
-                <h4 class="text-sm font-semibold text-black-light mb-4">Customer Support</h4>
+                <h4 class="text-sm font-semibold text-black-medium mb-4">Customer Support</h4>
 
-                <ul class="space-y-3 text-sm text-white-medium">
+                <ul class="space-y-3 text-sm text-black-medium">
 
                     <li>
                         <a href="<?= e(app_url('contact.php')); ?>" class="hover:text-black-light">
@@ -87,11 +89,11 @@
 
             <!-- MY ACCOUNT -->
             <div>
-                <h4 class="text-sm font-semibold text-black-light mb-4">
+                <h4 class="text-sm font-semibold text-black-medium mb-4">
                     My Account
                 </h4>
 
-                <ul class="space-y-3 text-sm text-white-medium">
+                <ul class="space-y-3 text-sm text-black-medium">
 
                     <li>
                         <a href="<?= e(app_url('user/profile.php')); ?>" class="hover:text-black-light">
@@ -125,55 +127,43 @@
 
 
     <!-- DIVIDER -->
-    <div class="border-t-2 border-dashed border-white-medium"></div>
+    <div class="border-t border-dashed border-white-medium"></div>
 
 
     <!-- BOTTOM SECTION -->
-    <div class="mx-auto max-w-7xl py-10 px-4 md:px-0">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+    <div class="mx-auto max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-8 py-4 px-4 md:px-0">
 
-            <!-- LOGO -->
-            <img
-                src="<?= e(asset_url('images/logo/logo.png')); ?>"
-                alt="Watch Ecommerce"
-                class="w-24">
+        <!-- COPYRIGHT -->
+        <div class="text-center text-xs text-white-medium">
+            © <?= date("Y"); ?> <?= e(APP_NAME); ?>. All Rights Reserved.
+        </div>
 
-            <!-- COPYRIGHT -->
-            <div class="text-center text-xs text-white-medium">
-                © <?= date("Y"); ?> <?= e(APP_NAME); ?>. All Rights Reserved.
-            </div>
+        <!-- SOCIAL -->
+        <div class="flex items-center gap-4">
 
-            <!-- SOCIAL -->
-            <div class="flex items-center gap-4">
+            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-pink-100 transition">
+                <i class="fab fa-instagram text-black-light group-hover:text-pink-500"></i>
+            </a>
 
-                <a href="https://www.instagram.com/bigbrandsindia" target="_blank">
-                    <i data-lucide="instagram" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
-                </a>
+            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-blue-100 transition">
+                <i class="fab fa-facebook-f text-black-light group-hover:text-blue-600"></i>
+            </a>
 
-                <a href="https://www.facebook.com/bigbrandsindia" target="_blank">
-                    <i data-lucide="facebook" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
-                </a>
+            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-gray-200 transition">
+                <i class="fab fa-twitter text-black-light group-hover:text-black-medium"></i>
+            </a>
 
-                <a href="https://twitter.com/bigbrandsindia" target="_blank">
-                    <i data-lucide="twitter" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
-                </a>
-
-                <a href="https://www.youtube.com/bigbrandsindia" target="_blank">
-                    <i data-lucide="youtube" class="w-5 h-5 text-black-light hover:text-primary-medium/80"></i>
-                </a>
-
-            </div>
+            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-red-100 transition">
+                <i class="fab fa-youtube text-black-light group-hover:text-red-500"></i>
+            </a>
 
         </div>
 
         <!-- PAYMENT METHODS -->
-        <div class="flex justify-center mt-6">
-
-            <div class="text-xs text-black-light flex items-center gap-2 text-center px-4 py-2 border rounded-full">
-                Secure Payments | UPI | Cards | Net Banking
-            </div>
-
+        <div class="text-xs text-black-light flex items-center gap-2 text-center px-4 py-2 border rounded-full">
+            Secure Payments | UPI | Cards | Net Banking
         </div>
+
 
     </div>
 

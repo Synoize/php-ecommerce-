@@ -4,28 +4,33 @@ declare(strict_types=1);
 
 class OrderModel extends BaseModel
 {
-    public function create(int $userId, int $addressId, array $cartItems, float $subtotal, ?array $coupon, string $paymentMethod, array $paymentMeta = []): int
-    {
+    public function createPendingPaymentOrder(
+        int $userId,
+        int $addressId,
+        array $cartItems,
+        float $subtotal,
+        ?array $coupon,
+        string $paymentMethod,
+        string $pay0OrderId
+    ): int {
         $discountAmount = $coupon ? round($subtotal * ((int) $coupon['discount_percent'] / 100), 2) : 0.0;
         $total = max(0, $subtotal - $discountAmount);
-        $status = (string) ($paymentMeta['initial_status'] ?? ($paymentMethod === 'cod' ? 'confirmed' : 'pending'));
-        $paymentStatus = (string) ($paymentMeta['initial_payment_status'] ?? 'pending');
 
         $this->pdo->beginTransaction();
 
         try {
             $stmt = $this->pdo->prepare(
-                'INSERT INTO orders (user_id, address_id, total_amount, status, payment_method, payment_status, razorpay_order_id)
-                 VALUES (:user_id, :address_id, :total_amount, :status, :payment_method, :payment_status, :razorpay_order_id)'
+                'INSERT INTO orders (user_id, address_id, total_amount, status, payment_method, payment_status, pay0_order_id)
+                 VALUES (:user_id, :address_id, :total_amount, :status, :payment_method, :payment_status, :pay0_order_id)'
             );
             $stmt->execute([
                 'user_id' => $userId,
                 'address_id' => $addressId,
                 'total_amount' => $total,
-                'status' => $status,
+                'status' => 'pending',
                 'payment_method' => $paymentMethod,
-                'payment_status' => $paymentStatus,
-                'razorpay_order_id' => $paymentMeta['razorpay_order_id'] ?? null,
+                'payment_status' => 'pending',
+                'pay0_order_id' => $pay0OrderId,
             ]);
             $orderId = (int) $this->pdo->lastInsertId();
 
@@ -37,9 +42,6 @@ class OrderModel extends BaseModel
                     :order_id, :product_id, :quantity, :price,
                     :box_option_id, :box_option_name, :box_option_price, :box_quantity
                  )'
-            );
-            $stockStmt = $this->pdo->prepare(
-                'UPDATE products SET stock = stock - :quantity WHERE id = :product_id AND stock >= :quantity'
             );
 
             foreach ($cartItems as $item) {
@@ -53,14 +55,6 @@ class OrderModel extends BaseModel
                     'box_option_price' => $item['box_price'] ?: null,
                     'box_quantity' => $item['box_quantity'] ?? 0,
                 ]);
-                $stockStmt->execute([
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                ]);
-
-                if ($stockStmt->rowCount() !== 1) {
-                    throw new RuntimeException($item['name'] . ' is no longer available in the requested quantity.');
-                }
             }
 
             if ($coupon) {
@@ -81,6 +75,105 @@ class OrderModel extends BaseModel
             $this->pdo->rollBack();
             throw $e;
         }
+    }
+
+    public function deletePendingForUser(int $orderId, int $userId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'DELETE FROM orders
+             WHERE id = :id AND user_id = :user_id AND status = :status AND payment_status = :payment_status'
+        );
+        $stmt->execute([
+            'id' => $orderId,
+            'user_id' => $userId,
+            'status' => 'pending',
+            'payment_status' => 'pending',
+        ]);
+    }
+
+    public function findByPay0OrderId(string $pay0OrderId): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM orders WHERE pay0_order_id = :pay0_order_id LIMIT 1'
+        );
+        $stmt->execute(['pay0_order_id' => $pay0OrderId]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function finalizePay0Success(string $pay0OrderId, string $txnId): array
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $orderStmt = $this->pdo->prepare(
+                'SELECT * FROM orders WHERE pay0_order_id = :pay0_order_id LIMIT 1 FOR UPDATE'
+            );
+            $orderStmt->execute(['pay0_order_id' => $pay0OrderId]);
+            $order = $orderStmt->fetch();
+
+            if (!$order) {
+                throw new RuntimeException('Order not found.');
+            }
+
+            $alreadyFinalized = (string) ($order['pay0_txn_id'] ?? '') !== '';
+            if (!$alreadyFinalized) {
+                $items = $this->items((int) $order['id']);
+                $stockStmt = $this->pdo->prepare(
+                    'UPDATE products SET stock = stock - :quantity WHERE id = :product_id AND stock >= :quantity'
+                );
+
+                foreach ($items as $item) {
+                    $stockStmt->execute([
+                        'product_id' => $item['product_id'],
+                        'quantity' => $item['quantity'],
+                    ]);
+
+                    if ($stockStmt->rowCount() !== 1) {
+                        throw new RuntimeException($item['name'] . ' is no longer available in the requested quantity.');
+                    }
+                }
+
+                $paymentStatus = (string) $order['payment_method'] === 'cod' ? 'pending' : 'paid';
+                $updateStmt = $this->pdo->prepare(
+                    'UPDATE orders
+                     SET payment_status = :payment_status, status = :status, pay0_txn_id = :pay0_txn_id
+                     WHERE id = :id'
+                );
+                $updateStmt->execute([
+                    'id' => $order['id'],
+                    'payment_status' => $paymentStatus,
+                    'status' => 'confirmed',
+                    'pay0_txn_id' => $txnId,
+                ]);
+                $order['payment_status'] = $paymentStatus;
+                $order['status'] = 'confirmed';
+                $order['pay0_txn_id'] = $txnId;
+            }
+
+            $this->pdo->commit();
+
+            return [
+                'order_id' => (int) $order['id'],
+                'payment_method' => (string) $order['payment_method'],
+                'total_amount' => (float) $order['total_amount'],
+                'already_finalized' => $alreadyFinalized,
+            ];
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public function markPaymentFailedByPay0OrderId(string $pay0OrderId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE orders SET payment_status = :payment_status WHERE pay0_order_id = :pay0_order_id AND payment_status = :current_status'
+        );
+        $stmt->execute([
+            'payment_status' => 'failed',
+            'pay0_order_id' => $pay0OrderId,
+            'current_status' => 'pending',
+        ]);
     }
 
     public function forUser(int $userId): array
@@ -180,36 +273,6 @@ class OrderModel extends BaseModel
             'UPDATE orders SET status = :status, payment_status = :payment_status WHERE id = :id'
         );
         $stmt->execute(['id' => $orderId, 'status' => $status, 'payment_status' => $paymentStatus]);
-    }
-
-    public function markPaid(int $orderId, string $razorpayPaymentId): void
-    {
-        $stmt = $this->pdo->prepare(
-            'UPDATE orders
-             SET payment_status = :payment_status, status = :status, razorpay_payment_id = :razorpay_payment_id
-             WHERE id = :id'
-        );
-        $stmt->execute([
-            'id' => $orderId,
-            'payment_status' => 'paid',
-            'status' => 'confirmed',
-            'razorpay_payment_id' => $razorpayPaymentId,
-        ]);
-    }
-
-    public function markCodAdvancePaid(int $orderId, string $razorpayPaymentId): void
-    {
-        $stmt = $this->pdo->prepare(
-            'UPDATE orders
-             SET payment_status = :payment_status, status = :status, razorpay_payment_id = :razorpay_payment_id
-             WHERE id = :id'
-        );
-        $stmt->execute([
-            'id' => $orderId,
-            'payment_status' => 'pending',
-            'status' => 'confirmed',
-            'razorpay_payment_id' => $razorpayPaymentId,
-        ]);
     }
 
     public function dashboardStats(): array

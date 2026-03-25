@@ -15,7 +15,7 @@ if (is_post()) {
 $pageTitle = 'Register';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mt-28 mx-auto max-w-md px-4 py-12">
+<main class="mt-28 mx-auto max-w-md min-h-[calc(100vh-112px)] px-8 py-12">
 
     <div class="md:bg-white-light/20 md:border md:p-8">
 

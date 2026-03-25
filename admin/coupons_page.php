@@ -14,7 +14,7 @@ if (is_post()) {
         $couponModel->save($_POST, isset($_POST['id']) && $_POST['id'] !== '' ? (int) $_POST['id'] : null);
         set_flash('success', 'Coupon saved.');
     }
-    redirect('admin/coupons.php');
+    redirect('admin/coupons_page.php');
 }
 
 $coupons = $couponModel->all();
@@ -48,7 +48,7 @@ require __DIR__ . '/partials/header.php';
                         <td class="py-3"><?= e((string) $coupon['valid_from']); ?> to <?= e((string) $coupon['valid_to']); ?></td>
                         <td class="py-3"><?= (int) $coupon['is_active'] === 1 ? 'Active' : 'Inactive'; ?></td>
                         <td class="py-3">
-                            <a class="text-sky-600" href="<?= e(app_url('admin/coupons.php?id=' . (int) $coupon['id'])); ?>">Edit</a>
+                            <a class="text-sky-600" href="<?= e(app_url('admin/coupons_page.php?id=' . (int) $coupon['id'])); ?>">Edit</a>
                             <form action="" method="post" class="inline">
                                 <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
                                 <input type="hidden" name="delete_id" value="<?= (int) $coupon['id']; ?>">
@@ -63,4 +63,3 @@ require __DIR__ . '/partials/header.php';
     </div>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
-

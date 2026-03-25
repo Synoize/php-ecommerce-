@@ -7,7 +7,7 @@ if (is_post()) {
     verify_csrf();
     $reviewModel->delete((int) ($_POST['review_id'] ?? 0));
     set_flash('success', 'Review deleted.');
-    redirect('admin/reviews.php');
+    redirect('admin/reviews_page.php');
 }
 
 $reviews = $reviewModel->all();

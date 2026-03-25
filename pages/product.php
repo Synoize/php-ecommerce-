@@ -152,7 +152,7 @@ require __DIR__ . '/layout/header.php';
                 <p class="mt-6 text-sm leading-7 text-black-light"><?= nl2br(e((string) $product['description'])); ?></p>
 
                 <div id="live-activity"
-                    class="mt-4 text-sm text-red-500 font-medium transition-opacity duration-500">
+                    class="mt-4 text-sm text-primary-medium font-medium transition-opacity duration-500">
                 </div>
                 <script>
                     document.addEventListener("DOMContentLoaded", () => {
@@ -434,7 +434,7 @@ require __DIR__ . '/layout/header.php';
                     </div>
                     <div>
                         <span class="mx-auto flex h-14 w-14 md:h-20 md:w-20 items-center justify-center rounded-full text-primary-medium/80 bg-white-light/40">
-                            <i data-lucide="dollar-sign"></i></span>
+                            <i data-lucide="indian-rupee"></i></span>
                         <div class="mt-2 font-medium">Cash On Delivery</div>
                     </div>
                 </div>

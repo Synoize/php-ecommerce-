@@ -45,7 +45,7 @@ if ($slides === []) {
     ];
 }
 
-$pageTitle = 'Watch Ecommerce | Home';
+$pageTitle = APP_NAME . " INDIA";
 $pageDescription = 'Shop premium watches with category filtering, reviews, wishlist, cart, and secure checkout.';
 require __DIR__ . '/layout/header.php';
 ?>
@@ -188,46 +188,48 @@ require __DIR__ . '/layout/header.php';
     </script>
 
     <!-- Categories -->
-    <section class="mx-auto flex max-w-7xl items-center justify-start gap-3 overflow-x-auto px-4 md:px-0 py-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:gap-8 md:py-20">
-        <!-- <div class="relative flex h-[80px] w-[80px] shrink-0 items-center justify-center md:h-[260px] md:w-[260px]">
-            <iframe
-                src="https://lottie.host/embed/f6933fd2-3012-489e-8a56-8576e6e9501f/CYg29mu74N.lottie"
-                class="absolute inset-0 h-full w-full pointer-events-none"></iframe>
+    <section class="mx-auto flex flex-col max-w-7xl gap-3 py-8 md:py-12">
+        <!-- Heading -->
+        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
+            Explore Collection's
+        </h2>
 
-            <a href="<?= e(app_url('categories.php')); ?>" class="relative text-center text-[10px] font-extrabold leading-tight text-white-dark md:text-3xl">
-                NEW <br> LAUNCH
-            </a>
-        </div> -->
-
-        <div class="group min-w-[70px] max-w-[90px] h-24 md:h-64 shrink-0 flex-col items-center md:min-w-[200px] md:max-w-[220px]">
-            <div class="flex w-full h-full items-center justify-center overflow-hidden rounded-full border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition shadow-inner">
-                <a href="<?= e(app_url('categories.php')); ?>" class="relative text-center text-[10px] font-bold text-transparent [-webkit-text-stroke:0.5px_#0065a4] leading-tight text-primary-medium md:text-3xl">
-                    NEW <br> LAUNCH
-                </a>
-            </div>
-        </div>
-
-        <?php foreach ($featuredCategories as $category): ?>
-            <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>" class="group min-w-[70px] max-w-[90px] shrink-0 flex-col items-center md:min-w-[180px] md:max-w-[220px]">
-                <div class="flex w-full items-center justify-center overflow-hidden rounded-t-[1.5rem] border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition md:rounded-t-[4rem]">
-                    <img
-                        src="<?= e(upload_url((string) $category['image'])); ?>"
-                        alt="<?= e($category['name']); ?>"
-                        class="h-20 w-full object-contain p-2 transition duration-300 group-hover:scale-105 md:h-60 md:p-8"
-                        loading="lazy">
+        <div class="flex justify-start mt-4 md:mt-10 px-4 md:px-0 gap-3 md:gap-8 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div class="group min-w-[74px] max-w-[90px] h-26 md:h-72 shrink-0 flex-col items-center md:min-w-[200px] md:max-w-[220px]">
+                <div class="flex w-full h-full items-center justify-center overflow-hidden rounded-full border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition shadow-inner">
+                    <a href="<?= e(app_url('categories.php')); ?>" class="relative text-center text-xs font-bold text-transparent [-webkit-text-stroke:0.4px_#0065a4] leading-tight text-primary-medium md:text-3xl">
+                        NEW <br> LAUNCH
+                    </a>
                 </div>
+            </div>
 
-                <p class="mt-2 text-center text-xs text-black-medium md:text-sm">
-                    <?= e($category['name']); ?>
-                </p>
-            </a>
-        <?php endforeach; ?>
+            <?php foreach ($featuredCategories as $category): ?>
+                <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>" class="group min-w-[70px] max-w-[90px] shrink-0 flex-col items-center md:min-w-[180px] md:max-w-[220px] ">
+                    <div class="flex w-full items-center justify-center overflow-hidden rounded-t-[1.5rem] border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition md:rounded-t-[4rem]">
+                        <img
+                            src="<?= e(upload_url((string) $category['image'])); ?>"
+                            alt="<?= e($category['name']); ?>"
+                            class="h-20 w-full object-contain p-2 transition duration-300 group-hover:scale-105 md:h-60 md:p-8"
+                            loading="lazy">
+                    </div>
+
+                    <p class="p-1 md:p-3 text-center text-[10px] text-black-medium md:text-sm border border-t-0 border-primary-medium/40">
+                        <?= e($category['name']); ?>
+                    </p>
+                </a>
+            <?php endforeach; ?>
+        </div>
     </section>
 
     <!-- Featured Products Video -->
     <section class="mx-auto max-w-7xl pb-8 pt-4 md:pb-12 overflow-hidden">
 
-        <div class="relative">
+        <!-- Heading -->
+        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
+            Watch UGC's & Buy
+        </h2>
+
+        <div class="relative mt-10">
 
             <!-- CAROUSEL -->
             <div id="featureCarousel"
@@ -406,7 +408,7 @@ require __DIR__ . '/layout/header.php';
         </div>
 
         <div class="my-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            <?php foreach (array_slice($featuredProducts, 0, 6) as $product): ?>
+            <?php foreach (array_slice($featuredProducts, 0, 12) as $product): ?>
                 <div class="group overflow-hidden">
                     <div class="relative overflow-hidden rounded-lg bg-white-light/40">
 
@@ -548,7 +550,7 @@ require __DIR__ . '/layout/header.php';
     <section class="mx-auto max-w-7xl py-10 md:py-20 overflow-hidden">
 
         <!-- Heading -->
-        <div class="px-4 md:px-0">
+        <div class="px-4 md:px-0 text-center md:text-left">
             <p class="text-sm uppercase tracking-wider text-black-light">
                 Client's Review
             </p>
@@ -679,14 +681,18 @@ require __DIR__ . '/layout/header.php';
     </script>
 
     <!-- Process Scripts -->
-    <section class="py-6 md:pt-10 pb-20 max-w-7xl mx-auto px-4">
+    <section class="pt-4 md:pt-0 pb-20 max-w-7xl mx-auto px-4">
+        <!-- Heading -->
+        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
+            Our Service Process
+        </h2>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
+        <div class="mt-10 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
 
             <!-- Item 1 -->
             <div class="flex flex-col items-center gap-3 group">
-                <div class="w-14 h-14 flex items-center justify-center transition">
-                    <i data-lucide="truck" class="w-12 h-12 text-black-medium"></i>
+                <div class="flex items-center justify-center transition">
+                    <i data-lucide="truck" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
                 </div>
                 <p class="text-sm md:text-base font-medium text-black-light">
                     Free Delivery
@@ -695,8 +701,8 @@ require __DIR__ . '/layout/header.php';
 
             <!-- Item 2 -->
             <div class="flex flex-col items-center gap-3 group">
-                <div class="w-14 h-14 flex items-center justify-center transition">
-                    <i data-lucide="refresh-ccw" class="w-12 h-12 text-black-medium"></i>
+                <div class="flex items-center justify-center transition">
+                    <i data-lucide="refresh-ccw" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
                 </div>
                 <p class="text-sm md:text-base font-medium text-black-light">
                     7 days replace / exchange
@@ -705,8 +711,8 @@ require __DIR__ . '/layout/header.php';
 
             <!-- Item 3 -->
             <div class="flex flex-col items-center gap-3 group">
-                <div class="w-14 h-14 flex items-center justify-center rounded-full transition">
-                    <i data-lucide="shield-check" class="w-12 h-12 text-black-medium"></i>
+                <div class="flex items-center justify-center transition">
+                    <i data-lucide="shield-check" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
                 </div>
                 <p class="text-sm md:text-base font-medium text-black-light">
                     Secure Checkout

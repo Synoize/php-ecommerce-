@@ -10,7 +10,7 @@ $flash = get_flash();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($pageTitle ?? APP_NAME); ?></title>
+    <title><?= e($pageTitle); ?></title>
     <meta name="description" content="<?= e($pageDescription ?? 'Luxury and everyday watches with secure checkout and admin tooling.'); ?>">
     <link rel="icon" href="<?= e(asset_url('images/logo/favicon.svg')); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,9 +61,7 @@ $flash = get_flash();
         <div id="topPromoBar"
             class="bg-primary-medium text-white-dark text-xs transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-h-10">
 
-            <div id="promo-activity" class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center transition-opacity duration-500">
-                Free Gifts on orders above <span class="font-semibold ml-1">₹1499</span>
-            </div>
+            <div id="promo-activity" class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center transition-opacity duration-500"></div>
 
         </div>
         <script>
@@ -132,24 +130,20 @@ $flash = get_flash();
                 <!-- DESKTOP NAVIGATION -->
                 <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-black-medium">
 
-                    <a href="<?= e(app_url()); ?>" class="hover:text-white-medium">
+                    <a href="<?= e(app_url()); ?>" class="hover:text-black-light">
                         Home
                     </a>
 
-                    <a href="<?= e(app_url('shop.php')); ?>" class="hover:text-white-medium">
+                    <a href="<?= e(app_url('shop.php')); ?>" class="hover:text-black-light">
                         Collection
                     </a>
-
-                    <!-- <a href="<?= e(app_url('categories.php')); ?>" class="hover:text-white-medium">
-                        Categories
-                    </a> -->
 
                     <!-- CATEGORIES -->
                     <div class="space-x-4">
                         <?php foreach ($headerCategories as $navCategory): ?>
 
                             <a
-                                href="<?= e(app_url('shop.php?category=' . (int)$navCategory['id'])); ?>" class="text-nowrap text-white-medium ">
+                                href="<?= e(app_url('shop.php?category=' . (int)$navCategory['id'])); ?>" class="text-nowrap text-white-medium hover:text-primary-medium/80">
 
                                 <?= e($navCategory['name']); ?>
 
@@ -160,7 +154,7 @@ $flash = get_flash();
 
                 </nav>
 
-                
+
                 <!-- MOBILE MENU BUTTON -->
                 <button id="navToggle" class="lg:hidden text-black-light">
                     <i data-lucide="menu" class="w-6 h-6"></i>
@@ -175,7 +169,7 @@ $flash = get_flash();
 
                 </a>
 
-                
+
                 <!-- MOBILE CART BUTTON -->
                 <a href="<?= e(app_url('cart.php')); ?>"
                     class="relative text-black-medium hover:text-white-medium lg:hidden text-black-light">
@@ -272,7 +266,7 @@ $flash = get_flash();
                                     <div class="py-2 text-sm text-black-medium">
 
                                         <?php if (is_admin()): ?>
-                                            <a href="<?= e(app_url('admin/index.php')); ?>"
+                                            <a href="<?= e(app_url('admin/dashboard.php')); ?>"
                                                 class="flex items-center gap-2 px-4 py-2 hover:bg-white-light">
 
                                                 <i data-lucide="shield-user" class="w-4 h-4"></i>
@@ -408,7 +402,7 @@ $flash = get_flash();
 
                             <!-- HOME -->
                             <a href="<?= e(app_url()); ?>"
-                                class="flex items-center gap-3 hover:text-white-medium">
+                                class="flex items-center gap-3 hover:text-black-light">
 
                                 <i data-lucide="home" class="w-5 h-5 text-black-light"></i>
                                 Home
@@ -421,7 +415,7 @@ $flash = get_flash();
                             <div>
 
                                 <button id="mobileCollectionBtn"
-                                    class="flex items-center justify-between w-full hover:text-white-medium">
+                                    class="flex items-center justify-between w-full hover:text-black-light">
 
                                     <span class="flex items-center gap-3">
 
@@ -443,7 +437,7 @@ $flash = get_flash();
                                 <div id="mobileCollectionMenu"
                                     class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
 
-                                    <div class="py-3 pl-8 space-y-3 text-black-light">
+                                    <div class="pt-3 pl-8 space-y-3 text-black-light">
 
                                         <?php foreach ($headerCategories as $navCategory): ?>
 
@@ -512,7 +506,7 @@ $flash = get_flash();
 
                             <!-- ADMIN DASHBOARD -->
                             <?php if (is_admin()): ?>
-                                <a href="<?= e(app_url('admin/index.php')); ?>"
+                                <a href="<?= e(app_url('admin/dashboard.php')); ?>"
                                     class="flex items-center gap-3 hover:text-white-medium">
 
                                     <i data-lucide="shield-user" class="text-black-light w-5 h-5"></i>
@@ -725,6 +719,9 @@ $flash = get_flash();
         // Initialize Lucide Icons
         lucide.createIcons();
     </script>
+
+    <?php require __DIR__ . '/../../includes/floating-icons.php'; ?>
+
 
     <?php if ($flash): ?>
         <div id="flashWrapper" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50">

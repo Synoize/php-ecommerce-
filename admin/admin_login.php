@@ -1,34 +1,44 @@
 <?php
 require_once __DIR__ . '/../config/bootstrap.php';
 
+if (is_logged_in() && current_user()['role'] === 'admin') {
+    redirect('admin/dashboard.php');
+}
+
 if (is_post()) {
     verify_csrf();
-    $result = (new AuthController())->login($_POST);
-    if ($result['ok'] && is_admin()) {
-        redirect('admin/index.php');
+    if ((new AuthController())->login($_POST)) {
+        redirect('admin/admin_login.php');
     }
-
-    (new AuthController())->logout();
-    set_flash('error', 'Admin credentials required.');
-    redirect('admin/admin_login.php');
 }
+
+$pageTitle = 'Admin Login';
+require __DIR__ . '/../pages/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex min-h-screen items-center justify-center bg-slate-950 p-4">
-    <form action="" method="post" class="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-        <h1 class="text-3xl font-bold">Admin Login</h1>
-        <p class="mt-2 text-sm text-slate-500">Use the seeded `admin@demo.com` account from `database.sql`.</p>
-        <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-        <input class="mt-6 w-full rounded-2xl border border-slate-200 px-4 py-3" type="email" name="email" placeholder="Email" required>
-        <input class="mt-4 w-full rounded-2xl border border-slate-200 px-4 py-3" type="password" name="password" placeholder="Password" required>
-        <button class="mt-6 w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Login</button>
-    </form>
-</body>
-</html>
+<main class="mx-auto mt-28 max-w-md min-h-[calc(100vh-112px)] px-4 py-12">
+    <div class="rounded-3xl bg-white p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em] text-white-medium">Secure Area</p>
+                <h1 class="mt-3 text-3xl font-semibold text-black-medium">Admin login</h1>
+                <p class="mt-2 text-sm text-black-light">Sign in with an administrator account.</p>
+            </div>
+            <div class="rounded-full border border-primary-medium p-3 text-primary-medium">
+                <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+        </div>
+        <form action="" method="post" class="mt-8 space-y-5">
+            <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+            <div>
+                <label class="mb-2 block text-sm font-medium text-black-light">Email</label>
+                <input type="email" name="email" class="w-full border px-4 py-3 outline-none transition focus:border-white-medium" placeholder="admin@gmail.com" required>
+            </div>
+            <div>
+                <label class="mb-2 block text-sm font-medium text-black-light">Password</label>
+                <input type="password" name="password" class="w-full border px-4 py-3 outline-none transition focus:border-white-medium" placeholder="admin123" required>
+            </div>
+            <button type="submit" class="w-full bg-primary-medium px-5 py-3 text-white-dark transition hover:bg-primary-medium/90">Login to admin</button>
+        </form>
+    </div>
+</main>
+<?php require __DIR__ . '/../pages/layout/footer.php'; ?>

@@ -15,8 +15,8 @@ if (is_post()) {
 $pageTitle = 'Login';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mt-28 mx-auto max-w-md px-4 py-12">
-    <div class="border md:bg-white-light/20 md:p-8">
+<main class="mt-28 mx-auto max-w-md min-h-[calc(100vh-112px)] px-8 py-12">
+    <div class="md:border md:bg-white-light/20 md:p-8">
         <div class="text-center">
             <h1 class="text-2xl font-semibold text-primary-medium">Login to Your Account</h1>
             <p class="mt-2 text-sm text-black-light">Welcome back! Please enter your details.</p>

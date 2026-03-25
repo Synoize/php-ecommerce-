@@ -5,8 +5,8 @@ $categories = (new CategoryModel())->all();
 $pageTitle = 'Watch Categories';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mx-auto max-w-7xl px-4 py-12">
-    <h1 class="font-display text-4xl font-bold">Watch categories</h1>
+<main class="mt-28 mx-auto max-w-7xl px-4 py-12">
+    <h1 class="text-2xl md:text-3xl font-bold">Watch categories</h1>
     <p class="mt-3 max-w-2xl text-slate-600">Browse category-based collections and jump straight into filtered product listings.</p>
     <div class="mt-10 grid gap-6 md:grid-cols-3 xl:grid-cols-4">
         <?php foreach ($categories as $category): ?>

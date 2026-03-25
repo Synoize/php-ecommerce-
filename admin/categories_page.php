@@ -14,7 +14,7 @@ if (is_post()) {
         $categoryModel->save($_POST, isset($_POST['id']) && $_POST['id'] !== '' ? (int) $_POST['id'] : null);
         set_flash('success', 'Category saved.');
     }
-    redirect('admin/categories.php');
+    redirect('admin/categories_page.php');
 }
 
 $categories = $categoryModel->all();
@@ -45,7 +45,7 @@ require __DIR__ . '/partials/header.php';
                         </div>
                     </div>
                     <div class="flex items-center gap-3 text-sm">
-                        <a class="text-sky-600" href="<?= e(app_url('admin/categories.php?id=' . (int) $category['id'])); ?>">Edit</a>
+                        <a class="text-sky-600" href="<?= e(app_url('admin/categories_page.php?id=' . (int) $category['id'])); ?>">Edit</a>
                         <form action="" method="post" onsubmit="return confirm('Delete category?')">
                             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
                             <input type="hidden" name="delete_id" value="<?= (int) $category['id']; ?>">
