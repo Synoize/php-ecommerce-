@@ -33,17 +33,11 @@ $defaultBox = $boxOptions[0] ?? null;
 $pageTitle = $product['name'] . ' | Watch Ecommerce';
 require __DIR__ . '/layout/header.php';
 ?>
-<main class="mt-28 mx-auto max-w-7xl px-4 py-10">
-    <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
+<main class="mt-28 mx-auto max-w-7xl px-4 pt-6 py-12 md:pt-12">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-start">
         <section>
-            <div class="flex gap-4">
-                <div class="flex flex-col gap-4">
-                    <?php foreach ($product['images'] as $image): ?>
-                        <button type="button" class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40" data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
-                            <img src="<?= e(upload_url((string) $image['image_url'])); ?>" alt="" class="h-12 w-28 object-contain md:h-20" loading="lazy">
-                        </button>
-                    <?php endforeach; ?>
-                </div>
+            <div class="flex flex-col md:flex-row gap-4">
+                
                 <div class="relative overflow-hidden md:p-4 border bg-white-light/20">
                     <img id="main-product-image" src="<?= e(upload_url((string) $product['images'][0]['image_url'])); ?>" alt="<?= e($product['name']); ?>" class="h-[300px] w-full object-contain md:h-[400px]">
 
@@ -59,6 +53,13 @@ require __DIR__ . '/layout/header.php';
                             <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
                         </button>
                     </form>
+                </div>
+                <div class="flex flex-row md:flex-col gap-4">
+                    <?php foreach ($product['images'] as $image): ?>
+                        <button type="button" class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40" data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
+                            <img src="<?= e(upload_url((string) $image['image_url'])); ?>" alt="" class="h-12 w-28 object-contain md:h-20" loading="lazy">
+                        </button>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>
@@ -149,10 +150,8 @@ require __DIR__ . '/layout/header.php';
 
                 </div>
 
-                <p class="mt-6 text-sm leading-7 text-black-light"><?= nl2br(e((string) $product['description'])); ?></p>
-
                 <div id="live-activity"
-                    class="mt-4 text-sm text-primary-medium font-medium transition-opacity duration-500">
+                    class="mt-6 text-sm text-primary-medium font-medium transition-opacity duration-500">
                 </div>
                 <script>
                     document.addEventListener("DOMContentLoaded", () => {
@@ -194,7 +193,7 @@ require __DIR__ . '/layout/header.php';
                 </script>
 
                 <?php if ($boxOptions !== []): ?>
-                    <div class="mt-8 border-t pt-6">
+                    <div class="mt-8 border-t pt-4">
                         <div class="text-2xl font-semibold text-black-medium">Buy with Box <span class="text-rose-500">*</span></div>
                         <div class="mt-4 grid gap-3 grid-cols-2">
                             <label class="flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium text-black-medium">

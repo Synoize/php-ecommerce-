@@ -46,6 +46,19 @@ $flash = get_flash();
                         sans: ['Manrope', 'sans-serif'],
                         display: ['Space Grotesk', 'sans-serif']
                     },
+                    animation: {
+                        marquee: 'marquee 15s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': {
+                                transform: 'translateX(0%)'
+                            },
+                            '100%': {
+                                transform: 'translateX(-50%)'
+                            },
+                        },
+                    },
                 }
             }
         };
@@ -57,12 +70,22 @@ $flash = get_flash();
 
     <header class="fixed top-0 left-0 w-full bg-white-dark border-b z-40">
 
-        <!-- PROMO BAR -->
-        <div id="topPromoBar"
-            class="bg-primary-medium text-white-dark text-xs transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-h-10">
+        <div id="topPromoBar" class="overflow-hidden bg-primary-dark text-white-dark group">
+            <div class="py-2 flex w-max animate-marquee group-hover:[animation-play-state:paused] text-xs sm:text-sm">
+                <span class="mx-8">🎁 Buy 1 Get 1 Free on T-Shirts</span>
+                <span class="mx-8">⚡ Limited Time Offer - Shop Now</span>
+                <span class="mx-8">🔥 Flat 50% OFF on all products</span>
+                <span class="mx-8">🚚 Free Delivery on orders above ₹499</span>
+                <span class="mx-8">🔴 IMPORTANT INFO (HIGH PRIORITY)</span>
+                <span class="mx-8">🚫 No Open Box Delivery Available</span>
 
-            <div id="promo-activity" class="mx-auto max-w-7xl px-4 h-8 flex justify-center items-center text-center transition-opacity duration-500"></div>
-
+                <span class="mx-8">🎁 Buy 1 Get 1 Free on T-Shirts</span>
+                <span class="mx-8">⚡ Limited Time Offer - Shop Now</span>
+                <span class="mx-8">🔥 Flat 50% OFF on all products</span>
+                <span class="mx-8">🚚 Free Delivery on orders above ₹499</span>
+                <span class="mx-8">🔴 IMPORTANT INFO (HIGH PRIORITY)</span>
+                <span class="mx-8">🚫 No Open Box Delivery Available</span>
+            </div>
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", () => {

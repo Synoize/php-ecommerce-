@@ -59,7 +59,7 @@ require __DIR__ . '/layout/header.php';
                         <?php if (($slide['type'] ?? 'image') === 'video'): ?>
                             <video
                                 src="<?= e(upload_url((string) $slide['file_path'])); ?>"
-                                class="h-[260px] w-full object-cover brightness-50 md:h-[calc(100vh-112px)]"
+                                class="h-[460px] w-full object-cover brightness-50 md:h-[calc(100vh-112px)]"
                                 autoplay
                                 muted
                                 loop></video>
@@ -67,11 +67,11 @@ require __DIR__ . '/layout/header.php';
                             <img
                                 src="<?= e(upload_url((string) $slide['file_path'])); ?>"
                                 alt="<?= e((string) $slide['title']); ?>"
-                                class="h-[260px] w-full object-cover brightness-50 md:h-[calc(100vh-112px)]">
+                                class="h-[460px] w-full object-cover brightness-50 md:h-[calc(100vh-112px)]">
                         <?php endif; ?>
 
                         <div class="absolute inset-0 flex items-center">
-                            <div class="flex h-full w-full flex-col justify-between px-6 py-10 md:px-32 md:py-20">
+                            <div class="flex h-full w-full flex-col justify-between px-10 py-14 md:px-32 md:py-20">
                                 <div class="max-w-3xl">
                                     <span class="inline-flex rounded-full bg-white-light px-4 py-2 text-xs text-black-light md:text-sm">Spring 2026 collection</span>
                                     <h2 class="mt-4 max-w-2xl text-2xl font-bold leading-tight text-white-dark md:mt-6 md:text-6xl">
@@ -98,14 +98,14 @@ require __DIR__ . '/layout/header.php';
                 <button
                     type="button"
                     onclick="prevSlide()"
-                    class="absolute left-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark md:h-12 md:w-12 md:text-xl">
+                    class="absolute left-4 top-1/2 z-10 hidden md:flex -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark h-10 w-10 md:text-xl">
                     &#8249;
                 </button>
 
                 <button
                     type="button"
                     onclick="nextSlide()"
-                    class="absolute right-4 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark md:h-12 md:w-12 md:text-xl">
+                    class="absolute right-4 top-1/2 z-10 hidden md:flex -translate-y-1/2 items-center justify-center rounded-full bg-white-dark/90 text-lg text-black-medium shadow-lg transition duration-300 hover:scale-105 hover:bg-white-dark h-10 w-10 md:text-xl">
                     &#8250;
                 </button>
 
@@ -188,13 +188,13 @@ require __DIR__ . '/layout/header.php';
     </script>
 
     <!-- Categories -->
-    <section class="mx-auto flex flex-col max-w-7xl gap-3 py-8 md:py-12">
+    <section class="mx-auto flex flex-col max-w-7xl gap-3 px-4 md:px-0 pt-8 md:pt-12">
         <!-- Heading -->
-        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
-            Explore Collection's
+        <h2 class="text-center text-xl md:text-3xl font-semibold text-primary-medium">
+            Expl<span class="relative inline-block">ore Collec<span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span></span>tion's
         </h2>
 
-        <div class="flex justify-start mt-4 md:mt-10 px-4 md:px-0 gap-3 md:gap-8 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <!-- <div class="flex justify-start mt-4 md:mt-10 px-4 md:px-0 gap-3 md:gap-8 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div class="group min-w-[74px] max-w-[90px] h-26 md:h-72 shrink-0 flex-col items-center md:min-w-[200px] md:max-w-[220px]">
                 <div class="flex w-full h-full items-center justify-center overflow-hidden rounded-full border border-primary-medium/40 bg-gradient-to-b from-[#0065a420] to-[#ff003320] transition shadow-inner">
                     <a href="<?= e(app_url('categories.php')); ?>" class="relative text-center text-xs font-bold text-transparent [-webkit-text-stroke:0.4px_#0065a4] leading-tight text-primary-medium md:text-3xl">
@@ -218,15 +218,33 @@ require __DIR__ . '/layout/header.php';
                     </p>
                 </a>
             <?php endforeach; ?>
+        </div> -->
+
+        <div class="my-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <?php foreach ($featuredCategories as $category): ?>
+                <div class="group overflow-hidden" style="border: 1px solid #ccc; border-radius: 15px;">
+                    <div class="relative overflow-hidden rounded-lg bg-white-light/40">
+                        <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>">
+                            <img src="<?= e(upload_url((string) $category['image'])); ?>" alt="<?= e($category['name']); ?>" class="h-36 md:h-44 w-full object-contain p-2 transition duration-500 group-hover:scale-105" loading="lazy" />
+                        </a>
+                    </div>
+                    <div class="py-1 px-2" style="background-color:#f1f1f1; text-align: center;">
+                        <h3 class="mt-1 line-clamp-2 text-xs md:text-sm font-medium text-black-medium">
+                            <?= e($category['name']); ?>
+                        </h3>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
         </div>
     </section>
 
     <!-- Featured Products Video -->
-    <section class="mx-auto max-w-7xl pb-8 pt-4 md:pb-12 overflow-hidden">
+    <section class="mx-auto max-w-7xl pt-4 pb-8 md:py-12 overflow-hidden">
 
         <!-- Heading -->
-        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
-            Watch UGC's & Buy
+        <h2 class="text-center text-xl md:text-3xl font-semibold text-primary-medium">
+            Watc<span class="relative inline-block">h UGC's &<span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span></span> Buy
         </h2>
 
         <div class="relative mt-10">
@@ -245,7 +263,7 @@ require __DIR__ . '/layout/header.php';
                     lg:w-[26%]
                     xl:w-[22%]">
 
-                        <div class="group relative rounded-3xl overflow-hidden
+                        <div class="group relative overflow-hidden
                         h-[320px] sm:h-[340px] md:h-[380px]
                         bg-white-light/40 cursor-pointer">
 
@@ -398,7 +416,9 @@ require __DIR__ . '/layout/header.php';
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wider text-black-light">Trending</p>
-                <h2 class="text-xl font-semibold text-primary-medium md:text-3xl">Featured Watches</h2>
+                <h2 class="text-xl md:text-3xl font-semibold text-primary-medium">
+                    <span class="relative inline-block">Featured <span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span></span> Watches
+                </h2>
             </div>
 
             <a href="<?= e(app_url('shop.php')); ?>" class="group flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition hover:bg-white-light/40">
@@ -522,8 +542,7 @@ require __DIR__ . '/layout/header.php';
     <!-- Banner -->
     <section class="mx-auto max-w-7xl px-4 pb-6 md:px-0 md:pb-0 md:pt-4">
 
-        <div class="mx-auto max-w-7xl px-[8%] 
-  bg-primary-medium rounded-xl md:rounded-3xl flex items-center justify-between overflow-hidden">
+        <div class="mx-auto max-w-7xl px-[8%] bg-primary-medium rounded-xl md:rounded-3xl flex items-center justify-between overflow-hidden">
 
             <!-- Text -->
             <div class="text-white-dark">
@@ -550,50 +569,42 @@ require __DIR__ . '/layout/header.php';
     <section class="mx-auto max-w-7xl py-10 md:py-20 overflow-hidden">
 
         <!-- Heading -->
-        <div class="px-4 md:px-0 text-center md:text-left">
-            <p class="text-sm uppercase tracking-wider text-black-light">
-                Client's Review
-            </p>
-
-            <h2 class="text-xl md:text-3xl font-semibold text-primary-medium">
-                Building trust through great work.
-            </h2>
-        </div>
+        <h2 class="text-center text-xl md:text-3xl font-semibold text-primary-medium">
+            Cli<span class="relative inline-block">ent's Rev
+                <span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span>
+            </span>iew
+        </h2>
 
         <!-- Carousel -->
         <div class="relative mt-10">
 
             <!-- Scroll Container -->
             <div id="reviewCarousel"
-                class="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory
+                class="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-proximity
             px-4 md:px-0
             [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 <?php
-                // Duplicate reviews for smooth infinite effect
                 $loopReviews = array_merge($clientsReview, $clientsReview);
                 foreach ($loopReviews as $review):
                 ?>
 
-                    <div
-                        class="snap-center shrink-0
-                    w-[80%]
+                    <div class="snap-center shrink-0
+                    w-[72%]
                     sm:w-[55%]
                     md:w-[38%]
                     lg:w-[26%]
                     xl:w-[22%]">
 
-                        <div class="relative rounded-xl overflow-hidden
-                        h-[360px] md:h-[380px]
+                        <div class="relative overflow-hidden
+                        h-[320px] sm:h-[340px] md:h-[380px]
                         bg-white-light/40 group">
 
-                            <!-- Image -->
                             <img
                                 src="<?= e(upload_url((string)$review)); ?>"
                                 class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
 
                         </div>
-
                     </div>
 
                 <?php endforeach; ?>
@@ -601,9 +612,8 @@ require __DIR__ . '/layout/header.php';
             </div>
 
             <!-- Left Arrow -->
-            <button
-                onclick="scrollCarousel(-1)"
-                class="absolute left-2 md:left-1 top-1/2 -translate-y-1/2 z-10
+            <button onclick="scrollReviewCarousel(-1)"
+                class="absolute left-2 md:left-1 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
             rounded-full bg-white-dark text-black-light hover:scale-105 transition">
 
@@ -611,9 +621,8 @@ require __DIR__ . '/layout/header.php';
             </button>
 
             <!-- Right Arrow -->
-            <button
-                onclick="scrollCarousel(1)"
-                class="absolute right-2 md:right-1 top-1/2 -translate-y-1/2 z-10
+            <button onclick="scrollReviewCarousel(1)"
+                class="absolute right-2 md:right-1 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
             rounded-full bg-white-dark text-black-light hover:scale-105 transition">
 
@@ -621,7 +630,6 @@ require __DIR__ . '/layout/header.php';
             </button>
 
         </div>
-
         <!-- See All -->
         <div class="flex items-center justify-center mt-8">
             <a href="<?= e(app_url('reviews.php')); ?>"
@@ -637,86 +645,253 @@ require __DIR__ . '/layout/header.php';
 
     </section>
     <script>
-        const carousel = document.getElementById('reviewCarousel');
+        document.addEventListener("DOMContentLoaded", () => {
 
-        let autoScroll;
-        const scrollStep = 300;
+            const carousel = document.getElementById('reviewCarousel');
+            if (!carousel) return;
 
-        function startAutoSlide() {
-            autoScroll = setInterval(() => {
+            let autoScroll;
+            let userInteracting = false;
+
+            function getScrollAmount() {
+                const firstCard = carousel.children[0];
+                if (!firstCard) return 300;
+
+                const style = window.getComputedStyle(carousel);
+                const gap = parseInt(style.gap) || 16;
+
+                return firstCard.offsetWidth + gap;
+            }
+
+            function startAutoSlide() {
+                if (userInteracting) return; // 🚫 don't start if user active
+
+                autoScroll = setInterval(() => {
+
+                    if (userInteracting) return; // extra safety
+
+                    const scrollAmount = getScrollAmount();
+
+                    carousel.scrollBy({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+
+                    if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
+                        carousel.scrollTo({
+                            left: 0,
+                            behavior: 'auto'
+                        });
+                    }
+
+                }, 5000); // slower
+            }
+
+            function stopAutoSlide() {
+                clearInterval(autoScroll);
+            }
+
+            // 👉 USER INTERACTION DETECTION
+            function setUserActive() {
+                userInteracting = true;
+                stopAutoSlide();
+            }
+
+            function setUserInactive() {
+                userInteracting = false;
+                setTimeout(startAutoSlide, 4000); // resume after delay
+            }
+
+            // 👉 BUTTON SCROLL
+            window.scrollReviewCarousel = function(direction) {
+                setUserActive();
+
+                const scrollAmount = getScrollAmount();
+
                 carousel.scrollBy({
-                    left: scrollStep,
+                    left: direction * scrollAmount,
                     behavior: 'smooth'
                 });
 
-                // Infinite loop reset
-                if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
-                    carousel.scrollTo({
-                        left: 0,
-                        behavior: 'auto'
-                    });
-                }
+                setUserInactive();
+            };
 
-            }, 2500);
-        }
+            // 👉 EVENTS
+            carousel.addEventListener('mouseenter', setUserActive);
+            carousel.addEventListener('mouseleave', setUserInactive);
 
-        function stopAutoSlide() {
-            clearInterval(autoScroll);
-        }
+            carousel.addEventListener('touchstart', setUserActive);
+            carousel.addEventListener('touchend', setUserInactive);
 
-        // Start autoplay
-        startAutoSlide();
+            carousel.addEventListener('scroll', setUserActive); // when user scrolls manually
 
-        // Pause on hover
-        carousel.addEventListener('mouseenter', stopAutoSlide);
-        carousel.addEventListener('mouseleave', startAutoSlide);
+            // START
+            startAutoSlide();
+        });
+    </script>
 
-        // Manual arrows
-        function scrollCarousel(direction) {
-            carousel.scrollBy({
-                left: direction * scrollStep,
-                behavior: 'smooth'
+    <!-- FAQ's -->
+    <section class="mx-auto max-w-4xl px-4 md:px-0 py-6 md:pt-0 md:pb-20">
+
+        <!-- Heading -->
+        <h2 class="text-center text-2xl md:text-3xl font-semibold text-primary-medium">
+            Frequently <span class="relative inline-block">Asked
+                <span class="absolute left-1/2 -translate-x-1/2 -bottom-2 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span>
+            </span> Questions
+        </h2>
+
+        <!-- FAQ Container -->
+        <div class="mt-10 space-y-4">
+
+            <!-- Item -->
+            <div class="faq-item border rounded-xl overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
+                    What services do you provide?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        We provide web development, app development, UI/UX design, and digital solutions tailored to your business needs.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="faq-item border rounded-xl overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
+                    How long does a project take?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        Project timelines vary based on complexity, but most projects are completed within 2–6 weeks.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="faq-item border rounded-xl overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
+                    Do you offer support after delivery?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        Yes, we provide ongoing support and maintenance services to ensure your product runs smoothly.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="faq-item border rounded-xl overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
+                    How can I get started?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        Simply contact us through our website or WhatsApp, and we’ll guide you through the process.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const items = document.querySelectorAll(".faq-item");
+
+            items.forEach(item => {
+                const btn = item.querySelector(".faq-btn");
+                const content = item.querySelector(".faq-content");
+                const icon = item.querySelector(".faq-icon");
+
+                btn.addEventListener("click", () => {
+
+                    const isOpen = content.style.maxHeight;
+
+                    // Close all
+                    document.querySelectorAll(".faq-content").forEach(c => c.style.maxHeight = null);
+                    document.querySelectorAll(".faq-icon").forEach(i => i.classList.remove("rotate-180"));
+
+                    // Open current
+                    if (!isOpen) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add("rotate-180");
+                    }
+
+                });
             });
-        }
+
+        });
     </script>
 
     <!-- Process Scripts -->
-    <section class="pt-4 md:pt-0 pb-20 max-w-7xl mx-auto px-4">
+    <section class="max-w-7xl mx-auto px-4 py-12 md:pt-0 md:pb-20">
         <!-- Heading -->
-        <h2 class="text-xl text-center px-4 md:px-0 md:text-3xl font-semibold text-primary-medium">
-            Our Service Process
+        <h2 class="text-center text-2xl md:text-3xl font-semibold text-primary-medium">
+            Our S<span class="relative inline-block">ervice Pr
+                <span class="absolute left-1/2 -translate-x-1/2 -bottom-2 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span>
+            </span>ocess
         </h2>
-
-        <div class="mt-10 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
+        <!-- Container -->
+        <div class=" mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
 
             <!-- Item 1 -->
-            <div class="flex flex-col items-center gap-3 group">
-                <div class="flex items-center justify-center transition">
-                    <i data-lucide="truck" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
+            <div class="group flex flex-col md:flex-row items-start gap-4 p-5 rounded-xl bg-white-light/40 backdrop-blur-md hover:shadow-lg transition">
+
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-medium/10 group-hover:bg-white-dark transition">
+                    <i data-lucide="truck" class="w-6 h-6 text-primary-medium group-hover:text-white transition"></i>
                 </div>
-                <p class="text-sm md:text-base font-medium text-black-light">
-                    Free Delivery
-                </p>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-black-light">DELIVERY IN 24H</h4>
+                    <p class="text-xs text-gray-500 mt-1">Free shipping over $100</p>
+                </div>
+
             </div>
 
             <!-- Item 2 -->
-            <div class="flex flex-col items-center gap-3 group">
-                <div class="flex items-center justify-center transition">
-                    <i data-lucide="refresh-ccw" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
+            <div class="group flex flex-col md:flex-row items-start gap-4 p-5 rounded-xl bg-white-light/40 backdrop-blur-md hover:shadow-lg transition">
+
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-medium/10 group-hover:bg-white-dark transition">
+                    <i data-lucide="rotate-ccw" class="w-6 h-6 text-primary-medium group-hover:text-white transition"></i>
                 </div>
-                <p class="text-sm md:text-base font-medium text-black-light">
-                    7 days replace / exchange
-                </p>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-black-light">24 HOURS RETURN</h4>
+                    <p class="text-xs text-gray-500 mt-1">Free return over $100</p>
+                </div>
+
             </div>
 
             <!-- Item 3 -->
-            <div class="flex flex-col items-center gap-3 group">
-                <div class="flex items-center justify-center transition">
-                    <i data-lucide="shield-check" class="w-10 h-10 md:w-14 md:h-14 text-white-medium"></i>
+            <div class="group flex flex-col md:flex-row items-start gap-4 p-5 rounded-xl bg-white-light/40 backdrop-blur-md hover:shadow-lg transition">
+
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-medium/10 group-hover:bg-white-dark transition">
+                    <i data-lucide="badge-check" class="w-6 h-6 text-primary-medium group-hover:text-white transition"></i>
                 </div>
-                <p class="text-sm md:text-base font-medium text-black-light">
-                    Secure Checkout
-                </p>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-black-light">QUALITY GUARANTEE</h4>
+                    <p class="text-xs text-gray-500 mt-1">Quality checked by our team</p>
+                </div>
+
+            </div>
+
+            <!-- Item 4 -->
+            <div class="group flex flex-col md:flex-row items-start gap-4 p-5 rounded-xl bg-white-light/40 backdrop-blur-md hover:shadow-lg transition">
+
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-medium/10 group-hover:bg-white-dark transition">
+                    <i data-lucide="headphones" class="w-6 h-6 text-primary-medium group-hover:text-white transition"></i>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-black-light">SUPPORT 24/7</h4>
+                    <p class="text-xs text-gray-500 mt-1">Shop with an expert</p>
+                </div>
+
             </div>
 
         </div>
