@@ -71,7 +71,7 @@ require __DIR__ . '/layout/header.php';
                         <?php endif; ?>
 
                         <div class="absolute inset-0 flex items-center">
-                            <div class="flex h-full w-full flex-col justify-between px-10 py-14 md:px-32 md:py-20">
+                            <div class="flex h-full w-full flex-col justify-between px-10 py-14 md:px-28 md:py-20">
                                 <div class="max-w-3xl">
                                     <span class="inline-flex rounded-full bg-white-light px-4 py-2 text-xs text-black-light md:text-sm">Spring 2026 collection</span>
                                     <h2 class="mt-4 max-w-2xl text-2xl font-bold leading-tight text-white-dark md:mt-6 md:text-6xl">
