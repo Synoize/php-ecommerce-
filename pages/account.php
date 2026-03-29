@@ -16,7 +16,7 @@ require __DIR__ . '/layout/header.php';
     </h1>
     
 
-    <div class="grid gap-6 lg:grid-cols-[280px,1fr]">
+    <div class="min-h-[calc(100vh-238px)] grid gap-6 lg:grid-cols-[280px,1fr]">
 
         <!-- SIDEBAR -->
         <aside class="md:sticky top-28 md:h-fit rounded-xl border bg-white-light/10 p-5 h-fit">
