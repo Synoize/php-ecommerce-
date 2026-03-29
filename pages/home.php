@@ -24,11 +24,11 @@ $userReview = $homepageMedia->userReviews();
 
 if ($featuredProductsVideo === []) {
     $featuredProductsVideo = [
-        "images/uploads/reviews/_01.mp4",
-        "images/uploads/reviews/_01.mp4",
-        "images/uploads/reviews/_01.mp4",
-        "images/uploads/reviews/_01.mp4",
-        "images/uploads/reviews/_01.mp4",
+        "images/uploads/ugcs/01-e11dc73db2c5.mp4",
+        "images/uploads/ugcs/01-e11dc73db2c5.mp4",
+        "images/uploads/ugcs/01-e11dc73db2c5.mp4",
+        "images/uploads/ugcs/01-e11dc73db2c5.mp4",
+        "images/uploads/ugcs/01-e11dc73db2c5.mp4",
     ];
 }
 
