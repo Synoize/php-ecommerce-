@@ -32,7 +32,7 @@ require __DIR__ . '/partials/header.php';
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="date" name="valid_from" value="<?= e((string) ($edit['valid_from'] ?? '')); ?>">
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="date" name="valid_to" value="<?= e((string) ($edit['valid_to'] ?? '')); ?>">
             <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" value="1" <?= !isset($edit['is_active']) || (int) $edit['is_active'] === 1 ? 'checked' : ''; ?>> Active</label>
-            <button class="w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Save coupon</button>
+            <button class="w-full rounded-full bg-primary-medium hover:bg-primary-medium/90 px-5 py-3 font-semibold text-white-dark" type="submit">Save coupon</button>
         </form>
     </div>
     <div class="rounded-3xl bg-white p-6 shadow">

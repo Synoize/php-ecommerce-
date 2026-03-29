@@ -37,32 +37,84 @@ require __DIR__ . '/layout/header.php';
     <div class="grid gap-6 lg:grid-cols-2 lg:items-start">
         <section>
             <div class="flex flex-col md:flex-row gap-4">
-                
-                <div class="relative overflow-hidden md:p-4 border bg-white-light/20">
-                    <img id="main-product-image" src="<?= e(upload_url((string) $product['images'][0]['image_url'])); ?>" alt="<?= e($product['name']); ?>" class="h-[300px] w-full object-contain md:h-[400px]">
 
-                    <!-- Wishlist -->
-                    <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
-                        <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-                        <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
-                        <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
-                        <button
-                            type="submit"
-                            class="rounded-full border p-2 transition bg-white-dark hover:scale-105 <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>"
-                            aria-label="<?= $wishlisted ? 'Remove from wishlist' : 'Add to wishlist'; ?>">
-                            <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
-                        </button>
-                    </form>
-                </div>
-                <div class="flex flex-row md:flex-col gap-4">
+                <!-- MOBILE SLIDER -->
+                <div class="md:hidden overflow-x-auto flex gap-4 snap-x snap-mandatory scroll-smooth 
+            [&::-webkit-scrollbar]:hidden 
+            [-ms-overflow-style:none] 
+            [scrollbar-width:none]">
                     <?php foreach ($product['images'] as $image): ?>
-                        <button type="button" class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40" data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
-                            <img src="<?= e(upload_url((string) $image['image_url'])); ?>" alt="" class="h-12 w-28 object-contain md:h-20" loading="lazy">
-                        </button>
+                        <div class="min-w-full snap-center relative border bg-white-light/20 p-4">
+
+                            <img
+                                src="<?= e(upload_url((string) $image['image_url'])); ?>"
+                                alt="<?= e($product['name']); ?>"
+                                class="h-[300px] w-full object-contain">
+
+                            <!-- Wishlist -->
+                            <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
+                                <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                                <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                                <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
+                                <button
+                                    type="submit"
+                                    class="rounded-full border p-2 transition bg-white-dark hover:scale-105 <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
+                                    <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
+                                </button>
+                            </form>
+
+                        </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- 💻 DESKTOP VIEW -->
+                <div class="hidden md:flex flex-row gap-4">
+                    <!-- Thumbnails -->
+                    <div class="flex flex-col gap-4">
+                        <?php foreach ($product['images'] as $image): ?>
+                            <button type="button"
+                                class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40"
+                                data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
+
+                                <img
+                                    src="<?= e(upload_url((string) $image['image_url'])); ?>"
+                                    class="h-20 w-28 object-contain"
+                                    loading="lazy">
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Main Image -->
+                    <div class="relative overflow-hidden p-4 border bg-white-light/20">
+                        <img id="main-product-image"
+                            src="<?= e(upload_url((string) $product['images'][0]['image_url'])); ?>"
+                            alt="<?= e($product['name']); ?>"
+                            class="h-[400px] w-full object-contain">
+
+                        <!-- Wishlist -->
+                        <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
+                            <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                            <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                            <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
+                            <button
+                                type="submit"
+                                class="rounded-full border p-2 transition bg-white-dark hover:scale-105 <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
+                                <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
             </div>
         </section>
+        <script>
+            document.querySelectorAll('.gallery-thumb').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('main-product-image').src = btn.dataset.image;
+                });
+            });
+        </script>
 
         <section class="space-y-6">
             <div class="md:p-2">
@@ -472,17 +524,14 @@ require __DIR__ . '/layout/header.php';
                 </details>
             </div>
 
-            <div class="rounded-2xl p-6 bg-gradient-to-br from-[#0065a420] to-[#ff003320] border">
+            <!-- <div class="rounded-2xl p-6 bg-gradient-to-br from-[#0065a420] to-[#ff003320] border">
 
-                <!-- Heading -->
                 <div class="text-sm font-semibold uppercase tracking-[0.18em] text-primary-medium">
                     Step By Step
                 </div>
 
-                <!-- Steps -->
                 <div class="mt-6 grid grid-cols-4 gap-5 text-center text-xs font-medium text-black-light">
 
-                    <!-- Step 1 -->
                     <div class="group">
                         <div class="mx-auto flex h-12 w-12 md:w-24 md:h-24 items-center justify-center rounded-full 
                         bg-white-dark/40 transition duration-300 text-black-light/80">
@@ -493,7 +542,6 @@ require __DIR__ . '/layout/header.php';
                         </div>
                     </div>
 
-                    <!-- Step 2 -->
                     <div class="group">
                         <div class="mx-auto flex h-12 w-12 md:w-24 md:h-24 items-center justify-center rounded-full 
                         bg-white-dark/40 transition duration-300 text-black-light/80">
@@ -504,7 +552,6 @@ require __DIR__ . '/layout/header.php';
                         </div>
                     </div>
 
-                    <!-- Step 3 -->
                     <div class="group">
                         <div class="mx-auto flex h-12 w-12 md:w-24 md:h-24 items-center justify-center rounded-full 
                         bg-white-dark/40 transition duration-300 text-black-light/80">
@@ -515,7 +562,6 @@ require __DIR__ . '/layout/header.php';
                         </div>
                     </div>
 
-                    <!-- Step 4 -->
                     <div class="group">
                         <div class="mx-auto flex h-12 w-12 md:w-24 md:h-24 items-center justify-center rounded-full 
                         bg-white-dark/40 transition duration-300 text-black-light/80">
@@ -528,13 +574,12 @@ require __DIR__ . '/layout/header.php';
 
                 </div>
 
-                <!-- CTA Button -->
                 <a href="tel:+916235559500"
                     class="mt-8 inline-flex items-center justify-center rounded-full bg-primary-medium px-6 py-3 text-sm text-white-dark transition-all duration-300 hover:bg-primary-medium/90 active:scale-95">
                     Chat With Support: +91 62355 9500
                 </a>
 
-            </div>
+            </div> -->
         </section>
     </div>
 

@@ -36,7 +36,7 @@ require __DIR__ . '/partials/header.php';
             <textarea class="w-full rounded-2xl border border-slate-200 px-4 py-3" name="description" rows="4" placeholder="Description"><?= e((string) ($edit['description'] ?? '')); ?></textarea>
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="button_name" value="<?= e((string) ($edit['button_name'] ?? '')); ?>" placeholder="Button text">
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="button_link" value="<?= e((string) ($edit['button_link'] ?? '')); ?>" placeholder="Button link">
-            <button class="w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Save slide</button>
+            <button class="w-full rounded-full bg-primary-medium hover:bg-primary-medium/90 px-5 py-3 font-semibold text-white-dark" type="submit">Save slide</button>
         </form>
     </div>
     <div class="rounded-3xl bg-white p-6 shadow">

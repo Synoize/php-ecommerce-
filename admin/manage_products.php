@@ -8,7 +8,7 @@ require __DIR__ . '/partials/header.php';
 ?>
 <div class="mb-6 flex items-center justify-between gap-4">
     <h1 class="text-3xl font-bold">Products</h1>
-    <a href="<?= e(app_url('admin/product_form.php')); ?>" class="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white">Add product</a>
+    <a href="<?= e(app_url('admin/product_form.php')); ?>" class="rounded-full  bg-primary-medium hover:bg-primary-medium/90 px-5 py-3 text-sm font-semibold text-white-dark">Add product</a>
 </div>
 <div class="rounded-3xl bg-white p-6 shadow">
     <div class="overflow-x-auto">

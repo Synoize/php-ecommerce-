@@ -1,6 +1,5 @@
 -- ---------------------------------------------
--- WATCH ECOMMERCE DATABASE
--- Production-ready SQL schema
+-- WATCH ECOMMERCE DATABASE SCHEMA
 -- ---------------------------------------------
 
 CREATE DATABASE IF NOT EXISTS watch_ecommerce
@@ -59,6 +58,17 @@ CREATE TABLE IF NOT EXISTS categories (
   UNIQUE KEY uq_categories_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS box_options (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  image VARCHAR(255) DEFAULT NULL,
+  price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_box_options_name (name),
+  CONSTRAINT chk_box_options_price_non_negative CHECK (price >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS products (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(190) NOT NULL,
@@ -86,20 +96,6 @@ CREATE TABLE IF NOT EXISTS product_images (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS product_box_options (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  product_id INT UNSIGNED NOT NULL,
-  name VARCHAR(150) NOT NULL,
-  image VARCHAR(255) DEFAULT NULL,
-  price DECIMAL(10,2) NOT NULL,
-  is_active TINYINT(1) NOT NULL DEFAULT 1,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_product_box_options_product (product_id),
-  CONSTRAINT chk_product_box_options_price_non_negative CHECK (price >= 0),
-  CONSTRAINT fk_product_box_options_product
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS cart (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id INT UNSIGNED NOT NULL,
@@ -119,7 +115,7 @@ CREATE TABLE IF NOT EXISTS cart (
   CONSTRAINT fk_cart_product
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   CONSTRAINT fk_cart_box_option
-    FOREIGN KEY (box_option_id) REFERENCES product_box_options(id) ON DELETE SET NULL
+    FOREIGN KEY (box_option_id) REFERENCES box_options(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS wishlist (
@@ -179,7 +175,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   CONSTRAINT fk_order_items_product
     FOREIGN KEY (product_id) REFERENCES products(id),
   CONSTRAINT fk_order_items_box_option
-    FOREIGN KEY (box_option_id) REFERENCES product_box_options(id) ON DELETE SET NULL
+    FOREIGN KEY (box_option_id) REFERENCES box_options(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS payments (
@@ -251,131 +247,3 @@ CREATE TABLE IF NOT EXISTS slides (
   button_link VARCHAR(255) DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO categories (name, image) VALUES
-('G-Shock', 'images/uploads/categories/g-shock.png'),
-('For Men', 'images/uploads/categories/man.png'),
-('For Women', 'images/uploads/categories/woman.png'),
-('Automatic', 'images/uploads/categories/automatic-mechanical.png')
-ON DUPLICATE KEY UPDATE
-  image = VALUES(image);
-
-INSERT INTO users (name, email, password, role)
-VALUES (
-  'Admin',
-  'admin@gmail.com',
-  '$2y$10$HuZFYH11qin0LzYkV1W3luJX5r8xvViWPYO7dJyZhZDnn0vSeXpJ6',
-  'admin'
-)
-ON DUPLICATE KEY UPDATE
-  name = VALUES(name),
-  password = VALUES(password),
-  role = VALUES(role);
-
-INSERT INTO products (name, description, category_id, price, stock, image)
-SELECT
-  'Women Classic Watch',
-  'Elegant analog watch designed for women with a slim dial and stylish strap.',
-  c.id,
-  2499.00,
-  15,
-  'images/uploads/products/_02.png'
-FROM categories c
-WHERE c.name = 'For Women'
-  AND NOT EXISTS (
-    SELECT 1 FROM products WHERE name = 'Women Classic Watch'
-  );
-
-INSERT INTO products (name, description, category_id, price, stock, image)
-SELECT
-  'Men Classic Watch',
-  'Premium analog wristwatch for men with leather strap.',
-  c.id,
-  2799.00,
-  20,
-  'images/uploads/products/_01.png'
-FROM categories c
-WHERE c.name = 'For Men'
-  AND NOT EXISTS (
-    SELECT 1 FROM products WHERE name = 'Men Classic Watch'
-  );
-
-INSERT INTO products (name, description, category_id, price, stock, image)
-SELECT
-  'G-Shock Digital Watch',
-  'G-Shock digital watch for everyone.',
-  c.id,
-  999.00,
-  25,
-  'images/uploads/products/_03.png'
-FROM categories c
-WHERE c.name = 'G-Shock'
-  AND NOT EXISTS (
-    SELECT 1 FROM products WHERE name = 'G-Shock Digital Watch'
-  );
-
-INSERT INTO products (name, description, category_id, price, stock, image)
-SELECT
-  'Automatic Mechanical Watch',
-  'Automatic mechanical watch with premium movement.',
-  c.id,
-  3999.00,
-  10,
-  'images/uploads/products/_04.png'
-FROM categories c
-WHERE c.name = 'Automatic'
-  AND NOT EXISTS (
-    SELECT 1 FROM products WHERE name = 'Automatic Mechanical Watch'
-  );
-
-INSERT INTO product_images (product_id, image_url, sort_order)
-SELECT p.id, p.image, 0
-FROM products p
-WHERE NOT EXISTS (
-  SELECT 1 FROM product_images pi WHERE pi.product_id = p.id
-);
-
-INSERT INTO product_box_options (product_id, name, image, price, is_active)
-SELECT p.id, 'G-Shock Kit Box', 'images/uploads/boxes/gshock-kit-box.jpg', 400.00, 1
-FROM products p
-WHERE p.name = 'Women Classic Watch'
-  AND NOT EXISTS (
-    SELECT 1 FROM product_box_options b WHERE b.product_id = p.id AND b.name = 'G-Shock Kit Box'
-  );
-
-INSERT INTO product_box_options (product_id, name, image, price, is_active)
-SELECT p.id, 'Premium Gift Box', 'images/uploads/boxes/premium-gift-box.jpg', 550.00, 1
-FROM products p
-WHERE p.name = 'Men Classic Watch'
-  AND NOT EXISTS (
-    SELECT 1 FROM product_box_options b WHERE b.product_id = p.id AND b.name = 'Premium Gift Box'
-  );
-
-INSERT INTO coupons (code, discount_percent, valid_from, valid_to, is_active)
-VALUES
-('WELCOME10', 10, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 365 DAY), 1),
-('FESTIVE15', 15, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 180 DAY), 1)
-ON DUPLICATE KEY UPDATE
-  discount_percent = VALUES(discount_percent),
-  valid_from = VALUES(valid_from),
-  valid_to = VALUES(valid_to),
-  is_active = VALUES(is_active);
-
-INSERT INTO slides (type, file_path, title, description, button_name, button_link)
-VALUES (
-  'image',
-  'images/uploads/carousel/_01.jpg',
-  'Watch Ecommerce',
-  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order tracking.',
-  'Shop Now',
-  'shop.php'
-),
- (
-  'video',
-  'images/uploads/carousel/_01.mp4',
-  'Watch Ecommerce',
-  'Browse premium watches with cart, reviews, wishlist, checkout, and admin order management.',
-  'Shop Now',
-  'shop.php'
-);
-

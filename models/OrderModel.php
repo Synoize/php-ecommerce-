@@ -277,10 +277,26 @@ class OrderModel extends BaseModel
 
     public function dashboardStats(): array
     {
+        $summary = $this->pdo->query(
+            "SELECT
+                COUNT(*) AS total_orders,
+                COALESCE(SUM(CASE WHEN payment_status = 'paid' OR payment_method = 'cod' THEN total_amount ELSE 0 END), 0) AS total_revenue,
+                COALESCE(SUM(CASE WHEN DATE(created_at) = CURDATE() AND (payment_status = 'paid' OR payment_method = 'cod') THEN total_amount ELSE 0 END), 0) AS today_revenue,
+                COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) AS pending_orders,
+                COALESCE(SUM(CASE WHEN status IN ('confirmed', 'shipped', 'delivered') THEN 1 ELSE 0 END), 0) AS successful_orders,
+                COALESCE(SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END), 0) AS delivered_orders,
+                COALESCE(SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END), 0) AS cancelled_orders
+             FROM orders"
+        )->fetch();
+
         return [
-            'orders' => (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn(),
-            'revenue' => (float) $this->pdo->query("SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE payment_status = 'paid' OR payment_method = 'cod'")->fetchColumn(),
-            'pending_orders' => (int) $this->pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'")->fetchColumn(),
+            'orders' => (int) ($summary['total_orders'] ?? 0),
+            'revenue' => (float) ($summary['total_revenue'] ?? 0),
+            'today_revenue' => (float) ($summary['today_revenue'] ?? 0),
+            'pending_orders' => (int) ($summary['pending_orders'] ?? 0),
+            'successful_orders' => (int) ($summary['successful_orders'] ?? 0),
+            'delivered_orders' => (int) ($summary['delivered_orders'] ?? 0),
+            'cancelled_orders' => (int) ($summary['cancelled_orders'] ?? 0),
         ];
     }
 }

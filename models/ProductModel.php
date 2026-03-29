@@ -146,8 +146,7 @@ class ProductModel extends BaseModel
         if ($product['images'] === []) {
             $product['images'][] = ['image_url' => $product['image']];
         }
-        $product['box_options'] = $this->boxOptions($id);
-        $product['box_options_admin'] = $this->boxOptionsAdmin($id);
+        $product['box_options'] = $this->boxOptions();
 
         return $product;
     }
@@ -161,22 +160,11 @@ class ProductModel extends BaseModel
         return $stmt->fetchAll();
     }
 
-    public function boxOptions(int $productId): array
+    public function boxOptions(): array
     {
-        $stmt = $this->pdo->prepare(
-            'SELECT * FROM product_box_options WHERE product_id = :product_id AND is_active = 1 ORDER BY id ASC'
-        );
-        $stmt->execute(['product_id' => $productId]);
-        return $stmt->fetchAll();
-    }
-
-    public function boxOptionsAdmin(int $productId): array
-    {
-        $stmt = $this->pdo->prepare(
-            'SELECT * FROM product_box_options WHERE product_id = :product_id ORDER BY id ASC'
-        );
-        $stmt->execute(['product_id' => $productId]);
-        return $stmt->fetchAll();
+        return $this->pdo->query(
+            'SELECT * FROM box_options WHERE is_active = 1 ORDER BY name ASC'
+        )->fetchAll();
     }
 
     public function related(int $categoryId, int $excludeId, int $limit = 4): array
@@ -199,11 +187,34 @@ class ProductModel extends BaseModel
         return $this->pdo->query(
             'SELECT p.*, c.name AS category_name,
                     (SELECT COUNT(*) FROM product_images pi WHERE pi.product_id = p.id) AS image_count,
-                    (SELECT COUNT(*) FROM product_box_options pbo WHERE pbo.product_id = p.id) AS box_count
+                    (SELECT COUNT(*) FROM box_options b WHERE b.is_active = 1) AS box_count
              FROM products p
              LEFT JOIN categories c ON c.id = p.category_id
              ORDER BY p.created_at DESC'
         )->fetchAll();
+    }
+
+    public function dashboardStats(): array
+    {
+        $row = $this->pdo->query(
+            'SELECT
+                COUNT(*) AS total_products,
+                COALESCE(SUM(stock), 0) AS total_stock,
+                COALESCE(SUM(CASE WHEN stock = 0 THEN 1 ELSE 0 END), 0) AS out_of_stock_products,
+                COALESCE(SUM(CASE WHEN stock > 0 AND stock < 10 THEN 1 ELSE 0 END), 0) AS low_stock_products,
+                COALESCE(SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END), 0) AS active_products,
+                COALESCE(SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END), 0) AS inactive_products
+             FROM products'
+        )->fetch();
+
+        return [
+            'total_products' => (int) ($row['total_products'] ?? 0),
+            'total_stock' => (int) ($row['total_stock'] ?? 0),
+            'out_of_stock_products' => (int) ($row['out_of_stock_products'] ?? 0),
+            'low_stock_products' => (int) ($row['low_stock_products'] ?? 0),
+            'active_products' => (int) ($row['active_products'] ?? 0),
+            'inactive_products' => (int) ($row['inactive_products'] ?? 0),
+        ];
     }
 
     public function save(array $data, ?int $id = null): int
@@ -243,7 +254,6 @@ class ProductModel extends BaseModel
         }
 
         $this->syncImages($id, $data['gallery'] ?? []);
-        $this->syncBoxOptions($id, $data['box_options'] ?? []);
         return $id;
     }
 
@@ -272,32 +282,6 @@ class ProductModel extends BaseModel
                 'product_id' => $productId,
                 'image_url' => $imageUrl,
                 'sort_order' => $sort,
-            ]);
-        }
-    }
-
-    private function syncBoxOptions(int $productId, array $boxOptions): void
-    {
-        $this->pdo->prepare('DELETE FROM product_box_options WHERE product_id = :product_id')
-            ->execute(['product_id' => $productId]);
-
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO product_box_options (product_id, name, image, price, is_active)
-             VALUES (:product_id, :name, :image, :price, :is_active)'
-        );
-
-        foreach ($boxOptions as $option) {
-            $name = trim((string) ($option['name'] ?? ''));
-            if ($name === '') {
-                continue;
-            }
-
-            $stmt->execute([
-                'product_id' => $productId,
-                'name' => $name,
-                'image' => trim((string) ($option['image'] ?? '')) ?: null,
-                'price' => (float) ($option['price'] ?? 0),
-                'is_active' => !empty($option['is_active']) ? 1 : 0,
             ]);
         }
     }

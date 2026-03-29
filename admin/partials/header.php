@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../config/bootstrap.php';
 require_admin();
 $adminPageTitle = $adminPageTitle ?? 'Admin';
 
-// Reusable Nav Link
 function navLink($path, $label, $icon)
 {
     $current = $_SERVER['REQUEST_URI'];
@@ -31,13 +30,8 @@ function navLink($path, $label, $icon)
 
     <link rel="icon" href="<?= e(asset_url('images/logo/favicon.svg')); ?>">
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -72,13 +66,9 @@ function navLink($path, $label, $icon)
 </head>
 
 <body class="min-h-screen bg-white-dark">
-
-    <!-- Navbar -->
     <header class="w-full bg-primary-dark h-20 flex items-center justify-between px-6 fixed top-0 left-0 z-50 text-nowrap">
-
         <div class="flex items-center gap-4">
             <img src="<?= e(asset_url('images/logo/logo.png')); ?>" class="h-12 w-12">
-
             <div>
                 <h2 class="text-2xl font-bold text-white-dark"><?= e(APP_NAME); ?></h2>
                 <p class="text-xs text-white-light">Admin - Store Operations</p>
@@ -93,25 +83,18 @@ function navLink($path, $label, $icon)
         </div>
     </header>
 
-    <!-- Layout -->
     <main class="flex pt-20">
-
-        <!-- Sidebar -->
-        <aside id="sidebar"
-            class="h-[calc(100vh-80px)] w-64 bg-primary-dark text-white-dark transition-all duration-300 flex flex-col fixed left-0 top-20">
-
-            <!-- Collapse Button -->
+        <aside id="sidebar" class="h-[calc(100vh-80px)] w-64 bg-primary-dark text-white-dark transition-all duration-300 flex flex-col fixed left-0 top-20">
             <div class="flex justify-end p-2">
                 <button id="collapseBtn">
                     <i data-lucide="chevron-left" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Nav -->
             <nav class="p-4 space-y-2 text-sm overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex-1">
-
                 <?= navLink('admin/dashboard.php', 'Dashboard', 'layout-dashboard') ?>
                 <?= navLink('admin/manage_products.php', 'Products', 'box') ?>
+                <?= navLink('admin/box_options.php', 'Box Options', 'package-open') ?>
                 <?= navLink('admin/categories_page.php', 'Categories', 'layers') ?>
                 <?= navLink('admin/slides.php', 'Slides', 'image') ?>
                 <?= navLink('admin/manage_orders.php', 'Orders', 'shopping-cart') ?>
@@ -123,15 +106,10 @@ function navLink($path, $label, $icon)
                 <?= navLink('admin/coupons_page.php', 'Coupons', 'ticket') ?>
                 <?= navLink('admin/reviews_page.php', 'Reviews', 'star') ?>
                 <?= navLink('user/logout.php', 'Logout', 'log-out') ?>
-
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <div id="mainContent"
-            class="ml-64 w-full transition-all duration-300 h-[calc(100vh-80px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-6">
-
-            <!-- Script -->
+        <div id="mainContent" class="ml-64 w-full transition-all duration-300 h-[calc(100vh-80px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-6">
             <script>
                 const sidebar = document.getElementById('sidebar');
                 const collapseBtn = document.getElementById('collapseBtn');
@@ -146,22 +124,17 @@ function navLink($path, $label, $icon)
                     if (collapsed) {
                         sidebar.classList.replace('w-64', 'w-20');
                         mainContent.classList.replace('ml-64', 'ml-20');
-
                         navTexts.forEach(el => el.classList.add('hidden'));
-
                         collapseBtn.innerHTML = '<i data-lucide="chevron-right" class="w-5 h-5"></i>';
                     } else {
                         sidebar.classList.replace('w-20', 'w-64');
                         mainContent.classList.replace('ml-20', 'ml-64');
-
                         navTexts.forEach(el => el.classList.remove('hidden'));
-
                         collapseBtn.innerHTML = '<i data-lucide="chevron-left" class="w-5 h-5"></i>';
                     }
 
                     lucide.createIcons();
                 });
 
-                // Init icons
                 lucide.createIcons();
             </script>

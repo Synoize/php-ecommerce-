@@ -35,7 +35,7 @@ require __DIR__ . '/partials/header.php';
                                 <option value="user" <?= $user['role'] === 'user' ? 'selected' : ''; ?>>User</option>
                                 <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
                             </select>
-                            <button class="rounded-xl bg-slate-900 px-4 py-2 text-white" type="submit">Save</button>
+                            <button class="rounded-xl bg-primary-medium hover:bg-primary-medium/90 px-4 py-2 text-white-dark" type="submit">Save</button>
                         </form>
                     </td>
                     <td class="py-3"><?= e((string) $user['created_at']); ?></td>

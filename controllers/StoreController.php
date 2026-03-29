@@ -9,6 +9,7 @@ class StoreController
     public CartModel $cart;
     public WishlistModel $wishlist;
     public ReviewModel $reviews;
+    public BoxOptionModel $boxOptions;
 
     public function __construct()
     {
@@ -17,6 +18,6 @@ class StoreController
         $this->cart = new CartModel();
         $this->wishlist = new WishlistModel();
         $this->reviews = new ReviewModel();
+        $this->boxOptions = new BoxOptionModel();
     }
 }
-

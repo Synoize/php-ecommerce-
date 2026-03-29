@@ -11,7 +11,7 @@ class CartModel extends BaseModel
                     b.name AS box_name, b.image AS box_image, b.price AS box_price, b.is_active AS box_is_active
              FROM cart c
              INNER JOIN products p ON p.id = c.product_id
-             LEFT JOIN product_box_options b ON b.id = c.box_option_id
+             LEFT JOIN box_options b ON b.id = c.box_option_id
              WHERE c.user_id = :user_id
              ORDER BY c.added_at DESC'
         );
@@ -35,7 +35,7 @@ class CartModel extends BaseModel
              FROM cart c
              INNER JOIN users u ON u.id = c.user_id
              INNER JOIN products p ON p.id = c.product_id
-             LEFT JOIN product_box_options b ON b.id = c.box_option_id
+             LEFT JOIN box_options b ON b.id = c.box_option_id
              ORDER BY c.added_at DESC'
         )->fetchAll();
 
@@ -58,7 +58,7 @@ class CartModel extends BaseModel
             throw new RuntimeException('Only ' . (int) $product['stock'] . ' item(s) available in stock.');
         }
 
-        $box = $this->resolveBoxOption($productId, $boxOptionId, $boxQuantity, $newQuantity, $existing);
+        $box = $this->resolveBoxOption($boxOptionId, $boxQuantity, $newQuantity, $existing);
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO cart (user_id, product_id, quantity, box_option_id, box_quantity)
@@ -85,7 +85,7 @@ class CartModel extends BaseModel
         }
 
         $this->ensureAvailableQuantity($productId, $quantity);
-        $box = $this->resolveBoxOption($productId, $boxOptionId, $boxQuantity, $quantity);
+        $box = $this->resolveBoxOption($boxOptionId, $boxQuantity, $quantity);
 
         $stmt = $this->pdo->prepare(
             'UPDATE cart
@@ -119,7 +119,7 @@ class CartModel extends BaseModel
             'SELECT COALESCE(SUM((c.quantity * p.price) + (c.box_quantity * COALESCE(b.price, 0))), 0)
              FROM cart c
              INNER JOIN products p ON p.id = c.product_id
-             LEFT JOIN product_box_options b ON b.id = c.box_option_id
+             LEFT JOIN box_options b ON b.id = c.box_option_id
              WHERE c.user_id = :user_id'
         );
         $stmt->execute(['user_id' => $userId]);
@@ -168,19 +168,19 @@ class CartModel extends BaseModel
         return $product;
     }
 
-    private function resolveBoxOption(int $productId, ?int $boxOptionId, int $boxQuantity, int $productQuantity, ?array $existing = null): array
+    private function resolveBoxOption(?int $boxOptionId, int $boxQuantity, int $productQuantity, ?array $existing = null): array
     {
         if ($boxOptionId === null || $boxOptionId <= 0) {
             return ['id' => null, 'quantity' => 0];
         }
 
         $stmt = $this->pdo->prepare(
-            'SELECT id, product_id, is_active FROM product_box_options WHERE id = :id LIMIT 1'
+            'SELECT id, is_active FROM box_options WHERE id = :id LIMIT 1'
         );
         $stmt->execute(['id' => $boxOptionId]);
         $box = $stmt->fetch();
 
-        if (!$box || (int) $box['product_id'] !== $productId || (int) $box['is_active'] !== 1) {
+        if (!$box || (int) $box['is_active'] !== 1) {
             throw new RuntimeException('Selected box option is unavailable.');
         }
 

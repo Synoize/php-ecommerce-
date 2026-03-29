@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/bootstrap.php';
 
 $store = new StoreController();
 $featuredCategories = $store->categories->featured(4);
-$featuredProducts = $store->products->featured(8);
+$featuredProducts = $store->products->featured(12);
 $slides = (new SlideModel())->all();
 $wishlistProductIds = [];
 
@@ -664,7 +664,7 @@ require __DIR__ . '/layout/header.php';
             }
 
             function startAutoSlide() {
-                if (userInteracting) return; // 🚫 don't start if user active
+                if (userInteracting) return; 
 
                 autoScroll = setInterval(() => {
 
