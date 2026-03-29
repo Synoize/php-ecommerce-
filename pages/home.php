@@ -34,11 +34,11 @@ if ($featuredProductsVideo === []) {
 
 if ($userReview === []) {
     $userReview = [
-        "images/uploads/reviews/_01.png",
-        "images/uploads/reviews/_01.png",
-        "images/uploads/reviews/_01.png",
-        "images/uploads/reviews/_01.png",
-        "images/uploads/reviews/_01.png",
+        "images/uploads/reviews/01-e9a9d1c9bc83.png",
+        "images/uploads/reviews/01-e9a9d1c9bc83.png",
+        "images/uploads/reviews/01-e9a9d1c9bc83.png",
+        "images/uploads/reviews/01-e9a9d1c9bc83.png",
+        "images/uploads/reviews/01-e9a9d1c9bc83.png",
     ];
 }
 
