@@ -5,6 +5,7 @@ $store = new StoreController();
 $featuredCategories = $store->categories->featured(4);
 $featuredProducts = $store->products->featured(12);
 $slides = (new SlideModel())->all();
+$homepageMedia = new HomepageMediaModel();
 $wishlistProductIds = [];
 
 if (is_logged_in()) {
@@ -18,21 +19,28 @@ if (is_logged_in()) {
     );
 }
 
-$featuredProductsVideo = [
-    "images/uploads/reviews/_01.mp4",
-    "images/uploads/reviews/_01.mp4",
-    "images/uploads/reviews/_01.mp4",
-    "images/uploads/reviews/_01.mp4",
-    "images/uploads/reviews/_01.mp4",
-];
+$featuredProductsVideo = $homepageMedia->featuredProductVideos();
+$userReview = $homepageMedia->userReviews();
 
-$clientsReview = [
-    "images/uploads/reviews/_01.png",
-    "images/uploads/reviews/_01.png",
-    "images/uploads/reviews/_01.png",
-    "images/uploads/reviews/_01.png",
-    "images/uploads/reviews/_01.png",
-];
+if ($featuredProductsVideo === []) {
+    $featuredProductsVideo = [
+        "images/uploads/reviews/_01.mp4",
+        "images/uploads/reviews/_01.mp4",
+        "images/uploads/reviews/_01.mp4",
+        "images/uploads/reviews/_01.mp4",
+        "images/uploads/reviews/_01.mp4",
+    ];
+}
+
+if ($userReview === []) {
+    $userReview = [
+        "images/uploads/reviews/_01.png",
+        "images/uploads/reviews/_01.png",
+        "images/uploads/reviews/_01.png",
+        "images/uploads/reviews/_01.png",
+        "images/uploads/reviews/_01.png",
+    ];
+}
 
 if ($slides === []) {
     $slides[] = [
@@ -223,12 +231,12 @@ require __DIR__ . '/layout/header.php';
         <div class="my-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             <?php foreach ($featuredCategories as $category): ?>
                 <div class="group overflow-hidden" style="border: 1px solid #ccc; border-radius: 15px;">
-                    <div class="relative overflow-hidden rounded-lg bg-white-light/40">
+                    <div class="relative overflow-hidden bg-white-light/10">
                         <a href="<?= e(app_url('shop.php?category=' . (int) $category['id'])); ?>">
                             <img src="<?= e(upload_url((string) $category['image'])); ?>" alt="<?= e($category['name']); ?>" class="h-36 md:h-44 w-full object-contain p-2 transition duration-500 group-hover:scale-105" loading="lazy" />
                         </a>
                     </div>
-                    <div class="py-1 px-2" style="background-color:#f1f1f1; text-align: center;">
+                    <div class="py-1 px-2 bg-white-light/40 text-center">
                         <h3 class="mt-1 line-clamp-2 text-xs md:text-sm font-medium text-black-medium">
                             <?= e($category['name']); ?>
                         </h3>
@@ -244,7 +252,7 @@ require __DIR__ . '/layout/header.php';
 
         <!-- Heading -->
         <h2 class="text-center text-xl md:text-3xl font-semibold text-primary-medium">
-            Watc<span class="relative inline-block">h UGC's &<span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span></span> Buy
+            W<span class="relative inline-block">atch & Bu<span class="absolute left-1/2 -translate-x-1/2 -bottom-3 w-2/3 h-[2.5px] bg-red-500 rounded-full"></span></span>y
         </h2>
 
         <div class="relative mt-10">
@@ -271,17 +279,17 @@ require __DIR__ . '/layout/header.php';
                             <video
                                 src="<?= e(upload_url((string)$video)); ?>"
                                 class="feature-video w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                                playsinline
+                                autoplay
                                 muted
-                                loop>
-                            </video>
+                                loop
+                                playsinline></video>
 
                             <!-- PLAY ICON -->
-                            <div class="playIcon absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <!-- <div class="playIcon absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div class="bg-white-light/40 backdrop-blur-sm rounded-full p-3">
                                     <i data-lucide="play" class="w-6 h-6 text-white-dark"></i>
                                 </div>
-                            </div>
+                            </div> -->
 
                         </div>
 
@@ -318,9 +326,9 @@ require __DIR__ . '/layout/header.php';
             const container = document.getElementById("featureCarousel");
             if (!container) return;
 
-            let autoScroll;
-
-            // GET SCROLL SIZE (dynamic)
+            // =========================
+            // BUTTON SCROLL (manual arrows only)
+            // =========================
             function getScrollAmount() {
                 const firstCard = container.children[0];
                 if (!firstCard) return 300;
@@ -331,7 +339,6 @@ require __DIR__ . '/layout/header.php';
                 return firstCard.offsetWidth + gap;
             }
 
-            // BUTTON SCROLL (same as before)
             window.scrollCarousel = function(direction) {
                 const scrollAmount = getScrollAmount();
 
@@ -341,78 +348,11 @@ require __DIR__ . '/layout/header.php';
                 });
             };
 
-            // AUTO SLIDE
-            function startAutoSlide() {
-                autoScroll = setInterval(() => {
-
-                    const scrollAmount = getScrollAmount();
-
-                    container.scrollBy({
-                        left: scrollAmount,
-                        behavior: "smooth"
-                    });
-
-                    // Infinite loop reset
-                    if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 5) {
-                        container.scrollTo({
-                            left: 0,
-                            behavior: "auto"
-                        });
-                    }
-
-                }, 2500);
-            }
-
-            function stopAutoSlide() {
-                clearInterval(autoScroll);
-            }
-
-            // START AUTO
-            startAutoSlide();
-
-            // Pause on hover (desktop)
-            container.addEventListener('mouseenter', stopAutoSlide);
-            container.addEventListener('mouseleave', startAutoSlide);
-
-            // Pause on touch (mobile)
-            container.addEventListener('touchstart', stopAutoSlide);
-            container.addEventListener('touchend', startAutoSlide);
-
-            // VIDEO CONTROL (unchanged)
-            document.querySelectorAll('.feature-video').forEach(video => {
-
-                const wrapper = video.closest('.group');
-                const playIcon = wrapper.querySelector('.playIcon');
-
-                wrapper.addEventListener('mouseenter', () => {
-                    video.play().catch(() => {});
-                    playIcon.classList.add('hidden');
-                });
-
-                wrapper.addEventListener('mouseleave', () => {
-                    video.pause();
-                    video.currentTime = 0;
-                    playIcon.classList.remove('hidden');
-                });
-
-                wrapper.addEventListener('click', () => {
-                    if (video.paused) {
-                        video.play().catch(() => {});
-                        playIcon.classList.add('hidden');
-                    } else {
-                        video.pause();
-                        video.currentTime = 0;
-                        playIcon.classList.remove('hidden');
-                    }
-                });
-
-            });
-
         });
     </script>
 
     <!-- Featured Watches -->
-    <section class="mx-auto max-w-7xl px-4 py-4 md:px-0">
+    <section class="mx-auto max-w-7xl px-4 pt-4 md:py-4 md:px-0">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wider text-black-light">Trending</p>
@@ -540,7 +480,7 @@ require __DIR__ . '/layout/header.php';
     </section>
 
     <!-- Banner -->
-    <section class="mx-auto max-w-7xl px-4 pb-6 md:px-0 md:pb-0 md:pt-4">
+    <section class="mx-auto max-w-7xl px-4 md:px-0 md:pb-0 md:pt-4">
 
         <div class="mx-auto max-w-7xl px-[8%] bg-primary-medium rounded-xl md:rounded-3xl flex items-center justify-between overflow-hidden">
 
@@ -585,7 +525,7 @@ require __DIR__ . '/layout/header.php';
             [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 <?php
-                $loopReviews = array_merge($clientsReview, $clientsReview);
+                $loopReviews = array_merge($userReview, $userReview);
                 foreach ($loopReviews as $review):
                 ?>
 
@@ -630,18 +570,6 @@ require __DIR__ . '/layout/header.php';
             </button>
 
         </div>
-        <!-- See All -->
-        <div class="flex items-center justify-center mt-8">
-            <a href="<?= e(app_url('reviews.php')); ?>"
-                class="group flex items-center gap-2 rounded-full border px-5 py-2 text-sm transition hover:bg-white-light/40 text-black-light">
-
-                <span>See All</span>
-
-                <i data-lucide="arrow-right"
-                    class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1">
-                </i>
-            </a>
-        </div>
 
     </section>
     <script>
@@ -664,7 +592,7 @@ require __DIR__ . '/layout/header.php';
             }
 
             function startAutoSlide() {
-                if (userInteracting) return; 
+                if (userInteracting) return;
 
                 autoScroll = setInterval(() => {
 
@@ -744,53 +672,79 @@ require __DIR__ . '/layout/header.php';
         <div class="mt-10 space-y-4">
 
             <!-- Item -->
-            <div class="faq-item border rounded-xl overflow-hidden">
-                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
-                    What services do you provide?
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    What products do you offer on your platform?
                     <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
                 </button>
-                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
                     <p class="py-3">
-                        We provide web development, app development, UI/UX design, and digital solutions tailored to your business needs.
+                        We offer a wide range of products across multiple categories including electronics, fashion, home essentials, beauty, and lifestyle products. Our platform connects you with trusted sellers to ensure quality and authenticity. We continuously update our catalog with trending and in-demand products so that you always have access to the latest collections at competitive prices.
                     </p>
                 </div>
             </div>
 
             <!-- Item -->
-            <div class="faq-item border rounded-xl overflow-hidden">
-                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
-                    How long does a project take?
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    How long does delivery take and what are the shipping options?
                     <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
                 </button>
-                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
                     <p class="py-3">
-                        Project timelines vary based on complexity, but most projects are completed within 2–6 weeks.
+                        Delivery timelines typically range from 2 to 7 business days depending on your location and product availability. We offer multiple shipping options including standard delivery, express shipping, and same-day delivery in select cities. Once your order is placed, you will receive real-time tracking updates so you can monitor your shipment until it reaches your doorstep.
                     </p>
                 </div>
             </div>
 
             <!-- Item -->
-            <div class="faq-item border rounded-xl overflow-hidden">
-                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
-                    Do you offer support after delivery?
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    What payment methods are available?
                     <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
                 </button>
-                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
                     <p class="py-3">
-                        Yes, we provide ongoing support and maintenance services to ensure your product runs smoothly.
+                        We support a variety of secure payment methods including credit/debit cards, UPI, net banking, digital wallets, and cash on delivery (COD) for eligible orders. All transactions are encrypted using industry-standard security protocols to ensure your personal and financial information remains safe and protected.
                     </p>
                 </div>
             </div>
 
             <!-- Item -->
-            <div class="faq-item border rounded-xl overflow-hidden">
-                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left font-medium">
-                    How can I get started?
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    What is your return and refund policy?
                     <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
                 </button>
-                <div class="faq-content px-5 text-sm text-gray-600 max-h-0 overflow-hidden transition-all duration-500">
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
                     <p class="py-3">
-                        Simply contact us through our website or WhatsApp, and we’ll guide you through the process.
+                        We offer an easy and hassle-free return policy for most products within 7 days of delivery. If you receive a damaged, defective, or incorrect item, you can request a return or replacement directly from your account dashboard. Refunds are processed quickly and are credited back to your original payment method within a few business days after the return is approved.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    How can I track my order?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        Once your order is confirmed, you will receive a tracking link via SMS or email. You can also visit your account dashboard and check the order status in real-time. Our tracking system provides detailed updates including order confirmation, dispatch, out-for-delivery, and delivery completion.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item -->
+            <div class="faq-item border overflow-hidden">
+                <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-black-medium font-medium">
+                    Is my personal information secure?
+                    <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-5 text-sm text-black-light max-h-0 overflow-hidden transition-all duration-500">
+                    <p class="py-3">
+                        Yes, your privacy and security are our top priorities. We use advanced encryption technologies and secure servers to protect your data. We do not share your personal information with third parties without your consent, and all transactions are processed through trusted and secure payment gateways.
                     </p>
                 </div>
             </div>

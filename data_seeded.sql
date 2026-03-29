@@ -122,7 +122,8 @@ FROM (
 ) AS seed
 INNER JOIN categories c ON c.name = seed.category_name
 LEFT JOIN products p ON p.name = seed.name
-WHERE p.id IS NULL;
+WHERE p.id IS NULL
+ORDER BY RAND();
 
 INSERT INTO product_images (product_id, image_url, sort_order)
 SELECT p.id, p.image, 0
@@ -176,3 +177,20 @@ VALUES
   'Shop Now',
   'shop.php'
 );
+
+INSERT INTO userReview (file_path)
+VALUES
+  ("images/uploads/reviews/_01.png"),
+  ("images/uploads/reviews/_01.png"),
+  ("images/uploads/reviews/_01.png"),
+  ("images/uploads/reviews/_01.png"),
+  ("images/uploads/reviews/_01.png");
+
+INSERT INTO featuredProductsVideo (file_path)
+VALUES
+  ("images/uploads/ugcs/_01.mp4"),
+  ("images/uploads/ugcs/_01.mp4"),
+  ("images/uploads/ugcs/_01.mp4"),
+  ("images/uploads/ugcs/_01.mp4"),
+  ("images/uploads/ugcs/_01.mp4");
+

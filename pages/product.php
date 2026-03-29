@@ -38,42 +38,60 @@ require __DIR__ . '/layout/header.php';
         <section>
             <div class="flex flex-col md:flex-row gap-4">
 
-                <!-- MOBILE SLIDER -->
-                <div class="md:hidden overflow-x-auto flex gap-4 snap-x snap-mandatory scroll-smooth 
-            [&::-webkit-scrollbar]:hidden 
-            [-ms-overflow-style:none] 
-            [scrollbar-width:none]">
-                    <?php foreach ($product['images'] as $image): ?>
-                        <div class="min-w-full snap-center relative border bg-white-light/20 p-4">
+                <!-- MOBILE VIEW -->
+                <div class="md:hidden">
 
-                            <img
-                                src="<?= e(upload_url((string) $image['image_url'])); ?>"
-                                alt="<?= e($product['name']); ?>"
-                                class="h-[300px] w-full object-contain">
+                    <!-- Main Image -->
+                    <div class="relative border bg-white-light/20 p-4">
+                        <img id="mobile-main-image"
+                            src="<?= e(upload_url((string) $product['images'][0]['image_url'])); ?>"
+                            alt="<?= e($product['name']); ?>"
+                            class="h-[300px] w-full object-contain transition duration-300">
 
-                            <!-- Wishlist -->
-                            <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
-                                <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
-                                <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
-                                <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
-                                <button
-                                    type="submit"
-                                    class="rounded-full border p-2 transition bg-white-dark hover:scale-105 <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
-                                    <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
-                                </button>
-                            </form>
+                        <!-- Wishlist -->
+                        <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
+                            <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
+                            <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
+                            <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
+                            <button
+                                type="submit"
+                                class="rounded-full border p-2 bg-white-dark hover:scale-105 transition <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
+                                <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
+                            </button>
+                        </form>
+                    </div>
 
-                        </div>
-                    <?php endforeach; ?>
+                    <!-- Thumbnail Slider -->
+                    <div class="mt-4 flex gap-3 overflow-x-auto scroll-smooth 
+                [&::-webkit-scrollbar]:hidden 
+                [-ms-overflow-style:none] 
+                [scrollbar-width:none]">
+
+                        <?php foreach ($product['images'] as $index => $image): ?>
+                            <button type="button"
+                                class="mobile-thumb min-w-[70px] h-[70px] border p-1 bg-white-light/20 transition 
+                               <?= $index === 0 ? 'border-white-medium' : ''; ?>"
+                                data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
+
+                                <img
+                                    src="<?= e(upload_url((string) $image['image_url'])); ?>"
+                                    class="w-full h-full object-contain">
+                            </button>
+                        <?php endforeach; ?>
+
+                    </div>
+
                 </div>
 
-                <!-- 💻 DESKTOP VIEW -->
+                <!-- DESKTOP VIEW -->
                 <div class="hidden md:flex flex-row gap-4">
+
                     <!-- Thumbnails -->
                     <div class="flex flex-col gap-4">
-                        <?php foreach ($product['images'] as $image): ?>
+                        <?php foreach ($product['images'] as $index => $image): ?>
                             <button type="button"
-                                class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40"
+                                class="gallery-thumb overflow-hidden p-2 border bg-white-light/20 hover:bg-white-light/40 transition 
+                               <?= $index === 0 ? 'border-white-medium' : ''; ?>"
                                 data-image="<?= e(upload_url((string) $image['image_url'])); ?>">
 
                                 <img
@@ -89,7 +107,7 @@ require __DIR__ . '/layout/header.php';
                         <img id="main-product-image"
                             src="<?= e(upload_url((string) $product['images'][0]['image_url'])); ?>"
                             alt="<?= e($product['name']); ?>"
-                            class="h-[400px] w-full object-contain">
+                            class="h-[400px] w-full object-contain transition duration-300">
 
                         <!-- Wishlist -->
                         <form action="<?= e(app_url('api/wishlist.php')); ?>" method="post" class="absolute top-3 right-3 z-10">
@@ -98,7 +116,7 @@ require __DIR__ . '/layout/header.php';
                             <input type="hidden" name="redirect" value="<?= e('product.php?id=' . $productId); ?>">
                             <button
                                 type="submit"
-                                class="rounded-full border p-2 transition bg-white-dark hover:scale-105 <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
+                                class="rounded-full border p-2 bg-white-dark hover:scale-105 transition <?= $wishlisted ? 'text-red-500' : 'text-black-light'; ?>">
                                 <i data-lucide="heart" class="h-4 w-4 <?= $wishlisted ? 'fill-current' : ''; ?>"></i>
                             </button>
                         </form>
@@ -109,10 +127,34 @@ require __DIR__ . '/layout/header.php';
             </div>
         </section>
         <script>
-            document.querySelectorAll('.gallery-thumb').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.getElementById('main-product-image').src = btn.dataset.image;
+            document.addEventListener("DOMContentLoaded", () => {
+
+                // MOBILE
+                const mobileMain = document.getElementById('mobile-main-image');
+                const mobileThumbs = document.querySelectorAll('.mobile-thumb');
+
+                mobileThumbs.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        mobileMain.src = btn.dataset.image;
+
+                        mobileThumbs.forEach(b => b.classList.remove('border-white-medium'));
+                        btn.classList.add('border-white-medium');
+                    });
                 });
+
+                // DESKTOP
+                const mainImage = document.getElementById('main-product-image');
+                const thumbs = document.querySelectorAll('.gallery-thumb');
+
+                thumbs.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        mainImage.src = btn.dataset.image;
+
+                        thumbs.forEach(b => b.classList.remove('border-white-medium'));
+                        btn.classList.add('border-white-medium');
+                    });
+                });
+
             });
         </script>
 
@@ -122,13 +164,12 @@ require __DIR__ . '/layout/header.php';
                     <?= e($product['category_name'] ?? 'Watch'); ?>
                 </span>
 
-                <h3 class="mt-3 line-clamp-2 text-2xl md:text-4xl font-semibold text-black-medium py-2">
+                <h3 class="mt-1 line-clamp-3 text-lg md:text-3xl font-semibold text-black-medium py-2">
                     <?= e($product['name']); ?>
                 </h3>
 
-                <div class="mt-4 flex flex-wrap items-center gap-3 text-sm ">
+                <!-- <div class="mt-4 flex flex-wrap items-center gap-3 text-sm ">
 
-                    <!-- Stars + Rating Badge -->
                     <div class="flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1">
                         <span class="flex items-center text-sm gap-4 text-white-dark">
                             <?= $ratingStars; ?>
@@ -138,22 +179,20 @@ require __DIR__ . '/layout/header.php';
                         </span>
                     </div>
 
-                    <!-- Divider -->
                     <span class="hidden sm:block h-4 w-px bg-white-medium"></span>
 
-                    <!-- Reviews Count -->
                     <span class="font-medium text-black-light">
                         <?= (int) $product['review_count']; ?> Reviews
                     </span>
 
-                </div>
+                </div> -->
 
                 <!-- Price Section -->
-                <div class="mt-5 flex flex-col gap-1">
+                <div class="mt-2 flex flex-col gap-1">
 
                     <!-- Price -->
                     <div class="flex items-center gap-3">
-                        <span class="text-2xl md:text-3xl font-bold text-black-medium">
+                        <span class="text-2xl md:text-3xl font-semibold text-black-medium">
                             <?= e(money((float) $product['price'])); ?>
                         </span>
 

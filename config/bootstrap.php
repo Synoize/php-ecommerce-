@@ -25,6 +25,7 @@ require_once __DIR__ . '/../models/OrderModel.php';
 require_once __DIR__ . '/../models/ReviewModel.php';
 require_once __DIR__ . '/../models/PaymentModel.php';
 require_once __DIR__ . '/../models/SlideModel.php';
+require_once __DIR__ . '/../models/HomepageMediaModel.php';
 require_once __DIR__ . '/../controllers/AuthController.php';
 require_once __DIR__ . '/../controllers/StoreController.php';
 require_once __DIR__ . '/../controllers/CheckoutController.php';
@@ -176,6 +177,78 @@ function request_uploaded_images(string $field, string $targetDirectory): array
     return $uploads;
 }
 
+function store_uploaded_file(array $file, string $targetDirectory, array $allowedMimeExtensions, string $errorMessage = 'File upload failed. Please try again.'): string
+{
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        throw new RuntimeException($errorMessage);
+    }
+
+    if (!is_uploaded_file($file['tmp_name'] ?? '')) {
+        throw new RuntimeException('Invalid uploaded file.');
+    }
+
+    $mime = '';
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $mime = strtolower((string) finfo_file($finfo, $file['tmp_name'] ?? ''));
+            finfo_close($finfo);
+        }
+    }
+
+    if ($mime === '' && function_exists('mime_content_type')) {
+        $mime = strtolower((string) mime_content_type($file['tmp_name'] ?? ''));
+    }
+
+    if (!isset($allowedMimeExtensions[$mime])) {
+        throw new RuntimeException('Unsupported file type.');
+    }
+
+    $relativeDirectory = 'images/uploads/' . trim($targetDirectory, '/');
+    $absoluteDirectory = upload_storage_path($relativeDirectory);
+    ensure_upload_directory($absoluteDirectory);
+
+    $fileName = normalize_uploaded_file_name((string) ($file['name'] ?? 'upload'))
+        . '-' . bin2hex(random_bytes(6))
+        . '.' . $allowedMimeExtensions[$mime];
+    $absolutePath = rtrim($absoluteDirectory, '/\\') . DIRECTORY_SEPARATOR . $fileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $absolutePath)) {
+        throw new RuntimeException($errorMessage);
+    }
+
+    return $relativeDirectory . '/' . $fileName;
+}
+
+function store_uploaded_video(array $file, string $targetDirectory): string
+{
+    return store_uploaded_file(
+        $file,
+        $targetDirectory,
+        [
+            'video/mp4' => 'mp4',
+            'video/webm' => 'webm',
+            'video/quicktime' => 'mov',
+        ],
+        'Video upload failed. Please try again.'
+    );
+}
+
+function request_uploaded_video(string $field, string $targetDirectory, ?string $fallback = null): ?string
+{
+    $file = $_FILES[$field] ?? null;
+    if (!is_array($file)) {
+        return $fallback;
+    }
+
+    $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($error === UPLOAD_ERR_NO_FILE) {
+        return $fallback;
+    }
+
+    return store_uploaded_video($file, $targetDirectory);
+}
+
 function set_flash(string $type, string $message): void
 {
     $_SESSION['flash'] = ['type' => $type, 'message' => $message];
@@ -252,7 +325,7 @@ function require_admin(): void
 
 function money(float $amount): string
 {
-    return 'Rs. ' . number_format($amount, 2);
+    return '₹ ' . number_format($amount, 2);
 }
 
 function slugify(string $value): string
@@ -322,3 +395,5 @@ function json_response(array $payload, int $status = 200): never
     echo json_encode($payload, JSON_UNESCAPED_SLASHES);
     exit;
 }
+
+

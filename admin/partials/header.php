@@ -97,6 +97,7 @@ function navLink($path, $label, $icon)
                 <?= navLink('admin/box_options.php', 'Box Options', 'package-open') ?>
                 <?= navLink('admin/categories_page.php', 'Categories', 'layers') ?>
                 <?= navLink('admin/slides.php', 'Slides', 'image') ?>
+                <?= navLink('admin/homepage_media.php', 'Home Media', 'film') ?>
                 <?= navLink('admin/manage_orders.php', 'Orders', 'shopping-cart') ?>
                 <?= navLink('admin/payments.php', 'Payments', 'credit-card') ?>
                 <?= navLink('admin/manage_users.php', 'Users', 'users') ?>

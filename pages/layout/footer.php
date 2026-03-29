@@ -103,29 +103,57 @@
 
     <div class="border-t border-dashed border-white-medium"></div>
 
-    <div class="mx-auto max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-8 py-4 px-4 md:px-0">
-        <div class="text-center text-xs text-white-medium">
-            Copyright © <?= date("Y"); ?> <?= e(APP_NAME); ?> INDIA. All Rights Reserved.
+    <div class="mx-auto max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-6 py-4 px-4 md:px-0">
+
+        <!-- LEFT -->
+        <div class="text-center md:text-start text-xs text-black-light">
+            © <?= date("Y"); ?> <?= e(APP_NAME); ?> INDIA. All Rights Reserved.<br>
+            <span class="text-primary-medium font-medium">Designed by Websolvit.</span>
         </div>
 
+        <!-- SOCIAL ICONS (COLORFUL) -->
         <div class="flex items-center gap-4">
-            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-pink-100 transition">
-                <i class="fab fa-instagram text-black-light group-hover:text-pink-500"></i>
+
+            <a href="#" class="w-9 h-9 flex justify-center items-center rounded-lg bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 hover:scale-105 transition">
+                <i class="fab fa-instagram text-white-dark"></i>
             </a>
-            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-blue-100 transition">
-                <i class="fab fa-facebook-f text-black-light group-hover:text-blue-600"></i>
+
+            <a href="#" class="w-9 h-9 flex justify-center items-center rounded-lg bg-blue-600 hover:scale-105 transition">
+                <i class="fab fa-facebook-f text-white-dark"></i>
             </a>
-            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-gray-200 transition">
-                <i class="fab fa-twitter text-black-light group-hover:text-black-medium"></i>
+
+            <a href="#" class="w-9 h-9 flex justify-center items-center rounded-lg bg-black-medium hover:scale-105 transition">
+                <i class="fab fa-x-twitter text-white-dark"></i>
             </a>
-            <a href="#" class="group w-8 h-8 flex justify-center items-center rounded-full bg-gray-100 hover:bg-red-100 transition">
-                <i class="fab fa-youtube text-black-light group-hover:text-red-500"></i>
+
+            <a href="#" class="w-9 h-9 flex justify-center items-center rounded-lg bg-red-600 hover:scale-105 transition">
+                <i class="fab fa-youtube text-white-dark"></i>
             </a>
+
         </div>
 
-        <div class="text-xs text-black-light flex items-center gap-2 text-center px-4 py-2 border rounded-full">
-            Secure Payments | UPI | Cards | Net Banking
+        <!-- PAYMENT ICONS -->
+        <div class="flex items-center gap-3 bg-white-light/40 px-4 py-2 rounded-full border">
+
+            <!-- UPI -->
+            <span class="text-xs font-semibold text-black-medium px-2 py-1 bg-white-dark rounded">UPI</span>
+
+            <!-- Visa -->
+            <svg class="h-5" viewBox="0 0 48 16">
+                <text x="0" y="14" font-size="14" font-weight="bold" fill="#1A1F71">VISA</text>
+            </svg>
+
+            <!-- MasterCard -->
+            <div class="flex items-center gap-1">
+                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                <span class="w-3 h-3 bg-yellow-400 rounded-full -ml-2 opacity-80"></span>
+            </div>
+
+            <!-- RuPay -->
+            <span class="text-xs font-semibold text-blue-600 px-2 py-1 bg-white-dark rounded">RuPay</span>
+
         </div>
+
     </div>
 
 </footer>
