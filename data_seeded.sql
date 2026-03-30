@@ -3,7 +3,7 @@
 -- Run after database.sql
 -- ---------------------------------------------
 
-USE watch_ecommerce;
+USE u710712341_ecommerce;
 
 INSERT INTO categories (name, image) VALUES
 ('G-Shock', 'images/uploads/categories/g-shock.png'),

@@ -42,7 +42,7 @@ require __DIR__ . '/partials/header.php';
                                     <option value="<?= e($paymentStatus); ?>" <?= $order['payment_status'] === $paymentStatus ? 'selected' : ''; ?>><?= e(ucfirst($paymentStatus)); ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <button class="rounded-xl bg-slate-900 px-4 py-2 text-white" type="submit">Update</button>
+                            <button class="rounded-xl bg-primary-medium hover:bg-primary-medium/90 px-4 py-2 text-white-dark" type="submit">Update</button>
                         </form>
                     </td>
                 </tr>

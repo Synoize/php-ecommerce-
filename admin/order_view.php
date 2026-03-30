@@ -87,7 +87,7 @@ require __DIR__ . '/partials/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button class="w-full rounded-full bg-slate-900 px-5 py-3 font-semibold text-white" type="submit">Update order</button>
+            <button class="w-full rounded-full bg-primary-medium hover:bg-primary-medium/90 px-5 py-3 font-semibold text-white-dark" type="submit">Update order</button>
         </form>
         <div class="mt-6 text-sm text-slate-500">Shipping</div>
         <div class="mt-2 text-sm"><?= e((string) $order['address_line']); ?>, <?= e((string) $order['city']); ?>, <?= e((string) $order['state']); ?> - <?= e((string) $order['pincode']); ?></div>

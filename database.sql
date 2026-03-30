@@ -2,11 +2,11 @@
 -- WATCH ECOMMERCE DATABASE SCHEMA
 -- ---------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS watch_ecommerce
+CREATE DATABASE IF NOT EXISTS u710712341_ecommerce
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE watch_ecommerce;
+USE u710712341_ecommerce;
 
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -77,29 +77,27 @@ class CheckoutController
             throw new RuntimeException('Please add a mobile number to your account before payment.');
         }
 
-        if (!empty($_SESSION['pending_pay0_local_order_id'])) {
-            $this->orders->deletePendingForUser((int) $_SESSION['pending_pay0_local_order_id'], $userId);
+        if (!empty($_SESSION['pending_pay0_order_id'])) {
+            unset($_SESSION['pending_pay0_orders'][$_SESSION['pending_pay0_order_id']]);
         }
 
         $discount = $coupon ? round($subtotal * ((int) $coupon['discount_percent'] / 100), 2) : 0.0;
         $total = max(0, $subtotal - $discount);
         $collectAmount = $paymentMethod === 'cod' ? min((float) COD_BOOKING_AMOUNT, $total) : $total;
         $pay0OrderId = 'ORD_' . time() . random_int(1000, 9999);
-        $localOrderId = $this->orders->createPendingPaymentOrder(
-            $userId,
-            $addressId,
-            $items,
-            $subtotal,
-            $coupon,
-            $paymentMethod,
-            $pay0OrderId
-        );
 
-        $_SESSION['pending_pay0_local_order_id'] = $localOrderId;
+        $_SESSION['pending_pay0_orders'][$pay0OrderId] = [
+            'user_id' => $userId,
+            'address_id' => $addressId,
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'coupon' => $coupon,
+            'payment_method' => $paymentMethod,
+        ];
+
         $_SESSION['pending_pay0_order_id'] = $pay0OrderId;
 
         return [
-            'local_order_id' => $localOrderId,
             'pay0_order_id' => $pay0OrderId,
             'customer_name' => (string) $user['name'],
             'customer_mobile' => (string) $user['phone'],
@@ -111,6 +109,29 @@ class CheckoutController
 
     public function handlePay0Success(string $pay0OrderId, string $txnId): int
     {
+        $order = $this->orders->findByPay0OrderId($pay0OrderId);
+
+        if (!$order) {
+            $pending = $_SESSION['pending_pay0_orders'][$pay0OrderId] ?? null;
+            if (!$pending) {
+                throw new RuntimeException('Payment cannot be finalized because the pending order data was lost.');
+            }
+
+            $this->orders->createOrder(
+                (int) $pending['user_id'],
+                (int) $pending['address_id'],
+                $pending['items'],
+                (float) $pending['subtotal'],
+                $pending['coupon'] ?? null,
+                (string) $pending['payment_method'],
+                $pay0OrderId,
+                'confirmed',
+                (string) $pending['payment_method'] === 'cod' ? 'pending' : 'paid'
+            );
+
+            unset($_SESSION['pending_pay0_orders'][$pay0OrderId], $_SESSION['pending_pay0_order_id']);
+        }
+
         $result = $this->orders->finalizePay0Success($pay0OrderId, $txnId);
         $amount = $result['payment_method'] === 'cod'
             ? min((float) COD_BOOKING_AMOUNT, (float) $result['total_amount'])
@@ -123,7 +144,7 @@ class CheckoutController
             $this->cart->clear((int) current_user()['id']);
         }
 
-        unset($_SESSION['checkout_coupon'], $_SESSION['pending_pay0_local_order_id'], $_SESSION['pending_pay0_order_id']);
+        unset($_SESSION['checkout_coupon'], $_SESSION['pending_pay0_order_id']);
 
         return (int) $result['order_id'];
     }
@@ -131,7 +152,7 @@ class CheckoutController
     public function handlePay0Failure(string $pay0OrderId): void
     {
         $this->orders->markPaymentFailedByPay0OrderId($pay0OrderId);
-        unset($_SESSION['pending_pay0_local_order_id'], $_SESSION['pending_pay0_order_id']);
+        unset($_SESSION['pending_pay0_orders'][$pay0OrderId], $_SESSION['pending_pay0_order_id']);
     }
 
     private function validateLiveStock(array $items): void

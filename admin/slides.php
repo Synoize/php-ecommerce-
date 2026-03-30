@@ -11,6 +11,27 @@ if (is_post()) {
         $slideModel->delete((int) $_POST['delete_id']);
         set_flash('success', 'Slide deleted.');
     } else {
+        $uploadedPath = null;
+        if (!empty($_FILES['file_upload']) && ($_FILES['file_upload']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            $type = ($_POST['type'] ?? 'image') === 'video' ? 'video' : 'image';
+            if ($type === 'video') {
+                $uploadedPath = request_uploaded_video('file_upload', 'slides');
+            } else {
+                $uploadedPath = request_uploaded_image('file_upload', 'slides');
+            }
+        }
+
+        if ($uploadedPath !== null) {
+            $_POST['file_path'] = $uploadedPath;
+        } elseif ($edit) {
+            $_POST['file_path'] = (string) ($edit['file_path'] ?? '');
+        }
+
+        if (trim((string) ($_POST['file_path'] ?? '')) === '') {
+            set_flash('error', 'Please upload a slide file.');
+            redirect('admin/slides.php' . (isset($_POST['id']) && $_POST['id'] !== '' ? '?id=' . (int) $_POST['id'] : ''));
+        }
+
         $slideModel->save($_POST, isset($_POST['id']) && $_POST['id'] !== '' ? (int) $_POST['id'] : null);
         set_flash('success', 'Slide saved.');
     }
@@ -24,14 +45,18 @@ require __DIR__ . '/partials/header.php';
 <div class="grid gap-6 lg:grid-cols-[360px,1fr]">
     <div class="rounded-3xl bg-white p-6 shadow">
         <h1 class="text-2xl font-bold"><?= $edit ? 'Edit slide' : 'Add slide'; ?></h1>
-        <form action="" method="post" class="mt-6 space-y-4">
+        <form action="" method="post" enctype="multipart/form-data" class="mt-6 space-y-4">
             <input type="hidden" name="_token" value="<?= e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?= (int) ($edit['id'] ?? 0); ?>">
             <select class="w-full rounded-2xl border border-slate-200 px-4 py-3" name="type">
                 <option value="image" <?= ($edit['type'] ?? 'image') === 'image' ? 'selected' : ''; ?>>Image</option>
                 <option value="video" <?= ($edit['type'] ?? '') === 'video' ? 'selected' : ''; ?>>Video</option>
             </select>
-            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="file_path" value="<?= e((string) ($edit['file_path'] ?? '')); ?>" placeholder="File path or URL" required>
+            <label class="block text-sm font-semibold text-slate-700">Upload slide file</label>
+            <input class="block w-full rounded-2xl border border-slate-200 px-4 py-3" type="file" name="file_upload" accept="image/*,video/mp4,video/webm,video/quicktime">
+            <?php if ($edit && !empty($edit['file_path'])): ?>
+                <p class="text-xs text-slate-500">Leave blank to keep the current file.</p>
+            <?php endif; ?>
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="title" value="<?= e((string) ($edit['title'] ?? '')); ?>" placeholder="Title">
             <textarea class="w-full rounded-2xl border border-slate-200 px-4 py-3" name="description" rows="4" placeholder="Description"><?= e((string) ($edit['description'] ?? '')); ?></textarea>
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="text" name="button_name" value="<?= e((string) ($edit['button_name'] ?? '')); ?>" placeholder="Button text">

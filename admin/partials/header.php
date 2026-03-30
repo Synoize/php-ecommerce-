@@ -138,4 +138,109 @@ function navLink($path, $label, $icon)
                 });
 
                 lucide.createIcons();
-            </script>
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const main = document.getElementById('mainContent');
+                if (!main) return;
+
+                const tables = Array.from(main.querySelectorAll('table'));
+                if (tables.length === 0) return;
+
+                tables.forEach((table, tableIndex) => {
+                    const headerRow = table.querySelector('thead tr');
+                    const rows = Array.from(table.querySelectorAll('tbody tr'));
+                    if (!headerRow || rows.length === 0) return;
+
+                    const filterColumns = ['customer', 'user', 'status', 'payment', 'type', 'role', 'category', 'active', 'gateway', 'order', 'stock'];
+                    let filterIndex = -1;
+                    Array.from(headerRow.cells).forEach((cell, index) => {
+                        const text = cell.textContent.trim().toLowerCase();
+                        if (filterIndex === -1 && filterColumns.some(name => text.includes(name))) {
+                            filterIndex = index;
+                        }
+                    });
+
+                    const searchWrapper = document.createElement('div');
+                    searchWrapper.className = 'mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between';
+
+                    const searchField = document.createElement('div');
+                    searchField.className = 'flex-1';
+                    const searchInputId = `admin-search-input-${tableIndex}`;
+                    searchField.innerHTML = `
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Search records</label>
+                        <input id="${searchInputId}" type="search" placeholder="Search table..." class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-primary-medium focus:ring-2 focus:ring-primary-light" />
+                    `;
+                    searchWrapper.appendChild(searchField);
+
+                    let filterSelect = null;
+                    if (filterIndex >= 0) {
+                        const values = new Set();
+                        rows.forEach(row => {
+                            const cell = row.cells[filterIndex];
+                            if (cell) {
+                                const value = cell.textContent.trim();
+                                if (value !== '') {
+                                    values.add(value);
+                                }
+                            }
+                        });
+                        const options = Array.from(values).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+                        if (options.length > 0) {
+                            filterSelect = document.createElement('div');
+                            filterSelect.className = 'flex-1';
+                            const label = document.createElement('label');
+                            label.className = 'block text-sm font-semibold text-slate-700 mb-2';
+                            label.textContent = `Filter by ${headerRow.cells[filterIndex].textContent.trim()}`;
+                            const select = document.createElement('select');
+                            select.id = `admin-filter-select-${tableIndex}`;
+                            select.className = 'w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-primary-medium focus:ring-2 focus:ring-primary-light';
+                            const allOption = document.createElement('option');
+                            allOption.value = 'all';
+                            allOption.textContent = 'All';
+                            select.appendChild(allOption);
+
+                            options.forEach(value => {
+                                const option = document.createElement('option');
+                                option.value = value.toLowerCase();
+                                option.textContent = value;
+                                select.appendChild(option);
+                            });
+
+                            filterSelect.appendChild(label);
+                            filterSelect.appendChild(select);
+                            searchWrapper.appendChild(filterSelect);
+                        }
+                    }
+
+                    const stats = document.createElement('div');
+                    stats.className = 'text-sm text-slate-500';
+                    stats.innerText = `${rows.length} record${rows.length === 1 ? '' : 's'} found`;
+                    searchWrapper.appendChild(stats);
+
+                    table.parentNode.insertBefore(searchWrapper, table);
+
+                    const applyFilters = () => {
+                        const query = document.getElementById(searchInputId).value.trim().toLowerCase();
+                        const filterValue = filterSelect ? document.getElementById(`admin-filter-select-${tableIndex}`).value.toLowerCase() : 'all';
+                        let visibleCount = 0;
+
+                        rows.forEach(row => {
+                            const rowText = row.textContent.trim().toLowerCase();
+                            const searchMatch = query === '' || rowText.includes(query);
+                            const filterMatch = filterIndex < 0 || filterValue === 'all' || (row.cells[filterIndex] && row.cells[filterIndex].textContent.trim().toLowerCase() === filterValue);
+                            const visible = searchMatch && filterMatch;
+                            row.style.display = visible ? '' : 'none';
+                            if (visible) visibleCount += 1;
+                        });
+
+                        stats.innerText = `${visibleCount} record${visibleCount === 1 ? '' : 's'} found`;
+                    };
+
+                    document.getElementById(searchInputId).addEventListener('input', applyFilters);
+                    if (filterSelect) {
+                        document.getElementById(`admin-filter-select-${tableIndex}`).addEventListener('change', applyFilters);
+                    }
+                });
+            });
+        </script>

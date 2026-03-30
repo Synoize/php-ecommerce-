@@ -13,6 +13,30 @@ class OrderModel extends BaseModel
         string $paymentMethod,
         string $pay0OrderId
     ): int {
+        return $this->createOrder(
+            $userId,
+            $addressId,
+            $cartItems,
+            $subtotal,
+            $coupon,
+            $paymentMethod,
+            $pay0OrderId,
+            'pending',
+            'pending'
+        );
+    }
+
+    public function createOrder(
+        int $userId,
+        int $addressId,
+        array $cartItems,
+        float $subtotal,
+        ?array $coupon,
+        string $paymentMethod,
+        string $pay0OrderId,
+        string $status,
+        string $paymentStatus
+    ): int {
         $discountAmount = $coupon ? round($subtotal * ((int) $coupon['discount_percent'] / 100), 2) : 0.0;
         $total = max(0, $subtotal - $discountAmount);
 
@@ -27,9 +51,9 @@ class OrderModel extends BaseModel
                 'user_id' => $userId,
                 'address_id' => $addressId,
                 'total_amount' => $total,
-                'status' => 'pending',
+                'status' => $status,
                 'payment_method' => $paymentMethod,
-                'payment_status' => 'pending',
+                'payment_status' => $paymentStatus,
                 'pay0_order_id' => $pay0OrderId,
             ]);
             $orderId = (int) $this->pdo->lastInsertId();
@@ -84,15 +108,18 @@ class OrderModel extends BaseModel
         $normalized = [];
 
         foreach ($cartItems as $item) {
-            $key = sprintf('%s|%s', $item['product_id'], $item['box_option_id'] ?? '0');
+            $boxOptionId = isset($item['box_option_id']) && $item['box_option_id'] !== ''
+                ? (int) $item['box_option_id']
+                : 0;
+
+            $key = sprintf('%s|%s', (int) $item['product_id'], $boxOptionId);
 
             if (isset($normalized[$key])) {
                 $normalized[$key]['quantity'] += (int) $item['quantity'];
-                $normalized[$key]['box_quantity'] = max(
-                    (int) $normalized[$key]['box_quantity'],
-                    (int) ($item['box_quantity'] ?? 0)
-                );
+                $normalized[$key]['box_quantity'] += (int) ($item['box_quantity'] ?? 0);
             } else {
+                $item['box_option_id'] = $boxOptionId === 0 ? null : $boxOptionId;
+                $item['box_quantity'] = (int) ($item['box_quantity'] ?? 0);
                 $normalized[$key] = $item;
             }
         }
@@ -205,10 +232,10 @@ class OrderModel extends BaseModel
             'SELECT o.*, a.city, a.state
              FROM orders o
              LEFT JOIN addresses a ON a.id = o.address_id
-             WHERE o.user_id = :user_id AND o.status != :pending_status
+             WHERE o.user_id = :user_id
              ORDER BY o.created_at DESC'
         );
-        $stmt->execute(['user_id' => $userId, 'pending_status' => 'pending']);
+        $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll();
     }
 
@@ -218,10 +245,10 @@ class OrderModel extends BaseModel
             'SELECT o.*, a.full_name, a.phone, a.address_line, a.city, a.state, a.pincode, a.country
              FROM orders o
              LEFT JOIN addresses a ON a.id = o.address_id
-             WHERE o.id = :order_id AND o.user_id = :user_id AND o.status != :pending_status
+             WHERE o.id = :order_id AND o.user_id = :user_id
              LIMIT 1'
         );
-        $stmt->execute(['order_id' => $orderId, 'user_id' => $userId, 'pending_status' => 'pending']);
+        $stmt->execute(['order_id' => $orderId, 'user_id' => $userId]);
         $order = $stmt->fetch();
 
         if (!$order) {

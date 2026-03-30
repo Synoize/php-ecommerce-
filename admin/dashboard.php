@@ -79,9 +79,9 @@ require __DIR__ . '/partials/header.php';
     </section>
 
     <section class="grid gap-6 xl:grid-cols-2">
-        <div class="rounded-lg max-h-[60vh] bg-white p-6 shadow">
+        <div class="rounded-lg h-[60vh] overflow-hidden bg-white p-6 shadow">
             <div class="flex items-center justify-between gap-3">
-                <h2 class="text-2xl font-bold text-black-medium">Latest 7 Orders</h2>
+                <h2 class="text-2xl font-bold text-black-medium">Latest Orders</h2>
                 <a class="text-sm font-semibold text-sky-600" href="<?= e(app_url('admin/manage_orders.php')); ?>">View all</a>
             </div>
             <div class="mt-4 overflow-x-auto">
@@ -95,7 +95,7 @@ require __DIR__ . '/partials/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($recentOrders as $order): ?>
+                        <?php foreach (array_slice($recentOrders, 0, 5) as $order): ?>
                             <tr class="border-t border-slate-100">
                                 <td class="py-3"><a class="font-semibold text-sky-600" href="<?= e(app_url('admin/order_view.php?id=' . (int) $order['id'])); ?>">#<?= (int) $order['id']; ?></a></td>
                                 <td class="py-3"><?= e($order['user_name']); ?></td>
@@ -108,7 +108,7 @@ require __DIR__ . '/partials/header.php';
             </div>
         </div>
 
-        <div class="rounded-lg max-h-[60vh] bg-white p-6 shadow">
+        <div class="rounded-lg h-[60vh] overflow-hidden bg-white p-6 shadow">
             <div class="flex items-center justify-between gap-3">
                 <h2 class="text-2xl font-bold text-black-medium">Registered Users</h2>
                 <a class="text-sm font-semibold text-sky-600" href="<?= e(app_url('admin/manage_users.php')); ?>">View all</a>
@@ -124,7 +124,7 @@ require __DIR__ . '/partials/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($registeredUsers as $user): ?>
+                        <?php foreach (array_slice($registeredUsers, 0, 5) as $user): ?>
                             <tr class="border-t border-slate-100">
                                 <td class="py-3 font-semibold text-black-medium"><?= e($user['name']); ?></td>
                                 <td class="py-3"><?= e($user['email']); ?></td>

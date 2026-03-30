@@ -10,11 +10,6 @@ if ($pay0OrderId === '') {
 }
 
 $orderModel = new OrderModel();
-$order = $orderModel->findByPay0OrderId($pay0OrderId);
-if (!$order) {
-    set_flash('error', 'Order not found.');
-    redirect('checkout.php');
-}
 
 $statusResponse = null;
 $errorMessage = null;
