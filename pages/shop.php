@@ -97,13 +97,13 @@ require __DIR__ . '/layout/header.php';
 
 
         <!-- FILTER DRAWER -->
-        <aside id="filter-drawer" class="fixed lg:static top-0 left-0 h-full lg:h-fit w-[300px] bg-white-dark p-4 md:p-0 z-50 md:z-10 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"> 
+        <aside id="filter-drawer" class="fixed lg:static top-0 left-0 h-full lg:h-fit w-[300px] bg-white-dark p-4 md:p-0 z-50 md:z-10 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto">
             <!-- MOBILE CLOSE -->
-            <button id="close-filter" class="mb-6 lg:hidden absolute top-4 right-4 text-black-light"> 
-                <i data-lucide="x" class="w-6 h-6"></i> 
+            <button id="close-filter" class="mb-6 lg:hidden absolute top-4 right-4 text-black-light">
+                <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <form action="<?= e(app_url('shop.php')); ?>" method="get" class="space-y-8"> 
-                <input type="hidden" name="sort" value="<?= e($filters['sort']); ?>"> 
+            <form action="<?= e(app_url('shop.php')); ?>" method="get" class="space-y-8">
+                <input type="hidden" name="sort" value="<?= e($filters['sort']); ?>">
                 <!-- FILTER HEADER -->
                 <div>
                     <h2 class="text-xl md:text-2xl font-semibold text-black-medium tracking-wide"> Filter Products </h2>
@@ -233,11 +233,26 @@ require __DIR__ . '/layout/header.php';
                             </h3>
 
                             <!-- PRICE -->
-                            <div class="flex items-center justify-between mt-auto">
+                            <div class="mt-2 flex items-center gap-2 text-nowrap">
 
-                                <p class="text-sm font-semibold text-green-600">
-                                    <?= e(money((float) $product['price'])); ?>
+                                <!-- Current Price -->
+                                <p class="text-lg font-medium text-black-medium">
+                                    <?= e(money(
+                                        (float)$product['best_price'] > 0
+                                            ? (float)$product['best_price']
+                                            : (float)$product['price']
+                                    )); ?>
                                 </p>
+
+                                <!-- Show MRP only if different -->
+                                <?php if (
+                                    (float)$product['best_price'] > 0 &&
+                                    (float)$product['best_price'] < (float)$product['price']
+                                ): ?>
+                                    <p class="text-xs text-black-light line-through">
+                                        <?= e(money((float)$product['price'])); ?>
+                                    </p>
+                                <?php endif; ?>
 
                             </div>
 

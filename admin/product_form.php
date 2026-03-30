@@ -36,6 +36,7 @@ if (is_post()) {
             'description' => trim((string) ($_POST['description'] ?? '')),
             'category_id' => (int) ($_POST['category_id'] ?? 0),
             'price' => (float) ($_POST['price'] ?? 0),
+            'best_price' => (float) ($_POST['best_price'] ?? 0),
             'stock' => (int) ($_POST['stock'] ?? 0),
             'image' => $primaryImage,
             'is_active' => !empty($_POST['is_active']) ? 1 : 0,
@@ -55,6 +56,7 @@ if (is_post()) {
             'description' => trim((string) ($_POST['description'] ?? '')),
             'category_id' => (int) ($_POST['category_id'] ?? 0),
             'price' => (string) ($_POST['price'] ?? '0'),
+            'best_price' => (string) ($_POST['best_price'] ?? '0'),
             'stock' => (string) ($_POST['stock'] ?? '0'),
             'image' => $fallbackImage,
             'is_active' => !empty($_POST['is_active']) ? 1 : 0,
@@ -104,6 +106,10 @@ require __DIR__ . '/partials/header.php';
         <div>
             <label class="mb-2 block text-sm font-semibold text-slate-700">Price</label>
             <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="number" step="0.01" min="0" name="price" value="<?= e((string) ($product['price'] ?? '0')); ?>" placeholder="Price" required>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-semibold text-slate-700">Best Price</label>
+            <input class="w-full rounded-2xl border border-slate-200 px-4 py-3" type="number" step="0.01" min="0" name="best_price" value="<?= e((string) ($product['best_price'] ?? '0')); ?>" placeholder="Best price" required>
         </div>
         <div>
             <label class="mb-2 block text-sm font-semibold text-slate-700">Stock</label>

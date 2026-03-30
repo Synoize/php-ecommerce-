@@ -221,14 +221,15 @@ class ProductModel extends BaseModel
     {
         if ($id === null) {
             $stmt = $this->pdo->prepare(
-                'INSERT INTO products (name, description, category_id, price, stock, image, is_active)
-                 VALUES (:name, :description, :category_id, :price, :stock, :image, :is_active)'
+                'INSERT INTO products (name, description, category_id, price, best_price, stock, image, is_active)
+                 VALUES (:name, :description, :category_id, :price, :best_price, :stock, :image, :is_active)'
             );
             $stmt->execute([
                 'name' => $data['name'],
                 'description' => $data['description'] ?: null,
                 'category_id' => $data['category_id'] ?: null,
                 'price' => $data['price'],
+                'best_price' => $data['best_price'],
                 'stock' => $data['stock'],
                 'image' => $data['image'] ?: null,
                 'is_active' => $data['is_active'],
@@ -238,7 +239,7 @@ class ProductModel extends BaseModel
             $stmt = $this->pdo->prepare(
                 'UPDATE products
                  SET name = :name, description = :description, category_id = :category_id,
-                     price = :price, stock = :stock, image = :image, is_active = :is_active
+                     price = :price, best_price = :best_price, stock = :stock, image = :image, is_active = :is_active
                  WHERE id = :id'
             );
             $stmt->execute([
@@ -247,6 +248,7 @@ class ProductModel extends BaseModel
                 'description' => $data['description'] ?: null,
                 'category_id' => $data['category_id'] ?: null,
                 'price' => $data['price'],
+                'best_price' => $data['best_price'],
                 'stock' => $data['stock'],
                 'image' => $data['image'] ?: null,
                 'is_active' => $data['is_active'],

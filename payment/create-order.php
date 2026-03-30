@@ -13,6 +13,11 @@ if (!$address) {
     redirect('checkout.php');
 }
 
+if (trim((string) current_user()['phone']) === '') {
+    set_flash('error', 'Please add a mobile number to your account before payment.');
+    redirect('checkout.php');
+}
+
 try {
     $checkout = new CheckoutController();
     $pending = $checkout->beginPay0Order((int) current_user()['id'], $addressId, $paymentMethod);

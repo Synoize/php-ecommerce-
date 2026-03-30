@@ -190,17 +190,48 @@ require __DIR__ . '/layout/header.php';
                 <!-- Price Section -->
                 <div class="mt-2 flex flex-col gap-1">
 
-                    <!-- Price -->
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl md:text-3xl font-semibold text-black-medium">
-                            <?= e(money((float) $product['price'])); ?>
-                        </span>
+                    <div class="mt-2 flex flex-wrap items-center gap-3">
 
-                        <!-- Optional badge -->
-                        <span class="rounded-full bg-white-light px-2 py-1 text-xs font-medium text-primary-medium">
-                            Best Price
-                        </span>
+                        <!-- Current Price -->
+                        <p class="text-2xl md:text-3xl font-semibold text-black-medium">
+                            <?= e(money(
+                                (float)$product['best_price'] > 0
+                                    ? (float)$product['best_price']
+                                    : (float)$product['price']
+                            )); ?>
+                        </p>
+
+                        <?php
+                        $price = (float)$product['price'];
+                        $best = (float)$product['best_price'];
+                        $hasDiscount = $best > 0 && $best < $price;
+                        $discount = $hasDiscount ? round((($price - $best) / $price) * 100) : 0;
+                        ?>
+
+                        <!-- Show only if real discount -->
+                        <?php if ($hasDiscount): ?>
+
+                            <!-- MRP -->
+                            <p class="text-sm text-black-light line-through">
+                                MRP <?= e(money($price)); ?>
+                            </p>
+
+                            <!-- Discount -->
+                            <span class="text-sm font-semibold text-green-600">
+                                <?= $discount ?>% OFF
+                            </span>
+
+                            <!-- Show badge ONLY if discount is strong -->
+                            <?php if ($discount >= 10): ?>
+                                <span class="rounded-full bg-white-light px-2 py-1 text-xs font-medium text-primary-medium">
+                                    Best Price
+                                </span>
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+
                     </div>
+
 
                     <!-- Tax Info -->
                     <span class="text-xs md:text-sm text-black-light">
@@ -357,9 +388,9 @@ require __DIR__ . '/layout/header.php';
 
                                                 <!-- Pricing Breakdown -->
 
-                                                <div class="flex justify-between text-xs uppercase tracking-wider text-black-light my-4">
+                                                <div class="flex flex-col justify-between text-xs uppercase tracking-wider text-black-light my-4">
                                                     <span>Options amount</span>
-                                                    <span id="box-option-total">
+                                                    <span id="box-option-total" class="text-black-medium font-semibold mt-1">
                                                         <?= $defaultBox ? e(money((float) $defaultBox['price'])) : e(money(0)); ?>
                                                     </span>
                                                 </div>
@@ -392,8 +423,8 @@ require __DIR__ . '/layout/header.php';
                                         <!-- Total Price -->
                                         <div class="flex justify-between items-center border-t pt-2">
                                             <span class="text-sm font-medium text-black-light">Final total</span>
-                                            <span id="final-total" class="text-xl md:text-2xl font-bold text-black-medium">
-                                                <?= e(money((float) $product['price'] + (float) ($defaultBox['price'] ?? 0))); ?>
+                                            <span id="final-total" class="text-xl md:text-2xl font-semibold text-black-medium">
+                                                <?= e(money((float) $product['best_price'] + (float) ($defaultBox['price'] ?? 0))); ?>
                                             </span>
                                         </div>
                                     </div>
@@ -848,9 +879,29 @@ require __DIR__ . '/layout/header.php';
                                     <?= e($item['name']); ?>
                                 </h3>
 
-                                <p class="mt-2 text-sm font-semibold text-green-600">
-                                    <?= e(money((float) $item['price'])); ?>
-                                </p>
+                                <!-- PRICE -->
+                                <div class="mt-2 flex items-center gap-2 text-nowrap">
+
+                                    <!-- Current Price -->
+                                    <p class="text-lg font-medium text-black-medium">
+                                        <?= e(money(
+                                            (float)$product['best_price'] > 0
+                                                ? (float)$product['best_price']
+                                                : (float)$product['price']
+                                        )); ?>
+                                    </p>
+
+                                    <!-- Show MRP only if different -->
+                                    <?php if (
+                                        (float)$product['best_price'] > 0 &&
+                                        (float)$product['best_price'] < (float)$product['price']
+                                    ): ?>
+                                        <p class="text-xs text-black-light line-through">
+                                            <?= e(money((float)$product['price'])); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                </div>
 
                                 <?php if (!isset($item['stock']) || (int)$item['stock'] > 0): ?>
                                     <a href="<?= e(product_link($item)); ?>"
@@ -903,7 +954,7 @@ require __DIR__ . '/layout/header.php';
     const boxSelect = document.getElementById('box-option-select');
     const mainImage = document.getElementById('main-product-image');
 
-    const basePrice = <?= json_encode((float) $product['price']); ?>;
+    const basePrice = <?= json_encode((float) $product['best_price']); ?>;
     const hasBoxOptions = <?= json_encode($boxOptions !== []); ?>;
 
     const cartForm = document.getElementById('add-to-cart-form');

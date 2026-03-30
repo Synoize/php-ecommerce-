@@ -10,7 +10,7 @@ require __DIR__ . '/partials/header.php';
     <h1 class="text-2xl font-bold">Cart Activity</h1>
     <div class="mt-6 overflow-x-auto">
         <table class="min-w-full text-sm">
-            <thead><tr class="text-left text-slate-500"><th class="pb-3">Customer</th><th class="pb-3">Product</th><th class="pb-3">Quantity</th><th class="pb-3">Box Option</th><th class="pb-3">Line Total</th><th class="pb-3">Added</th></tr></thead>
+            <thead><tr class="text-left text-slate-500"><th class="pb-3">Customer</th><th class="pb-3">Product</th><th class="pb-3">Price</th><th class="pb-3">Best Price</th><th class="pb-3">Quantity</th><th class="pb-3">Box Option</th><th class="pb-3">Line Total</th><th class="pb-3">Added</th></tr></thead>
             <tbody>
             <?php foreach ($items as $item): ?>
                 <tr class="border-t border-slate-100 align-top">
@@ -19,6 +19,8 @@ require __DIR__ . '/partials/header.php';
                         <div class="text-xs text-slate-500"><?= e($item['email']); ?></div>
                     </td>
                     <td class="py-3"><?= e($item['product_name']); ?></td>
+                    <td class="py-3"><?= e(money((float) $item['price'])); ?></td>
+                    <td class="py-3"><?= e(money((float) $item['best_price'])); ?></td>
                     <td class="py-3"><?= (int) $item['quantity']; ?></td>
                     <td class="py-3">
                         <?php if (!empty($item['box_name']) && (int) $item['box_quantity'] > 0): ?>

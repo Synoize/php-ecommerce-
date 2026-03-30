@@ -7,7 +7,7 @@ class WishlistModel extends BaseModel
     public function items(int $userId): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT w.*, p.name, p.price, p.stock, p.image
+            'SELECT w.*, p.name, p.price, p.best_price, p.stock, p.image
              FROM wishlist w
              INNER JOIN products p ON p.id = w.product_id
              WHERE w.user_id = :user_id
@@ -20,7 +20,7 @@ class WishlistModel extends BaseModel
     public function adminAll(): array
     {
         return $this->pdo->query(
-            'SELECT w.*, u.name AS user_name, u.email, p.name AS product_name, p.price, p.stock
+            'SELECT w.*, u.name AS user_name, u.email, p.name AS product_name, p.price, p.best_price, p.stock
              FROM wishlist w
              INNER JOIN users u ON u.id = w.user_id
              INNER JOIN products p ON p.id = w.product_id

@@ -31,94 +31,94 @@ SET @mens_chrono_desc = 'This Product is the Same as Original (Master Quality) w
 SET @edifice_desc = 'This Product is the Same as Original (Master Quality) with 3 month Machine Replacement Warranty. original box free, no extra charges apply! Cash on Delivery available all over India. All Chrono working.';
 SET @gshock_desc = 'Brand - G-Shock Casio. For Unisex. 7AA Premium Collection. Water and impact Resistant. Countdown timer. Mineral Glass. Digital drive System. Working StopWatch/ Day/Date Digital Display. Easy Pin Buckled Lock. Working AutoLight. Working World time with Automatic Reset.';
 
-INSERT INTO products (name, description, category_id, price, stock, image)
-SELECT seed.name, seed.description, c.id, seed.price, seed.stock, seed.image
+INSERT INTO products (name, description, category_id, price, best_price, stock, image)
+SELECT seed.name, seed.description, c.id, seed.price, seed.best_price, seed.stock, seed.image
 FROM (
-    SELECT 'Women Classic Watch' AS name, 'Elegant analog watch designed for women with a slim dial and stylish strap.' AS description, 'For Women' AS category_name, 2499.00 AS price, 15 AS stock, 'images/uploads/products/_02.png' AS image
-    UNION ALL SELECT 'Men Classic Watch', 'Premium analog wristwatch for men with leather strap.', 'For Men', 2799.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'G-Shock Digital Watch', 'G-Shock digital watch for everyone.', 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'Automatic Mechanical Watch', 'Automatic mechanical watch with premium movement.', 'Automatic', 3999.00, 10, 'images/uploads/products/_04.png'
+    SELECT 'Women Classic Watch' AS name, 'Elegant analog watch designed for women with a slim dial and stylish strap.' AS description, 'For Women' AS category_name, 2499.00 AS price, 2199.00 AS best_price, 15 AS stock, 'images/uploads/products/_02.png' AS image
+    UNION ALL SELECT 'Men Classic Watch', 'Premium analog wristwatch for men with leather strap.', 'For Men', 2799.00, 2399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'G-Shock Digital Watch', 'G-Shock digital watch for everyone.', 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'Automatic Mechanical Watch', 'Automatic mechanical watch with premium movement.', 'Automatic', 3999.00, 3499.00, 10, 'images/uploads/products/_04.png'
 
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Rose Gold Chain With White Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Rose Gold Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With White Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With Blue Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Black Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Brown Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Grey Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Olive Green Strap, Gold Case With White Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Black Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Black Strap, Black Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Tan Brown Strap, Silver Rosegold Case With White Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Brown Strap, Silver Rosegold Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Blue Strap, Silver Case With Blue Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Black Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Black Strap, Black Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 20, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Towns-Man Edition Black Leather', @automatic_desc, 'Automatic', 1699.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Towns-Man Edition Tan Brown Leather', @automatic_desc, 'Automatic', 1699.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Bronson Leather', @automatic_desc, 'Automatic', 1699.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Brown Leather Black Case', @automatic_desc, 'Automatic', 1799.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Everett Brown Leather Black Case', @automatic_desc, 'Automatic', 1799.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Metal Silver Rose Gold', @automatic_desc, 'Automatic', 1899.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Black Metal Towns-Man Edition', @automatic_desc, 'Automatic', 1999.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Black Metal Brown shade', @automatic_desc, 'Automatic', 1999.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Fosssil Automatic Black Metal Silver dial shade', @automatic_desc, 'Automatic', 1999.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Cartier Automatic Leather', @automatic_desc, 'Automatic', 1999.00, 18, 'images/uploads/products/_04.png'
-    UNION ALL SELECT 'Cartier Automatic Leather Arebic', @automatic_desc, 'Automatic', 1999.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Rose Gold Chain With White Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Rose Gold Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With White Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With Blue Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silver Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Black Chain With Black Dial', @automatic_desc, 'Automatic', 1999.00, 1799.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Brown Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Grey Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Olive Green Strap, Gold Case With White Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Black Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Silicone Black Strap, Black Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Tan Brown Strap, Silver Rosegold Case With White Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Brown Strap, Silver Rosegold Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Blue Strap, Silver Case With Blue Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Black Strap, Silver Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Tommy Hilfiger Automatic Leather Black Strap, Black Case With Black Dial', @automatic_desc, 'Automatic', 1799.00, 1599.00, 20, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Towns-Man Edition Black Leather', @automatic_desc, 'Automatic', 1699.00, 1499.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Towns-Man Edition Tan Brown Leather', @automatic_desc, 'Automatic', 1699.00, 1499.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Bronson Leather', @automatic_desc, 'Automatic', 1699.00, 1499.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Brown Leather Black Case', @automatic_desc, 'Automatic', 1799.00, 1599.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Everett Brown Leather Black Case', @automatic_desc, 'Automatic', 1799.00, 1599.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Metal Silver Rose Gold', @automatic_desc, 'Automatic', 1899.00, 1699.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Black Metal Towns-Man Edition', @automatic_desc, 'Automatic', 1999.00, 1799.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Black Metal Brown shade', @automatic_desc, 'Automatic', 1999.00, 1799.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Fosssil Automatic Black Metal Silver dial shade', @automatic_desc, 'Automatic', 1999.00, 1799.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Cartier Automatic Leather', @automatic_desc, 'Automatic', 1999.00, 1799.00, 18, 'images/uploads/products/_04.png'
+    UNION ALL SELECT 'Cartier Automatic Leather Arebic', @automatic_desc, 'Automatic', 1999.00, 1799.00, 18, 'images/uploads/products/_04.png'
 
-    UNION ALL SELECT 'Edifice Chronograph Working Silver Black Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Golden Silver White Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Golden Silver Black Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Golden Black Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Golden White Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Rose Gold Silver White Dial', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Leather Strap', @edifice_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Edifice Chronograph Working Black', @edifice_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Fosssil Metal Chronograph Working', @mens_chrono_desc, 'For Men', 1299.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Fosssil Leather Chronograph Working', @mens_chrono_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Fosssil Black Leather Slim Watch Chronograph Working', @mens_chrono_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Patek P Silver Black', @mens_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Patek P Black', @mens_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Patek P Golden Black', @mens_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Patek P Golden White', @mens_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Patek P Golden Green', @mens_desc, 'For Men', 1199.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Gold Case, White Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Gold Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Brown Strap, Silver Rose Gold Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Brown Strap, Silver Rose Gold Case, White Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Metal Regular Chronograph Working Silver Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tissot Metal Regular Chronograph Working Silver White dial', @mens_chrono_desc, 'For Men', 1499.00, 20, 'images/uploads/products/_01.png'
-    UNION ALL SELECT 'Tag Cr7 Metal Black Chronograph Working', @mens_chrono_desc, 'For Men', 1799.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Silver Black Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Golden Silver White Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Golden Silver Black Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Golden Black Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Golden White Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Rose Gold Silver White Dial', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Leather Strap', @edifice_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Edifice Chronograph Working Black', @edifice_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Fosssil Metal Chronograph Working', @mens_chrono_desc, 'For Men', 1299.00, 1199.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Fosssil Leather Chronograph Working', @mens_chrono_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Fosssil Black Leather Slim Watch Chronograph Working', @mens_chrono_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Patek P Silver Black', @mens_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Patek P Black', @mens_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Patek P Golden Black', @mens_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Patek P Golden White', @mens_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Patek P Golden Green', @mens_desc, 'For Men', 1199.00, 1099.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Gold Case, White Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Gold Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Black Strap, Silver Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Brown Strap, Silver Rose Gold Case, Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Slim Leather Chronograph Working Brown Strap, Silver Rose Gold Case, White Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Metal Regular Chronograph Working Silver Black Dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tissot Metal Regular Chronograph Working Silver White dial', @mens_chrono_desc, 'For Men', 1499.00, 1399.00, 20, 'images/uploads/products/_01.png'
+    UNION ALL SELECT 'Tag Cr7 Metal Black Chronograph Working', @mens_chrono_desc, 'For Men', 1799.00, 1599.00, 20, 'images/uploads/products/_01.png'
 
-    UNION ALL SELECT 'Casio AE 1200 leather Brown', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'Casio AE 1200 leather Black Silver', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'Casio AE 1200 leather Black', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'Casio AE 1200 leather Black Copper', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G - SHOCK BBGM - 2100 Silver Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G - SHOCK BBGM - 2100 Full Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G - SHOCK BBGBM - 2100 Silver Tiffany Blue Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G - SHOCK BBGBM-2100 Silver Green Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGBM-2100 Silver Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM-2100 Blue Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM-2100 Rose gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM-2100 gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM-2100 Black Green Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGA-2100 Black Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGA-2100 Black White Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGA- 110 Black Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGA- 110 Black gold Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 110 Silver Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 110 Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 110 Gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 5600 Silver Metal Body', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 5600 Black Metal Body', @gshock_desc, 'G-Shock', 999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Gold Full Metal', @gshock_desc, 'G-Shock', 1199.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Silver Full Metal', @gshock_desc, 'G-Shock', 1199.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Black Full Metal', @gshock_desc, 'G-Shock', 1199.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 2100b Tiffany Blue Silver Full Metal', @gshock_desc, 'G-Shock', 1999.00, 25, 'images/uploads/products/_03.png'
-    UNION ALL SELECT 'G-SHOCK BBGM- 2100b Silver Black Full Metal', @gshock_desc, 'G-Shock', 1999.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'Casio AE 1200 leather Brown', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'Casio AE 1200 leather Black Silver', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'Casio AE 1200 leather Black', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'Casio AE 1200 leather Black Copper', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G - SHOCK BBGM - 2100 Silver Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G - SHOCK BBGM - 2100 Full Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G - SHOCK BBGBM - 2100 Silver Tiffany Blue Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G - SHOCK BBGBM-2100 Silver Green Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGBM-2100 Silver Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM-2100 Blue Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM-2100 Rose gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM-2100 gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM-2100 Black Green Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGA-2100 Black Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 1199.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGA-2100 Black White Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 1199.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGA- 110 Black Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 1199.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGA- 110 Black gold Fiber Body', @gshock_desc, 'G-Shock', 1299.00, 1199.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 110 Silver Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 110 Black Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 110 Gold Metal Body', @gshock_desc, 'G-Shock', 1399.00, 1299.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 5600 Silver Metal Body', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 5600 Black Metal Body', @gshock_desc, 'G-Shock', 999.00, 899.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Gold Full Metal', @gshock_desc, 'G-Shock', 1199.00, 1099.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Silver Full Metal', @gshock_desc, 'G-Shock', 1199.00, 1099.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 5000 Black Full Metal', @gshock_desc, 'G-Shock', 1199.00, 1099.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 2100b Tiffany Blue Silver Full Metal', @gshock_desc, 'G-Shock', 1999.00, 1799.00, 25, 'images/uploads/products/_03.png'
+    UNION ALL SELECT 'G-SHOCK BBGM- 2100b Silver Black Full Metal', @gshock_desc, 'G-Shock', 1999.00, 1799.00, 25, 'images/uploads/products/_03.png'
 ) AS seed
 INNER JOIN categories c ON c.name = seed.category_name
 LEFT JOIN products p ON p.name = seed.name
@@ -180,17 +180,19 @@ VALUES
 
 INSERT INTO userReview (file_path)
 VALUES
-  ("images/uploads/reviews/_01.png"),
-  ("images/uploads/reviews/_01.png"),
-  ("images/uploads/reviews/_01.png"),
-  ("images/uploads/reviews/_01.png"),
-  ("images/uploads/reviews/_01.png");
+  ("images/uploads/reviews/01-e9a9d1c9bc83.png"),
+  ("images/uploads/reviews/01-e9a9d1c9bc83.png"),
+  ("images/uploads/reviews/01-e9a9d1c9bc83.png"),
+  ("images/uploads/reviews/01-e9a9d1c9bc83.png"),
+  ("images/uploads/reviews/01-e9a9d1c9bc83.png");
 
 INSERT INTO featuredProductsVideo (file_path)
 VALUES
-  ("images/uploads/ugcs/_01.mp4"),
-  ("images/uploads/ugcs/_01.mp4"),
-  ("images/uploads/ugcs/_01.mp4"),
-  ("images/uploads/ugcs/_01.mp4"),
-  ("images/uploads/ugcs/_01.mp4");
+  ("images/uploads/ugcs/01-e11dc73db2c5.mp4"),
+  ("images/uploads/ugcs/01-e11dc73db2c5.mp4"),
+  ("images/uploads/ugcs/01-e11dc73db2c5.mp4"),
+  ("images/uploads/ugcs/01-e11dc73db2c5.mp4"),
+  ("images/uploads/ugcs/01-e11dc73db2c5.mp4");
+
+
 

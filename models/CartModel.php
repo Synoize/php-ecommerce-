@@ -6,8 +6,9 @@ class CartModel extends BaseModel
 {
     public function items(int $userId): array
     {
+        $this->normalizeCart($userId);
         $stmt = $this->pdo->prepare(
-            'SELECT c.*, p.name, p.price, p.stock, p.image, p.is_active,
+            'SELECT c.*, p.name, p.price, p.best_price, p.stock, p.image, p.is_active,
                     b.name AS box_name, b.image AS box_image, b.price AS box_price, b.is_active AS box_is_active
              FROM cart c
              INNER JOIN products p ON p.id = c.product_id
@@ -19,7 +20,8 @@ class CartModel extends BaseModel
         $items = $stmt->fetchAll();
 
         foreach ($items as &$item) {
-            $productTotal = (float) $item['price'] * (int) $item['quantity'];
+            $unitPrice = (float) $item['best_price'] > 0 ? (float) $item['best_price'] : (float) $item['price'];
+            $productTotal = $unitPrice * (int) $item['quantity'];
             $boxTotal = ((float) ($item['box_price'] ?? 0)) * (int) ($item['box_quantity'] ?? 0);
             $item['line_total'] = $productTotal + $boxTotal;
         }
@@ -30,7 +32,7 @@ class CartModel extends BaseModel
     public function adminAll(): array
     {
         $rows = $this->pdo->query(
-            'SELECT c.*, u.name AS user_name, u.email, p.name AS product_name, p.price,
+            'SELECT c.*, u.name AS user_name, u.email, p.name AS product_name, p.price, p.best_price,
                     b.name AS box_name, b.price AS box_price
              FROM cart c
              INNER JOIN users u ON u.id = c.user_id
@@ -40,7 +42,8 @@ class CartModel extends BaseModel
         )->fetchAll();
 
         foreach ($rows as &$row) {
-            $row['line_total'] = ((float) $row['price'] * (int) $row['quantity'])
+            $unitPrice = (float) $row['best_price'] > 0 ? (float) $row['best_price'] : (float) $row['price'];
+            $row['line_total'] = ($unitPrice * (int) $row['quantity'])
                 + ((float) ($row['box_price'] ?? 0) * (int) ($row['box_quantity'] ?? 0));
         }
 
@@ -52,26 +55,43 @@ class CartModel extends BaseModel
         $quantity = max(1, $quantity);
         $product = $this->ensureAvailableQuantity($productId, $quantity);
         $existing = $this->cartItem($userId, $productId);
-        $newQuantity = ((int) ($existing['quantity'] ?? 0)) + $quantity;
 
-        if ($newQuantity > (int) $product['stock']) {
-            throw new RuntimeException('Only ' . (int) $product['stock'] . ' item(s) available in stock.');
+        if ($existing) {
+            $newQuantity = ((int) $existing['quantity']) + $quantity;
+
+            if ($newQuantity > (int) $product['stock']) {
+                throw new RuntimeException('Only ' . (int) $product['stock'] . ' item(s) available in stock.');
+            }
+
+            $box = $this->resolveBoxOption($boxOptionId, $boxQuantity, $newQuantity, $existing);
+
+            $stmt = $this->pdo->prepare(
+                'UPDATE cart
+                 SET quantity = :quantity, box_option_id = :box_option_id, box_quantity = :box_quantity
+                 WHERE user_id = :user_id AND product_id = :product_id'
+            );
+            $stmt->execute([
+                'user_id' => $userId,
+                'product_id' => $productId,
+                'quantity' => $newQuantity,
+                'box_option_id' => $box['id'],
+                'box_quantity' => $box['quantity'],
+            ]);
+
+            $this->normalizeProductItem($userId, $productId);
+            return;
         }
 
-        $box = $this->resolveBoxOption($boxOptionId, $boxQuantity, $newQuantity, $existing);
+        $box = $this->resolveBoxOption($boxOptionId, $boxQuantity, $quantity);
 
         $stmt = $this->pdo->prepare(
             'INSERT INTO cart (user_id, product_id, quantity, box_option_id, box_quantity)
-             VALUES (:user_id, :product_id, :quantity, :box_option_id, :box_quantity)
-             ON DUPLICATE KEY UPDATE
-                quantity = VALUES(quantity),
-                box_option_id = VALUES(box_option_id),
-                box_quantity = VALUES(box_quantity)'
+             VALUES (:user_id, :product_id, :quantity, :box_option_id, :box_quantity)'
         );
         $stmt->execute([
             'user_id' => $userId,
             'product_id' => $productId,
-            'quantity' => $newQuantity,
+            'quantity' => $quantity,
             'box_option_id' => $box['id'],
             'box_quantity' => $box['quantity'],
         ]);
@@ -115,8 +135,9 @@ class CartModel extends BaseModel
 
     public function subtotal(int $userId): float
     {
+        $this->normalizeCart($userId);
         $stmt = $this->pdo->prepare(
-            'SELECT COALESCE(SUM((c.quantity * p.price) + (c.box_quantity * COALESCE(b.price, 0))), 0)
+            'SELECT COALESCE(SUM((c.quantity * CASE WHEN p.best_price > 0 THEN p.best_price ELSE p.price END) + (c.box_quantity * COALESCE(b.price, 0))), 0)
              FROM cart c
              INNER JOIN products p ON p.id = c.product_id
              LEFT JOIN box_options b ON b.id = c.box_option_id
@@ -128,6 +149,7 @@ class CartModel extends BaseModel
 
     public function count(int $userId): int
     {
+        $this->normalizeCart($userId);
         $stmt = $this->pdo->prepare('SELECT COALESCE(SUM(quantity), 0) FROM cart WHERE user_id = :user_id');
         $stmt->execute(['user_id' => $userId]);
         return (int) $stmt->fetchColumn();
@@ -143,6 +165,60 @@ class CartModel extends BaseModel
         );
         $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
         return $stmt->fetch() ?: null;
+    }
+
+    private function normalizeCart(int $userId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT product_id, COUNT(*) AS duplicate_count
+             FROM cart
+             WHERE user_id = :user_id
+             GROUP BY product_id
+             HAVING duplicate_count > 1'
+        );
+        $stmt->execute(['user_id' => $userId]);
+        $duplicates = $stmt->fetchAll();
+
+        foreach ($duplicates as $duplicate) {
+            $this->normalizeProductItem($userId, (int) $duplicate['product_id']);
+        }
+    }
+
+    private function normalizeProductItem(int $userId, int $productId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, quantity, box_option_id, box_quantity
+             FROM cart
+             WHERE user_id = :user_id AND product_id = :product_id
+             ORDER BY id ASC'
+        );
+        $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
+        $rows = $stmt->fetchAll();
+
+        if (count($rows) <= 1) {
+            return;
+        }
+
+        $primary = array_shift($rows);
+        $totalQuantity = (int) $primary['quantity'];
+
+        foreach ($rows as $row) {
+            $totalQuantity += (int) $row['quantity'];
+        }
+
+        $stmt = $this->pdo->prepare(
+            'UPDATE cart
+             SET quantity = :quantity
+             WHERE id = :id'
+        );
+        $stmt->execute(['quantity' => $totalQuantity, 'id' => $primary['id']]);
+
+        $deleteIds = array_column($rows, 'id');
+        if ($deleteIds !== []) {
+            $placeholders = implode(',', array_fill(0, count($deleteIds), '?'));
+            $deleteStmt = $this->pdo->prepare("DELETE FROM cart WHERE id IN ($placeholders)");
+            $deleteStmt->execute($deleteIds);
+        }
     }
 
     private function ensureAvailableQuantity(int $productId, int $quantity): array

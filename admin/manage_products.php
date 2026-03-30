@@ -13,7 +13,7 @@ require __DIR__ . '/partials/header.php';
 <div class="rounded-3xl bg-white p-6 shadow">
     <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
-            <thead><tr class="text-left text-slate-500"><th class="pb-3">Product</th><th class="pb-3">Category</th><th class="pb-3">Price</th><th class="pb-3">Stock</th><th class="pb-3">Media</th><th class="pb-3">Status</th><th class="pb-3">Action</th></tr></thead>
+            <thead><tr class="text-left text-slate-500"><th class="pb-3">Product</th><th class="pb-3">Category</th><th class="pb-3">Price</th><th class="pb-3">Best Price</th><th class="pb-3">Stock</th><th class="pb-3">Media</th><th class="pb-3">Status</th><th class="pb-3">Action</th></tr></thead>
             <tbody>
             <?php foreach ($products as $product): ?>
                 <tr class="border-t border-slate-100">
@@ -23,6 +23,7 @@ require __DIR__ . '/partials/header.php';
                     </td>
                     <td class="py-3"><?= e((string) $product['category_name']); ?></td>
                     <td class="py-3"><?= e(money((float) $product['price'])); ?></td>
+                    <td class="py-3"><?= e(money((float) $product['best_price'])); ?></td>
                     <td class="py-3"><?= (int) $product['stock']; ?></td>
                     <td class="py-3 text-slate-500"><?= (int) $product['image_count']; ?> gallery image(s)</td>
                     <td class="py-3">

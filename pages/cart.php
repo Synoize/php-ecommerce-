@@ -33,23 +33,58 @@ require __DIR__ . '/layout/header.php';
                grid-cols-[80px,1fr] lg:grid-cols-[120px,1fr,auto]">
 
                         <!-- IMAGE -->
-                        <div class="overflow-hidden rounded-lg border bg-white-dark h-24 md:h-28 mx-auto sm:mx-0 w-full max-w-[140px]">
-                            <img src="<?= e(upload_url((string) $item['image'])); ?>"
-                                alt="<?= e($item['name']); ?>"
-                                class="h-24 md:h-28 w-full object-contain p-2 transition duration-300 group-hover:scale-105">
-                        </div>
+                        <?php $productUrl = e(app_url('product.php?id=' . (int) $item['product_id'])); ?>
+                        <?php $isAvailable = (int) $item['stock'] > 0 && (int) $item['is_active'] === 1; ?>
+                        <?php if ($isAvailable): ?>
+                            <a href="<?= $productUrl; ?>" class="overflow-hidden rounded-lg border bg-white-dark h-24 md:h-28 mx-auto sm:mx-0 w-full max-w-[140px] block transition hover:opacity-90">
+                                <img src="<?= e(upload_url((string) $item['image'])); ?>"
+                                    alt="<?= e($item['name']); ?>"
+                                    class="h-24 md:h-28 w-full object-contain p-2 transition duration-300 group-hover:scale-105">
+                            </a>
+                        <?php else: ?>
+                            <div class="overflow-hidden rounded-lg border bg-white-dark h-24 md:h-28 mx-auto sm:mx-0 w-full max-w-[140px]">
+                                <img src="<?= e(upload_url((string) $item['image'])); ?>"
+                                    alt="<?= e($item['name']); ?>"
+                                    class="h-24 md:h-28 w-full object-contain p-2 transition duration-300 group-hover:scale-105">
+                            </div>
+                        <?php endif; ?>
 
                         <!-- DETAILS -->
                         <div class="flex flex-col justify-between">
 
                             <div>
                                 <h3 class="text-sm sm:text-base md:text-lg font-semibold text-black-medium">
-                                    <?= e($item['name']); ?>
+                                    <?php if ($isAvailable): ?>
+                                        <a href="<?= $productUrl; ?>" class="hover:text-primary-medium transition">
+                                            <?= e($item['name']); ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <?= e($item['name']); ?>
+                                    <?php endif; ?>
                                 </h3>
 
-                                <p class="mt-1 text-xs sm:text-sm text-black-light">
-                                    <?= e(money((float) $item['price'])); ?> each
-                                </p>
+                                <div class="mt-1 flex items-center gap-2 text-nowrap">
+
+                                    <!-- Current Price -->
+                                    <p class="text-lg text-black-medium">
+                                        <?= e(money(
+                                            (float)$item['best_price'] > 0
+                                                ? (float)$item['best_price']
+                                                : (float)$item['price']
+                                        )); ?>
+                                    </p>
+
+                                    <!-- Show MRP only if different -->
+                                    <?php if (
+                                        (float)$item['best_price'] > 0 &&
+                                        (float)$item['best_price'] < (float)$item['price']
+                                    ): ?>
+                                        <p class="text-xs text-black-light line-through">
+                                            <?= e(money((float)$item['price'])); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                </div>
 
                                 <!-- BOX OPTION -->
                                 <?php if (!empty($item['box_name']) && (int) $item['box_quantity'] > 0): ?>
@@ -103,15 +138,15 @@ require __DIR__ . '/layout/header.php';
                         </div>
 
                         <!-- Total Price -->
-                        <div class="flex flex-row self-end items-center gap-10 text-nowrap">
+                        <div class="flex flex-row self-end items-center space-x-8 text-nowrap">
                             <span class="text-xs text-black-light">
                                 Quantity: <span class="font-semibold"><?= (int) $item['quantity']; ?></span>
                             </span>
 
-                            <span class="text-lg sm:text-xl font-bold text-black-medium">
+                            <span class="text-lg sm:text-2xl font-semibold text-black-medium">
                                 <?= e(money((float) $item['line_total'])); ?>
                             </span>
-                            
+
                         </div>
 
                     </article>
@@ -163,7 +198,7 @@ require __DIR__ . '/layout/header.php';
                         <span class="text-green-600 font-medium">Free</span>
                     </div>
 
-                    <div class="border-t pt-4 flex justify-between text-lg font-bold text-black-medium">
+                    <div class="border-t pt-4 flex justify-between text-lg font-semibold text-black-medium">
                         <span>Total</span>
                         <span><?= e(money($subtotal)); ?></span>
                     </div>

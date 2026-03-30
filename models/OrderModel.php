@@ -44,12 +44,14 @@ class OrderModel extends BaseModel
                  )'
             );
 
+            $cartItems = $this->normalizeOrderItems($cartItems);
             foreach ($cartItems as $item) {
+                $effectivePrice = (float) ($item['best_price'] ?? 0) > 0 ? (float) $item['best_price'] : (float) $item['price'];
                 $itemStmt->execute([
                     'order_id' => $orderId,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
-                    'price' => $item['price'],
+                    'price' => $effectivePrice,
                     'box_option_id' => $item['box_option_id'] ?: null,
                     'box_option_name' => $item['box_name'] ?: null,
                     'box_option_price' => $item['box_price'] ?: null,
@@ -75,6 +77,27 @@ class OrderModel extends BaseModel
             $this->pdo->rollBack();
             throw $e;
         }
+    }
+
+    private function normalizeOrderItems(array $cartItems): array
+    {
+        $normalized = [];
+
+        foreach ($cartItems as $item) {
+            $key = sprintf('%s|%s', $item['product_id'], $item['box_option_id'] ?? '0');
+
+            if (isset($normalized[$key])) {
+                $normalized[$key]['quantity'] += (int) $item['quantity'];
+                $normalized[$key]['box_quantity'] = max(
+                    (int) $normalized[$key]['box_quantity'],
+                    (int) ($item['box_quantity'] ?? 0)
+                );
+            } else {
+                $normalized[$key] = $item;
+            }
+        }
+
+        return array_values($normalized);
     }
 
     public function deletePendingForUser(int $orderId, int $userId): void
@@ -182,10 +205,10 @@ class OrderModel extends BaseModel
             'SELECT o.*, a.city, a.state
              FROM orders o
              LEFT JOIN addresses a ON a.id = o.address_id
-             WHERE o.user_id = :user_id
+             WHERE o.user_id = :user_id AND o.status != :pending_status
              ORDER BY o.created_at DESC'
         );
-        $stmt->execute(['user_id' => $userId]);
+        $stmt->execute(['user_id' => $userId, 'pending_status' => 'pending']);
         return $stmt->fetchAll();
     }
 
@@ -195,10 +218,10 @@ class OrderModel extends BaseModel
             'SELECT o.*, a.full_name, a.phone, a.address_line, a.city, a.state, a.pincode, a.country
              FROM orders o
              LEFT JOIN addresses a ON a.id = o.address_id
-             WHERE o.id = :order_id AND o.user_id = :user_id
+             WHERE o.id = :order_id AND o.user_id = :user_id AND o.status != :pending_status
              LIMIT 1'
         );
-        $stmt->execute(['order_id' => $orderId, 'user_id' => $userId]);
+        $stmt->execute(['order_id' => $orderId, 'user_id' => $userId, 'pending_status' => 'pending']);
         $order = $stmt->fetch();
 
         if (!$order) {

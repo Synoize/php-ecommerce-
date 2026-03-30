@@ -76,8 +76,10 @@ require __DIR__ . '/layout/header.php';
                                     <?= e($address['address_line']); ?>,
                                     <?= e($address['city']); ?>,
                                     <?= e($address['state']); ?> -
-                                    <?= e($address['pincode']); ?>
+                                    <?= e($address['pincode']); ?>,
+                                    <?= e($address['country']); ?>
                                 </p>
+                                <p class="mt-2 text-xs text-black-light leading-5">Phone: <?= e($address['phone']); ?></p>
 
                             </div>
                         <?php endforeach; ?>

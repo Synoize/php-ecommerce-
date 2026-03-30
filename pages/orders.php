@@ -19,7 +19,7 @@ require __DIR__ . '/layout/header.php';
         My Orders
     </h1>
 
-    <div class="mt-8 min-h-[calc(100vh-262px)] grid gap-6 lg:grid-cols-[320px,1fr]">
+    <div class="mt-8 min-h-[calc(100vh-246px)] grid gap-6 lg:grid-cols-[320px,1fr]">
 
         <!-- LEFT: ORDER LIST -->
         <section class="space-y-4">
@@ -106,7 +106,9 @@ require __DIR__ . '/layout/header.php';
                 <!-- META -->
                 <div class="mt-4 text-sm text-black-light space-y-1">
                     <div>Payment: <?= e($order['payment_method']); ?> / <?= e($order['payment_status']); ?></div>
-                    <div>Address: <?= e($order['address_line']); ?>, <?= e($order['city']); ?>, <?= e($order['state']); ?></div>
+                    <div>Recipient: <?= e($order['full_name']); ?></div>
+                    <div>Address: <?= e($order['address_line']); ?>, <?= e($order['city']); ?>, <?= e($order['state']); ?> - <?= e($order['pincode']); ?>, <?= e($order['country']); ?></div>
+                    <div>Phone: <?= e($order['phone']); ?></div>
                 </div>
 
                 <!-- COD MESSAGE -->

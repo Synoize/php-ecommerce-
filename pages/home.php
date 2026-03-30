@@ -447,9 +447,29 @@ require __DIR__ . '/layout/header.php';
 
                         </div> -->
 
-                        <p class="mt-2 text-sm font-semibold text-green-600">
-                            <?= e(money((float) $product['price'])); ?>
-                        </p>
+                        <!-- PRICE -->
+                        <div class="mt-2 flex items-center gap-2 text-nowrap">
+
+                            <!-- Current Price -->
+                            <p class="text-lg font-medium text-black-medium">
+                                <?= e(money(
+                                    (float)$product['best_price'] > 0
+                                        ? (float)$product['best_price']
+                                        : (float)$product['price']
+                                )); ?>
+                            </p>
+
+                            <!-- Show MRP only if different -->
+                            <?php if (
+                                (float)$product['best_price'] > 0 &&
+                                (float)$product['best_price'] < (float)$product['price']
+                            ): ?>
+                                <p class="text-xs text-black-light line-through">
+                                    <?= e(money((float)$product['price'])); ?>
+                                </p>
+                            <?php endif; ?>
+
+                        </div>
 
 
 

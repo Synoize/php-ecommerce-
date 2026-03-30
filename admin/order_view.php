@@ -93,6 +93,8 @@ require __DIR__ . '/partials/header.php';
         <div class="mt-2 text-sm"><?= e((string) $order['address_line']); ?>, <?= e((string) $order['city']); ?>, <?= e((string) $order['state']); ?> - <?= e((string) $order['pincode']); ?></div>
         <div class="mt-6 text-sm text-slate-500">Payment</div>
         <div class="mt-2 text-sm"><?= e((string) $order['payment_method']); ?> / <?= e((string) $order['payment_status']); ?></div>
+        <div class="mt-6 text-sm text-slate-500">Phone</div>
+        <div class="mt-2 text-sm"><?= e((string) $order['phone']); ?></div>
         <?php if (!empty($order['coupon'])): ?>
             <div class="mt-6 text-sm text-slate-500">Coupon</div>
             <div class="mt-2 text-sm"><?= e((string) $order['coupon']['code']); ?> saved <?= e(money((float) $order['coupon']['discount_amount'])); ?></div>

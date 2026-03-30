@@ -34,7 +34,8 @@ require __DIR__ . '/layout/header.php';
                                         <span class="rounded-full bg-green-100 px-2 py-1 text-xs text-green-600">Default</span>
                                     <?php endif; ?>
                                 </div>
-                                <p class="text-xs text-black-light"><?= e($address['address_line']); ?>, <?= e($address['city']); ?>, <?= e($address['state']); ?> - <?= e($address['pincode']); ?></p>
+                                <p class="text-xs text-black-light"><?= e($address['address_line']); ?>, <?= e($address['city']); ?>, <?= e($address['state']); ?> - <?= e($address['pincode']); ?>, <?= e($address['country']); ?></p>
+                                <p class="text-xs text-black-light">Phone: <?= e($address['phone']); ?></p>
                             </div>
                             <div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary-medium"></div>
                         </label>
@@ -64,15 +65,40 @@ require __DIR__ . '/layout/header.php';
 
             <div class="mt-4 max-h-[300px] space-y-3 overflow-y-auto pr-1">
                 <?php foreach ($data['items'] as $item): ?>
-                    <div class="flex justify-between border-b pb-2 text-sm">
-                        <div>
+                    <div class="flex justify-between gap-2 border-b pb-2 text-sm">
+                        <div class="w-full flex flex-col gap-1">
                             <div class="font-medium"><?= e($item['name']); ?></div>
-                            <div class="text-xs text-black-light">Qty: <?= (int) $item['quantity']; ?></div>
+                            <div class="mt-1 flex justify-between items-center">
+                                <div class="flex items-center gap-2 text-nowrap">
+
+                                    <!-- Current Price -->
+                                    <p class="text-sm text-black-light text-black-medium">
+                                        <?= e(money(
+                                            (float)$item['best_price'] > 0
+                                                ? (float)$item['best_price']
+                                                : (float)$item['price']
+                                        )); ?>
+                                    </p>
+
+                                    <!-- Show MRP only if different -->
+                                    <?php if (
+                                        (float)$item['best_price'] > 0 &&
+                                        (float)$item['best_price'] < (float)$item['price']
+                                    ): ?>
+                                        <p class="text-xs text-black-light line-through">
+                                            <?= e(money((float)$item['price'])); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                </div>
+                                <div class="text-xs text-black-light">Quantity: <?= (int) $item['quantity']; ?></div>
+                            </div>
+
                             <?php if (!empty($item['box_name']) && (int) $item['box_quantity'] > 0): ?>
                                 <div class="text-xs text-black-light"><?= e($item['box_name']); ?> x <?= (int) $item['box_quantity']; ?></div>
                             <?php endif; ?>
                         </div>
-                        <div class="font-semibold"><?= e(money((float) $item['line_total'])); ?></div>
+                        <div class="font-semibold text-nowrap"><?= e(money((float) $item['line_total'])); ?></div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -104,6 +130,12 @@ require __DIR__ . '/layout/header.php';
                 <button id="checkout-button" class="w-full rounded-lg bg-primary-medium px-5 py-3 text-sm font-semibold text-white-dark transition hover:bg-primary-medium/90">
                     Continue to Pay0
                 </button>
+
+                <?php if (trim((string) current_user()['phone']) === ''): ?>
+                    <div id="checkout-phone-error" class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-3 text-sm text-rose-700">
+                        Please add a mobile number to your account before payment. <a href="<?= e(app_url('account.php')); ?>" class="font-semibold underline">Update phone in your account</a>.
+                    </div>
+                <?php endif; ?>
             </form>
         </aside>
     </div>
@@ -116,7 +148,10 @@ require __DIR__ . '/layout/header.php';
     const orderTotal = <?= json_encode((float) $data['total']); ?>;
 
     function formatINR(amount) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount);
     }
 
     function syncPaymentCopy() {
@@ -136,5 +171,21 @@ require __DIR__ . '/layout/header.php';
 
     paymentMethod?.addEventListener('change', syncPaymentCopy);
     syncPaymentCopy();
+
+    const userPhone = <?= json_encode(trim((string) current_user()['phone'])); ?>;
+    const checkoutForm = document.getElementById('checkout-form');
+    const checkoutError = document.getElementById('checkout-phone-error');
+
+    checkoutForm?.addEventListener('submit', event => {
+        if (!userPhone) {
+            event.preventDefault();
+            if (checkoutError) {
+                checkoutError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                checkoutError.classList.remove('hidden');
+            } else {
+                alert('Please add a mobile number to your account before payment.');
+            }
+        }
+    });
 </script>
 <?php require __DIR__ . '/layout/footer.php'; ?>

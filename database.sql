@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS products (
   description TEXT DEFAULT NULL,
   category_id INT UNSIGNED DEFAULT NULL,
   price DECIMAL(10,2) NOT NULL,
+  best_price DECIMAL(10,2) NOT NULL,
   stock INT UNSIGNED NOT NULL DEFAULT 0,
   image VARCHAR(255) DEFAULT NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
@@ -82,9 +83,13 @@ CREATE TABLE IF NOT EXISTS products (
   KEY idx_products_category (category_id),
   KEY idx_products_active (is_active),
   CONSTRAINT chk_products_price_non_negative CHECK (price >= 0),
+  CONSTRAINT chk_products_best_price_non_negative CHECK (best_price >= 0),
   CONSTRAINT fk_products_category
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE products
+  ADD COLUMN IF NOT EXISTS best_price DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER price;
 
 CREATE TABLE IF NOT EXISTS product_images (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
